@@ -1,0 +1,104 @@
+.blur-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 999; // Keep it on top
+
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    transition:
+        background 0.3s ease,
+        backdrop-filter 0.3s ease;
+}
+
+.blur-container.blurred {
+    background: rgba(19, 22.5, 30.5, 0.2);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0;
+    margin-bottom: 1rem; // Distances navbar from content
+    font-family: "Figtree", sans-serif;
+
+    &-left,
+    &-right {
+        display: flex;
+        align-items: center;
+    }
+
+    &-center {
+        display: flex;
+        gap: 0.1rem;
+        font-size: 0.85rem;
+
+        li.dropdown {
+            position: relative;
+
+            a {
+                text-decoration: none;
+                color: inherit;
+            }
+
+            .dropdown-menu {
+                display: none;
+                position: absolute;
+                background: var(--pico-background-color);
+                box-shadow: var(--pico-box-shadow);
+                border-radius: var(--pico-border-radius);
+                min-width: 160px;
+                padding: 0.5rem 0;
+                z-index: 10;
+            }
+
+            &:hover .dropdown-menu {
+                display: block;
+            }
+        }
+    }
+}
+
+.logo-link {
+    text-decoration: none;
+    color: gainsboro;
+    display: flex;
+    align-items: center;
+
+    .logo-img {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 0;
+        margin-right: 7px;
+    }
+
+    .logo-text {
+        font-size: 1.5rem;
+    }
+}
+
+.btn {
+    padding: 0.3rem 0.7rem;
+    border: none;
+    border-radius: 2rem;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.85rem;
+    white-space: nowrap;
+
+    &.login {
+        background: transparent;
+        color: gainsboro;
+    }
+
+    &.signup {
+        background: white;
+        color: rgb(36, 36, 36);
+        margin-left: 0.6rem;
+    }
+}

@@ -1,9 +1,10 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-	modules: ["@nuxt/eslint"],
+	modules: ["@nuxt/eslint", "@nuxtjs/google-fonts"],
 	devtools: { enabled: true },
 	css: ["@picocss/pico"],
 	compatibilityDate: "2025-05-15",
+
 	eslint: {
 		config: {
 			stylistic: {
@@ -13,5 +14,14 @@ export default defineNuxtConfig({
 				indent: "tab",
 			},
 		},
+	},
+	googleFonts: {
+		families: {
+			Figtree: {
+				wght: "300..900",
+				ital: "300..900",
+			},
+		},
+		display: "swap",
 	},
 });
