@@ -14,7 +14,7 @@
 }
 
 .blur-container.blurred {
-    background: rgba(19, 22.5, 30.5, 0.2);
+    background: rgba(var(--bg), 0.2);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
 }
@@ -31,26 +31,28 @@
     &-right {
         display: flex;
         align-items: center;
+        margin-right: 10px;
     }
 
     &-center {
         display: flex;
         gap: 0.1rem;
         font-size: 0.85rem;
+        margin-right: 10px;
 
         li.dropdown {
             position: relative;
 
             a {
                 text-decoration: none;
-                color: inherit;
+                color: var(--secondary-text);
             }
 
             .dropdown-menu {
                 display: none;
                 position: absolute;
-                background: var(--pico-background-color);
-                box-shadow: var(--pico-box-shadow);
+                background: var(--bg);
+                box-shadow: var(--shadow);
                 border-radius: var(--pico-border-radius);
                 min-width: 160px;
                 padding: 0.5rem 0;
@@ -66,15 +68,15 @@
 
 .logo-link {
     text-decoration: none;
-    color: gainsboro;
+    color: var(--primary);
     display: flex;
     align-items: center;
 
     .logo-img {
         width: 64px;
         height: 64px;
-        margin-bottom: 0;
-        margin-right: 7px;
+        margin-bottom: 25px;
+        margin-right: 10px;
     }
 
     .logo-text {
@@ -93,12 +95,12 @@
 
     &.login {
         background: transparent;
-        color: gainsboro;
+        color: var(--primary-text);
     }
 
     &.signup {
-        background: white;
-        color: rgb(36, 36, 36);
+        background: var(--primary);
+        color: var(--primary-text);
         margin-left: 0.6rem;
     }
 }

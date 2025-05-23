@@ -73,6 +73,7 @@ function onScroll() {
 }
 
 onMounted(() => {
+	window.scrollTo(0, 0); // Reset scroll state
 	window.addEventListener("scroll", onScroll);
 });
 

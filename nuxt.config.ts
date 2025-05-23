@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
 	modules: ["@nuxt/eslint", "@nuxtjs/google-fonts"],
 	devtools: { enabled: true },
-	css: ["@picocss/pico"],
+	css: ["@picocss/pico/css/pico.min.css", "@/assets/css/theme.css"],
 	compatibilityDate: "2025-05-15",
 
 	eslint: {

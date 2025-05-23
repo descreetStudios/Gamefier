@@ -1,0 +1,40 @@
+/* Default: Dark Theme */
+:root:not([data-theme]),
+[data-theme=dark] {
+  /* Primary */
+  --primary: #4498ff;
+  --primary-hover: #3b82f6;
+  --primary-text: #ffffff;
+  /* Secondary */
+  --secondary: #fbbf24;
+  --secondary-hover: #f59e0b;
+  --secondary-text: #c1cbdb;
+  /* Other */
+  --bg: #121212;
+  --surface: #1e1e1e;
+  --border: #374151;
+  --shadow: rgba(0, 0, 0, 0.8);
+  /* Pico Override */
+  --pico-background-color: var(--bg);
+}
+
+/* Light Theme */
+[data-theme=light] {
+  /* Primary */
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --primary-text: #111827;
+  /* Secondary */
+  --secondary: #cc0cff;
+  --secondary-hover: #aa0ed4;
+  --secondary-text: #6b7280;
+  /* Other */
+  --bg: #f9fafb;
+  --surface: #ffffff;
+  --border: #e5e7eb;
+  --shadow: rgba(0, 0, 0, 0.1);
+  /* Pico Override */
+  --pico-background-color: var(--bg);
+}
+
+/*# sourceMappingURL=theme.css.map */
