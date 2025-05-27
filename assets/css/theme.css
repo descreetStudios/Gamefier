@@ -4,16 +4,24 @@
   /* Primary */
   --primary: #4498ff;
   --primary-hover: #3b82f6;
-  --primary-text: #ffffff;
+  --primary-text: white;
+  --inv-primary-text: black;
   /* Secondary */
-  --secondary: #fbbf24;
-  --secondary-hover: #f59e0b;
+  --secondary: #cc0cff;
+  --secondary-hover: #aa0ed4;
   --secondary-text: #c1cbdb;
+  --inv-secondary-text: #27292c;
   /* Other */
-  --bg: #121212;
+  --bg: #131313;
   --surface: #1e1e1e;
-  --border: #374151;
-  --shadow: rgba(0, 0, 0, 0.8);
+  --secondary-surface: #2e343a;
+  --border: black;
+  --shadow: rgba(0, 0, 0, 0.4);
+  --glowing: #eeeeee;
+  --error: #f87171;
+  --warning: #fa992a;
+  --info: #2adbfa;
+  --success: #33d371;
   /* Pico Override */
   --pico-background-color: var(--bg);
 }
@@ -21,18 +29,26 @@
 /* Light Theme */
 [data-theme=light] {
   /* Primary */
-  --primary: #3b82f6;
-  --primary-hover: #2563eb;
-  --primary-text: #111827;
+  --primary: #4498ff;
+  --primary-hover: #3b82f6;
+  --primary-text: black;
+  --inv-primary-text: white;
   /* Secondary */
   --secondary: #cc0cff;
   --secondary-hover: #aa0ed4;
-  --secondary-text: #6b7280;
+  --secondary-text: #333333;
+  --inv-secondary-text: #cfcfcf;
   /* Other */
-  --bg: #f9fafb;
-  --surface: #ffffff;
-  --border: #e5e7eb;
+  --bg: #f2f2f2;
+  --surface: white;
+  --secondary-surface: #d1d5eb;
+  --border: #c0baba;
   --shadow: rgba(0, 0, 0, 0.1);
+  --glowing: #3b82f6;
+  --error: #f87171;
+  --warning: #fa992a;
+  --info: #2adbfa;
+  --success: #33d371;
   /* Pico Override */
   --pico-background-color: var(--bg);
 }

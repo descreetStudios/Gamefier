@@ -52,15 +52,17 @@
 
 			<!-- Auth buttons (Right) -->
 			<div class="navbar-right">
-				<NuxtLink to="/login">
-					<button class="btn login">
-						Login
-					</button>
+				<NuxtLink
+					to="/login"
+					class="btn login"
+				>
+					Login
 				</NuxtLink>
-				<NuxtLink to="/register">
-					<button class="btn signup">
-						Sign Up
-					</button>
+				<NuxtLink
+					to="/signup"
+					class="btn signup"
+				>
+					Sign Up
 				</NuxtLink>
 			</div>
 		</nav>
