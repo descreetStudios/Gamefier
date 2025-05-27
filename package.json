@@ -16,9 +16,12 @@
     "@nuxtjs/google-fonts": "^3.2.0",
     "@picocss/pico": "^2.1.1",
     "eslint": "^9.27.0",
+    "firebase": "^11.8.1",
     "nuxt": "^3.17.3",
+    "nuxt-vuefire": "^1.0.5",
     "vue": "^3.5.13",
-    "vue-router": "^4.5.1"
+    "vue-router": "^4.5.1",
+    "vuefire": "^3.2.1"
   },
   "devDependencies": {
     "sass": "^1.89.0",
