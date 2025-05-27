@@ -51,8 +51,8 @@
             .dropdown-menu {
                 display: none;
                 position: absolute;
-                background: var(--bg);
-                box-shadow: var(--shadow);
+                background: var(--surface);
+                box-shadow: 0 4px 20px var(--shadow);
                 border-radius: var(--pico-border-radius);
                 min-width: 160px;
                 padding: 0.5rem 0;
@@ -92,6 +92,7 @@
     font-weight: bold;
     font-size: 0.85rem;
     white-space: nowrap;
+    text-decoration: none;
 
     &.login {
         background: transparent;
@@ -100,7 +101,7 @@
 
     &.signup {
         background: var(--primary);
-        color: var(--primary-text);
+        color: var(--inv-primary-text);
         margin-left: 0.6rem;
     }
 }

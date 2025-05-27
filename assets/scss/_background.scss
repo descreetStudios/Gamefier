@@ -12,8 +12,7 @@
     position: absolute;
     width: 0;
     opacity: 0;
-    background-color: white;
-    box-shadow: #e9f1f1 0 0 20px 2px;
+    box-shadow: var(--primary) 0 0 20px 2px;
     top: 100vh;
     bottom: 0;
     left: 0;
