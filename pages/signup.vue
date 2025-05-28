@@ -40,6 +40,7 @@
 					placeholder="Password"
 					required
 					autocomplete="new-password"
+					autocomplete="new-password"
 				>
 				<input
 					v-model="confirmPassword"
@@ -78,6 +79,9 @@
 				>
 				Sign up with Google
 			</button>
+			<footer class="signup-footer">
+				Already have an account? <NuxtLink to="/login">Login</NuxtLink>
+			</footer>
 		</section>
 	</main>
 </template>
@@ -132,7 +136,7 @@ async function onSubmit() {
 		await register(email.value, password.value);
 		alert("Account created!");
 		await registerUserData(email.value, displayName.value);
-		await navigateTo("/");
+		await navigateTo("/dashboard");
 	}
 	catch (err) {
 		alert(err.message);

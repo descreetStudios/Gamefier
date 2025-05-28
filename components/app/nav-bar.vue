@@ -19,33 +19,39 @@
 			<!-- Dropdown items (Center) -->
 			<ul class="navbar-center nav">
 				<li class="dropdown">
-					<a href="#">About</a>
+					<NuxtLink to="#">About</NuxtLink>
 					<ul class="dropdown-menu menu">
-						<li><a href="#">About content</a></li>
+						<li><NuxtLink to="#">About content</NuxtLink></li>
 					</ul>
 				</li>
 				<li class="dropdown">
-					<a href="#">Services</a>
+					<NuxtLink to="#">Services</NuxtLink>
 					<ul class="dropdown-menu menu">
-						<li><a href="#">Services content</a></li>
+						<li><NuxtLink to="#">Services content</NuxtLink></li>
 					</ul>
 				</li>
 				<li class="dropdown">
-					<a href="#">Products</a>
+					<NuxtLink to="#">Products</NuxtLink>
 					<ul class="dropdown-menu menu">
-						<li><a href="#">Products content</a></li>
+						<li><NuxtLink to="#">Products content</NuxtLink></li>
 					</ul>
 				</li>
 				<li class="dropdown">
-					<a href="#">Features</a>
+					<NuxtLink to="#">Features</NuxtLink>
 					<ul class="dropdown-menu menu">
-						<li><a href="#">Features content</a></li>
+						<li><NuxtLink to="#">Features content</NuxtLink></li>
 					</ul>
 				</li>
 				<li class="dropdown">
-					<a href="#">Contact</a>
+					<NuxtLink to="#">Contact</NuxtLink>
 					<ul class="dropdown-menu menu">
-						<li><a href="#">Contact content</a></li>
+						<li><NuxtLink to="#">Contact content</NuxtLink></li>
+					</ul>
+				</li>
+				<li class="dropdown">
+					<NuxtLink to="/dashboard">Dashboard</NuxtLink>
+					<ul class="dropdown-menu menu">
+						<li><NuxtLink to="/dashboard">User dashboard</NuxtLink></li>
 					</ul>
 				</li>
 			</ul>

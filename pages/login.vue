@@ -47,7 +47,7 @@
 				Login with Google
 			</button>
 			<footer class="login-footer">
-				Don't have an account? <a href="/signup">Sign up</a>
+				Don't have an account? <NuxtLink to="/signup">Sign up</NuxtLink>
 			</footer>
 		</section>
 	</main>
@@ -62,7 +62,7 @@ async function onSubmit() {
 	try {
 		await login(email.value, password.value);
 		alert("Logged in!");
-		await navigateTo("/");
+		await navigateTo("/dashboard");
 	}
 	catch (err) {
 		alert(err.message);
