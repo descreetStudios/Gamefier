@@ -70,7 +70,7 @@ async function onSubmit() {
 }
 
 function onGoogleLogin() {
-	// Placeholder: handle Google login
+	// Placeholder: handle Google loginp
 	alert("Google login");
 }
 </script>

@@ -37,7 +37,6 @@ export default defineNuxtConfig({
 		},
 		display: "swap",
 	},
-
 	vuefire: {
 		config: {
 			apiKey: process.env.NUXT_PUBLIC_FIREBASE_API_KEY,
@@ -49,4 +48,5 @@ export default defineNuxtConfig({
 			measurementId: process.env.NUXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 		},
 	},
+
 });

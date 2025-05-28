@@ -1,3 +1,9 @@
+/* 
+------------------- Compile with sass ------------------- 
+sass --watch assets/scss/theme.scss assets/css/theme.css
+---------------------------------------------------------
+*/
+
 /* Default: Dark Theme */
 :root:not([data-theme]),
 [data-theme="dark"] {

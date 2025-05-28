@@ -40,7 +40,6 @@
 					placeholder="Password"
 					required
 					autocomplete="new-password"
-					autocomplete="new-password"
 				>
 				<input
 					v-model="confirmPassword"
@@ -94,7 +93,7 @@ const email = ref("");
 const confirmEmail = ref("");
 const password = ref("");
 const confirmPassword = ref("");
-const { register, registerUserData } = useAuth();
+const { signup, signupUserData } = useAuth();
 
 // Check if fields are filled
 const emailFilled = computed(() => email.value.trim() !== "" && confirmEmail.value.trim() !== "");
@@ -109,7 +108,7 @@ const passwordsMatch = computed(() =>
 	!passwordFilled.value || password.value === confirmPassword.value,
 );
 
-// Form validity (strict match required for submit)
+// Form validity
 const formValid = computed(() =>
 	emailFilled.value && passwordFilled.value && emailsMatch.value && passwordsMatch.value,
 );
@@ -120,7 +119,7 @@ const showError = computed(() =>
 	|| (passwordFilled.value && !passwordsMatch.value),
 );
 
-// Single error message
+// Build error message
 const errorMessage = computed(() => {
 	const emailFail = emailFilled.value && !emailsMatch.value;
 	const passwordFail = passwordFilled.value && !passwordsMatch.value;
@@ -133,9 +132,9 @@ const errorMessage = computed(() => {
 
 async function onSubmit() {
 	try {
-		await register(email.value, password.value);
+		await signup(email.value, password.value);
 		alert("Account created!");
-		await registerUserData(email.value, displayName.value);
+		await signupUserData(email.value, displayName.value);
 		await navigateTo("/dashboard");
 	}
 	catch (err) {

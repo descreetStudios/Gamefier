@@ -26,12 +26,12 @@ export const useAuth = () => {
 		await signInWithEmailAndPassword($auth, email, password);
 	};
 
-	const register = async (email: string, password: string) => {
+	const signup = async (email: string, password: string) => {
 		const userCredential = await createUserWithEmailAndPassword($auth, email, password);
 		uid.value = userCredential.user.uid;
 	};
 
-	const registerUserData = async (email: string, displayName: string) => {
+	const signupUserData = async (email: string, displayName: string) => {
 		try {
 			await setDoc(doc($db, "users", email), {
 				uid: uid.value,
@@ -55,8 +55,8 @@ export const useAuth = () => {
 		user,
 		initAuth,
 		login,
-		register,
-		registerUserData,
+		signup,
+		signupUserData,
 		logout,
 	};
 };
