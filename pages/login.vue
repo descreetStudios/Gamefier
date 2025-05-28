@@ -14,23 +14,23 @@
 				@submit.prevent="onSubmit"
 			>
 				<input
-                    v-model="email"
+					v-model="email"
 					type="email"
 					placeholder="Email"
 					required
 					autocomplete="email"
 				>
 				<input
-                    v-model="password"
+					v-model="password"
 					type="password"
 					placeholder="Password"
 					required
 					autocomplete="current-password"
 				>
-				<button 
-                    @click="onSubmit"
+				<button
 					type="submit"
 					class="btn-login"
+					@click="onSubmit"
 				>
 					Login
 				</button>
@@ -59,7 +59,7 @@ const password = ref("");
 const { login } = useAuth();
 
 async function onSubmit() {
-    try {
+	try {
 		await login(email.value, password.value);
 		alert("Logged in!");
 		await navigateTo("/");

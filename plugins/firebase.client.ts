@@ -1,4 +1,5 @@
 import { initializeApp, getApps } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 
@@ -20,6 +21,7 @@ export default defineNuxtPlugin(() => {
 		? getApps()[0]
 		: initializeApp(firebaseConfig);
 
+	const db = getFirestore(app);
 	// Analytics may fail on server
 	let analytics;
 	try {
@@ -34,6 +36,7 @@ export default defineNuxtPlugin(() => {
 	return {
 		provide: {
 			firebase: app,
+			db,
 			analytics,
 			auth,
 		},

@@ -14,6 +14,13 @@
 				@submit.prevent="onSubmit"
 			>
 				<input
+					v-model="displayName"
+					type="text"
+					placeholder="Display Name"
+					required
+					autocomplete="displayName"
+				>
+				<input
 					v-model="email"
 					type="email"
 					placeholder="Email"
@@ -32,7 +39,7 @@
 					type="password"
 					placeholder="Password"
 					required
-					autocomplete="current-password"
+					autocomplete="new-password"
 				>
 				<input
 					v-model="confirmPassword"
@@ -78,11 +85,12 @@
 <script setup>
 import { ref, computed } from "vue";
 
+const displayName = ref("");
 const email = ref("");
 const confirmEmail = ref("");
 const password = ref("");
 const confirmPassword = ref("");
-const { register } = useAuth();
+const { register, registerUserData } = useAuth();
 
 // Check if fields are filled
 const emailFilled = computed(() => email.value.trim() !== "" && confirmEmail.value.trim() !== "");
@@ -123,6 +131,7 @@ async function onSubmit() {
 	try {
 		await register(email.value, password.value);
 		alert("Account created!");
+		await registerUserData(email.value, displayName.value);
 		await navigateTo("/");
 	}
 	catch (err) {
