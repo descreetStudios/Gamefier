@@ -4,21 +4,21 @@
     align-items: center;
     height: 100vh;
     background-color: var(--bg);
-    padding: 1rem;
 }
 
 .login-card {
     background-color: var(--surface);
     border-radius: 15px;
     box-shadow: 0 6px 15px var(--shadow);
-    padding: 2.5rem 3rem;
+    padding: 3rem;
     width: 100%;
     max-width: 500px;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1rem;
     -webkit-user-drag: none;
     user-select: none;
+    scale: .8;
 }
 
 .logo {
@@ -90,7 +90,6 @@
 
 .btn-login {
     border-radius: 9999px; // fully rounded
-    padding: 0.75rem 1rem;
     font-weight: 600;
     color: var(--primary-text);
     background-image: linear-gradient(90deg, var(--primary), var(--secondary));
@@ -109,7 +108,6 @@
     background: var(--surface);
     border: none;
     border-radius: 10px;
-    padding: 0.6rem 1rem;
     font-weight: 500;
     color: var(--primary-text);
     cursor: pointer;
@@ -141,7 +139,6 @@
 .login-footer, .signup-footer {
     font-size: 0.9rem;
     color: var(--secondary-text);
-    margin-top: 1rem;
     text-align: center;
 
     a {
