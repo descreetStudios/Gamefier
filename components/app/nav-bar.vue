@@ -8,7 +8,7 @@
 					class="logo-link"
 				>
 					<img
-						src="@/assets/images/logo/gamefier-logo-64px.png"
+						src="/images/logo/gamefier-logo-64px.png"
 						alt="GF"
 						class="logo-img"
 					>

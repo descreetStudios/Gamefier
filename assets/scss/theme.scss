@@ -8,55 +8,91 @@ sass --watch assets/scss/theme.scss assets/css/theme.css
 :root:not([data-theme]),
 [data-theme="dark"] {
   /* Primary */
-  --primary: #4498ff;
-  --primary-hover: #3b82f6;
-  --primary-text: white;
-  --inv-primary-text: black;
-  /* Secondary */
-  --secondary: #cc0cff;
-  --secondary-hover: #aa0ed4;
-  --secondary-text: #c1cbdb;
-  --inv-secondary-text: #27292c;
-  /* Other */
-  --bg: #131313;
-  --surface: #1e1e1e;
-  --secondary-surface: #2e343a;
-  --border: black;
-  --shadow: rgba(0, 0, 0, 0.4);
-  --glowing: #eeeeee;
-  --error: #f87171;
-  --warning: #fa992a;
-  --info: #2adbfa;
-  --success: #33d371;
+  --primary: rgb(68, 152, 255);
+  --primary-rgb: 68, 152, 255;
+  --primary-hover: rgb(59, 130, 246);
+  --primary-hover-rgb: 59, 130, 246;
+  --primary-text: rgb(255, 255, 255);
+  --primary-text-rgb: 255, 255, 255;
+  --inv-primary-text: rgb(0, 0, 0);
+  --inv-primary-text-rgb: 0, 0, 0;
 
-  /* Pico Override */
+  /* Secondary */
+  --secondary: rgb(204, 12, 255);
+  --secondary-rgb: 204, 12, 255;
+  --secondary-hover: rgb(170, 14, 212);
+  --secondary-hover-rgb: 170, 14, 212;
+  --secondary-text: rgb(193, 203, 219);
+  --secondary-text-rgb: 193, 203, 219;
+  --inv-secondary-text: rgb(39, 41, 44);
+  --inv-secondary-text-rgb: 39, 41, 44;
+
+  /* Other */
+  --bg: rgb(19, 19, 19);
+  --bg-rgb: 19, 19, 19;
+  --surface: rgb(30, 30, 30);
+  --surface-rgb: 30, 30, 30;
+  --secondary-surface: rgb(46, 52, 58);
+  --secondary-surface-rgb: 46, 52, 58;
+  --border: rgb(0, 0, 0);
+  --border-rgb: 0, 0, 0;
+  --shadow: rgba(0, 0, 0, 0.4);
+  --glowing: rgb(238, 238, 238);
+  --glowing-rgb: 238, 238, 238;
+  --error: rgb(248, 113, 113);
+  --error-rgb: 248, 113, 113;
+  --warning: rgb(250, 153, 42);
+  --warning-rgb: 250, 153, 42;
+  --info: rgb(42, 219, 250);
+  --info-rgb: 42, 219, 250;
+  --success: rgb(51, 211, 113);
+  --success-rgb: 51, 211, 113;
+
   --pico-background-color: var(--bg);
 }
 
 /* Light Theme */
 [data-theme="light"] {
   /* Primary */
-  --primary: #4498ff;
-  --primary-hover: #3b82f6;
-  --primary-text: black;
-  --inv-primary-text: white;
-  /* Secondary */
-  --secondary: #cc0cff;
-  --secondary-hover: #aa0ed4;
-  --secondary-text: #333333;
-  --inv-secondary-text: #cfcfcf;
-  /* Other */
-  --bg: #f2f2f2;
-  --surface: white;
-  --secondary-surface: #d1d5eb;
-  --border: #c0baba;
-  --shadow: rgba(0, 0, 0, 0.1);
-  --glowing: #3b82f6;
-  --error: #f87171;
-  --warning: #fa992a;
-  --info: #2adbfa;
-  --success: #33d371;
+  --primary: rgb(68, 152, 255);
+  --primary-rgb: 68, 152, 255;
+  --primary-hover: rgb(59, 130, 246);
+  --primary-hover-rgb: 59, 130, 246;
+  --primary-text: rgb(0, 0, 0);
+  --primary-text-rgb: 0, 0, 0;
+  --inv-primary-text: rgb(255, 255, 255);
+  --inv-primary-text-rgb: 255, 255, 255;
 
-  /* Pico Override */
+  /* Secondary */
+  --secondary: rgb(204, 12, 255);
+  --secondary-rgb: 204, 12, 255;
+  --secondary-hover: rgb(170, 14, 212);
+  --secondary-hover-rgb: 170, 14, 212;
+  --secondary-text: rgb(51, 51, 51);
+  --secondary-text-rgb: 51, 51, 51;
+  --inv-secondary-text: rgb(207, 207, 207);
+  --inv-secondary-text-rgb: 207, 207, 207;
+
+  /* Other */
+  --bg: rgb(242, 242, 242);
+  --bg-rgb: 242, 242, 242;
+  --surface: rgb(255, 255, 255);
+  --surface-rgb: 255, 255, 255;
+  --secondary-surface: rgb(209, 213, 235);
+  --secondary-surface-rgb: 209, 213, 235;
+  --border: rgb(192, 186, 186);
+  --border-rgb: 192, 186, 186;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --glowing: rgb(59, 130, 246);
+  --glowing-rgb: 59, 130, 246;
+  --error: rgb(248, 113, 113);
+  --error-rgb: 248, 113, 113;
+  --warning: rgb(250, 153, 42);
+  --warning-rgb: 250, 153, 42;
+  --info: rgb(42, 219, 250);
+  --info-rgb: 42, 219, 250;
+  --success: rgb(51, 211, 113);
+  --success-rgb: 51, 211, 113;
+
   --pico-background-color: var(--bg);
 }

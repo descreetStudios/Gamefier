@@ -2,7 +2,7 @@
 	<main class="login-page">
 		<section class="login-card">
 			<img
-				src="assets/images/logo/gamefier-logo-64px.png"
+				src="/images/logo/gamefier-logo-64px.png"
 				alt="L"
 				class="logo"
 			>
@@ -53,7 +53,7 @@
 					class="error"
 				>
 					<img
-						src="assets/images/icons/warning.png"
+						src="/images/icons/warning.png"
 						alt="!"
 						class="error-icon"
 					>
@@ -72,14 +72,14 @@
 				@click="onGooglesignup"
 			>
 				<img
-					src="assets/images/icons/google-icon.svg"
+					src="/images/icons/google-icon.svg"
 					alt="G"
 					class="google-icon"
 				>
 				Sign up with Google
 			</button>
 			<footer class="signup-footer">
-				Already have an account? <NuxtLink to="/login">Login</NuxtLink>
+				Already have an account? <NuxtLink to="/login">Log in</NuxtLink>
 			</footer>
 		</section>
 	</main>
@@ -132,13 +132,26 @@ const errorMessage = computed(() => {
 
 async function onSubmit() {
 	try {
+		const duration = 3000;
 		await signup(email.value, password.value);
-		alert("Account created!");
 		await signupUserData(email.value, displayName.value);
-		await navigateTo("/dashboard");
+
+		$eventBus.emit("alert", {
+			message: "Sign up success! Redirecting...",
+			type: "success",
+			duration: duration,
+		});
+
+		sleep(duration).then(() => {
+			navigateTo("/dashboard");
+		});
 	}
 	catch (err) {
-		alert(err.message);
+		$eventBus.emit("alert", {
+			message: err.message || "Sign up failed.",
+			type: "error",
+			duration: 4000,
+		});
 	}
 }
 

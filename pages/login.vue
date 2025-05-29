@@ -1,18 +1,16 @@
 <template>
 	<div>
-		<AppMessageCard>
-			<p>This is a message that comes from the top!</p>
-		</AppMessageCard>
+		<AppGlobalAlert />
 
 		<main class="login-page">
 			<section class="login-card">
 				<img
-					src="assets/images/logo/gamefier-logo-64px.png"
+					src="/images/logo/gamefier-logo-64px.png"
 					alt="L"
 					class="logo"
 				>
 				<h1 class="login-title">
-					Login
+					Log in
 				</h1>
 				<form
 					class="login-form"
@@ -36,7 +34,7 @@
 						type="submit"
 						class="btn-login"
 					>
-						Login
+						Log in
 					</button>
 				</form>
 				<button
@@ -44,11 +42,11 @@
 					@click="onGoogleLogin"
 				>
 					<img
-						src="assets/images/icons/google-icon.svg"
+						src="/images/icons/google-icon.svg"
 						alt="G"
 						class="google-icon"
 					>
-					Login with Google
+					Log in with Google
 				</button>
 				<footer class="login-footer">
 					Don't have an account? <NuxtLink to="/signup">Sign up</NuxtLink>
@@ -59,18 +57,36 @@
 </template>
 
 <script setup>
+import { sleep } from "@/utils/sleep";
+import { navigateTo } from "#app";
+
+const { $eventBus } = useNuxtApp();
+
 const email = ref("");
 const password = ref("");
 const { login } = useAuth();
 
 async function onSubmit() {
 	try {
+		const duration = 3000;
 		await login(email.value, password.value);
-		alert("Logged in!");
-		await navigateTo("/dashboard");
+
+		$eventBus.emit("alert", {
+			message: "Log in success! Redirecting...",
+			type: "success",
+			duration: duration,
+		});
+
+		sleep(duration).then(() => {
+			navigateTo("/dashboard");
+		});
 	}
 	catch (err) {
-		alert(err.message);
+		$eventBus.emit("alert", {
+			message: err.message || "Log in failed.",
+			type: "error",
+			duration: 4000,
+		});
 	}
 }
 
