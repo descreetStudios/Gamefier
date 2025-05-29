@@ -58,27 +58,41 @@
 
 			<!-- Auth buttons (Right) -->
 			<div class="navbar-right">
-				<NuxtLink
-					to="/login"
-					class="btn login"
+				<div v-if="!logged">
+					<NuxtLink
+						to="/login"
+						class="btn login"
+					>
+						Login
+					</NuxtLink>
+					<NuxtLink
+						to="/signup"
+						class="btn signup"
+					>
+						Sign Up
+					</NuxtLink>
+				</div>
+				<div
+					v-if="logged"
+					class="user-img"
+					@click="onUserClick"
 				>
-					Login
-				</NuxtLink>
-				<NuxtLink
-					to="/signup"
-					class="btn signup"
-				>
-					Sign Up
-				</NuxtLink>
+					<img
+						:src="userIcon"
+					>
+					<h4>{{ displayName }}</h4>
+				</div>
 			</div>
 		</nav>
 	</div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
-
+const { user } = useAuth();
+const logged = computed(() => !!user.value);
+const displayName = computed(() => user.value?.displayName || "User");
 const scrolled = ref(false);
+const userIcon = ref("/images/icons/user.png");
 
 function onScroll() {
 	scrolled.value = window.scrollY > 0;

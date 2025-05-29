@@ -1,99 +1,106 @@
 <template>
-	<main class="login-page">
-		<section class="login-card">
-			<img
-				src="/images/logo/gamefier-logo-64px.png"
-				alt="L"
-				class="logo"
-			>
-			<h1 class="login-title">
-				Sign up
-			</h1>
-			<form
-				class="signup-form"
-				@submit.prevent="onSubmit"
-			>
-				<input
-					v-model="displayName"
-					type="text"
-					placeholder="Display Name"
-					required
-					autocomplete="displayName"
+	<div>
+		<AppGlobalAlert />
+
+		<main class="login-page">
+			<section class="login-card">
+				<img
+					src="/images/logo/gamefier-logo-64px.png"
+					alt="L"
+					class="logo"
 				>
-				<input
-					v-model="email"
-					type="email"
-					placeholder="Email"
-					required
-					autocomplete="email"
+				<h1 class="login-title">
+					Sign up
+				</h1>
+				<form
+					class="signup-form"
+					@submit.prevent="onSubmit"
 				>
-				<input
-					v-model="confirmEmail"
-					type="email"
-					placeholder="Confirm Email"
-					required
-					autocomplete="email"
-				>
-				<input
-					v-model="password"
-					type="password"
-					placeholder="Password"
-					required
-					autocomplete="new-password"
-				>
-				<input
-					v-model="confirmPassword"
-					type="password"
-					placeholder="Confirm Password"
-					required
-					autocomplete="new-password"
-				>
-				<p
-					v-if="showError"
-					class="error"
+					<input
+						v-model="displayName"
+						type="text"
+						placeholder="Display Name"
+						required
+						autocomplete="displayName"
+					>
+					<input
+						v-model="email"
+						type="email"
+						placeholder="Email"
+						required
+						autocomplete="email"
+					>
+					<input
+						v-model="confirmEmail"
+						type="email"
+						placeholder="Confirm Email"
+						required
+						autocomplete="email"
+					>
+					<input
+						v-model="password"
+						type="password"
+						placeholder="Password"
+						required
+						autocomplete="new-password"
+					>
+					<input
+						v-model="confirmPassword"
+						type="password"
+						placeholder="Confirm Password"
+						required
+						autocomplete="new-password"
+					>
+					<p
+						v-if="showError"
+						class="error"
+					>
+						<img
+							src="/images/icons/warning.png"
+							alt="!"
+							class="error-icon"
+						>
+						{{ errorMessage }}
+					</p>
+					<button
+						type="submit"
+						class="btn-login"
+						:disabled="!formValid"
+					>
+						Sign up
+					</button>
+				</form>
+				<button
+					class="btn-google"
+					@click="onGooglesignup"
 				>
 					<img
-						src="/images/icons/warning.png"
-						alt="!"
-						class="error-icon"
+						src="/images/icons/google-icon.svg"
+						alt="G"
+						class="google-icon"
 					>
-					{{ errorMessage }}
-				</p>
-				<button
-					type="submit"
-					class="btn-login"
-					:disabled="!formValid"
-				>
-					Sign up
+					Sign up with Google
 				</button>
-			</form>
-			<button
-				class="btn-google"
-				@click="onGooglesignup"
-			>
-				<img
-					src="/images/icons/google-icon.svg"
-					alt="G"
-					class="google-icon"
-				>
-				Sign up with Google
-			</button>
-			<footer class="signup-footer">
-				Already have an account? <NuxtLink to="/login">Log in</NuxtLink>
-			</footer>
-		</section>
-	</main>
+				<footer class="signup-footer">
+					Already have an account? <NuxtLink to="/login">Log in</NuxtLink>
+				</footer>
+			</section>
+		</main>
+	</div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { sleep } from "@/utils/sleep";
+import { navigateTo } from "#app";
+
+const { $eventBus } = useNuxtApp();
+const { signup, signupUserData } = useAuth();
 
 const displayName = ref("");
 const email = ref("");
 const confirmEmail = ref("");
 const password = ref("");
 const confirmPassword = ref("");
-const { signup, signupUserData } = useAuth();
 
 // Check if fields are filled
 const emailFilled = computed(() => email.value.trim() !== "" && confirmEmail.value.trim() !== "");

@@ -32,6 +32,10 @@
         display: flex;
         align-items: center;
         margin-right: 10px;
+        -webkit-user-drag: none;
+        -khtml-user-drag: none;
+        -moz-user-drag: none;
+        -o-user-drag: none;
     }
 
     &-center {
@@ -103,5 +107,30 @@
         background: var(--primary);
         color: var(--inv-primary-text);
         margin-left: 0.6rem;
+    }
+}
+
+.user-img {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    img {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        object-fit: cover;
+        -webkit-user-drag: none;
+        -khtml-user-drag: none;
+        -moz-user-drag: none;
+        -o-user-drag: none;
+    }
+
+    h4 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: var(--primary-text);
+        white-space: nowrap;
     }
 }

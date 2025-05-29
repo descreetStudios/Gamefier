@@ -61,10 +61,10 @@ import { sleep } from "@/utils/sleep";
 import { navigateTo } from "#app";
 
 const { $eventBus } = useNuxtApp();
+const { login } = useAuth();
 
 const email = ref("");
 const password = ref("");
-const { login } = useAuth();
 
 async function onSubmit() {
 	try {
@@ -91,7 +91,6 @@ async function onSubmit() {
 }
 
 function onGoogleLogin() {
-	// Placeholder: handle Google loginp
 	alert("Google login");
 }
 </script>
