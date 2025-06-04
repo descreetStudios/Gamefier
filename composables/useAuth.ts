@@ -6,9 +6,9 @@ import {
 	type User,
 } from "firebase/auth";
 
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 // Google Login
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup, updateProfile } from "firebase/auth";
 
 export const useAuth = () => {
 	const { $auth } = useNuxtApp();
@@ -17,10 +17,34 @@ export const useAuth = () => {
 	const uid = ref("");
 
 	const user = useState<User | null>("user", () => null);
+	const authLoading = useState("authLoading", () => true);
+	let userData = useState<Record<string, any> | null>("userData", () => null);
 
-	const initAuth = () => {
-		onAuthStateChanged($auth, (u) => {
+	const fetchUserData = async (uid: string) => {
+		if (!uid) return;
+		const userRef = doc($db, "users", uid);
+		const userSnapshot = await getDoc(userRef);
+
+		if (userSnapshot.exists()) {
+			userData.value = userSnapshot.data();
+		}
+
+		authLoading.value = false;
+	};
+
+	const initAuth = async () => {
+		authLoading.value = true;
+
+		onAuthStateChanged($auth, async (u) => {
+			console.log("🔍 Utente rilevato da Firebase:", u);
 			user.value = u;
+
+			if (u) {
+				await fetchUserData(u.uid);
+			}
+			else {
+				authLoading.value = false;
+			}
 		});
 	};
 
@@ -37,14 +61,17 @@ export const useAuth = () => {
 		await signInWithEmailAndPassword($auth, email, password);
 	};
 
-	const signup = async (email: string, password: string) => {
+	const signup = async (email: string, password: string, displayName: string) => {
 		const userCredential = await createUserWithEmailAndPassword($auth, email, password);
+		await updateProfile(userCredential.user, {
+			displayName: displayName,
+		});
 		uid.value = userCredential.user.uid;
 	};
 
 	const signupUserData = async (email: string, displayName: string) => {
 		try {
-			await setDoc(doc($db, "users", email), {
+			await setDoc(doc($db, "users", uid.value), {
 				uid: uid.value,
 				displayName: displayName,
 				email: email,
@@ -59,11 +86,15 @@ export const useAuth = () => {
 	};
 
 	const logout = async () => {
-		await signOut($auth);
-	};
+        await signOut($auth);
+        user.value = null;
+        userData.value = null;
+    };
 
 	return {
 		user,
+		userData,
+		authLoading,
 		initAuth,
 		login,
 		signup,
