@@ -7,6 +7,8 @@ import {
 } from "firebase/auth";
 
 import { doc, setDoc } from "firebase/firestore";
+// Google Login
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 export const useAuth = () => {
 	const { $auth } = useNuxtApp();
@@ -20,6 +22,15 @@ export const useAuth = () => {
 		onAuthStateChanged($auth, (u) => {
 			user.value = u;
 		});
+	};
+
+	const loginWithGoogle = async () => {
+		const provider = new GoogleAuthProvider();
+		try {
+		await signInWithPopup($auth, provider);
+		} catch (err) {
+		console.error('Error during Google login:', err);
+		}
 	};
 
 	const login = async (email: string, password: string) => {
@@ -58,5 +69,6 @@ export const useAuth = () => {
 		signup,
 		signupUserData,
 		logout,
+		loginWithGoogle,
 	};
 };

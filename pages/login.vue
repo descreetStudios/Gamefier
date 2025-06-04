@@ -68,18 +68,18 @@ const password = ref("");
 
 async function onSubmit() {
 	try {
-		const duration = 3000;
 		await login(email.value, password.value);
 
 		$eventBus.emit("alert", {
 			message: "Log in success! Redirecting...",
 			type: "success",
-			duration: duration,
+			duration: 3000,
 		});
 
-		sleep(duration).then(() => {
+		// Timeout 
+		setTimeout(() => {
 			navigateTo("/dashboard");
-		});
+		}, 3000);
 	}
 	catch (err) {
 		$eventBus.emit("alert", {
@@ -90,9 +90,12 @@ async function onSubmit() {
 	}
 }
 
-function onGoogleLogin() {
-	alert("Google login");
-}
+const { loginWithGoogle } = useAuth();
+
+const onGoogleLogin = async () => {
+  await loginWithGoogle();
+  await navigateTo('/dashboard');
+};
 </script>
 
 <style lang="scss">
