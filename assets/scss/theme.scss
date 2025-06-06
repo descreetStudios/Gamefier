@@ -36,6 +36,7 @@ sass --watch assets/scss/theme.scss assets/css/theme.css
   --secondary-surface-rgb: 46, 52, 58;
   --border: rgb(0, 0, 0);
   --border-rgb: 0, 0, 0;
+  --border-radius: 1vw;
   --shadow: rgba(0, 0, 0, 0.4);
   --glowing: rgb(238, 238, 238);
   --glowing-rgb: 238, 238, 238;
@@ -49,6 +50,7 @@ sass --watch assets/scss/theme.scss assets/css/theme.css
   --success-rgb: 51, 211, 113;
 
   --pico-background-color: var(--bg);
+  --pico-border-radius: var(--border-radius);
 }
 
 /* Light Theme */
@@ -82,6 +84,7 @@ sass --watch assets/scss/theme.scss assets/css/theme.css
   --secondary-surface-rgb: 209, 213, 235;
   --border: rgb(192, 186, 186);
   --border-rgb: 192, 186, 186;
+  --border-radius: 1vw;
   --shadow: rgba(0, 0, 0, 0.1);
   --glowing: rgb(59, 130, 246);
   --glowing-rgb: 59, 130, 246;
@@ -95,4 +98,5 @@ sass --watch assets/scss/theme.scss assets/css/theme.css
   --success-rgb: 51, 211, 113;
 
   --pico-background-color: var(--bg);
+  --pico-border-radius: var(--border-radius);
 }

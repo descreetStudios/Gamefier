@@ -72,15 +72,24 @@
 						Sign Up
 					</NuxtLink>
 				</div>
-				<div
-					v-if="logged"
-					class="user-img"
-					@click="onUserClick"
-				>
-					<img
-						:src="userIcon"
+				<div class="user-container">
+					<div
+						v-if="logged"
+						class="user-img"
+						@click="onUserClick"
 					>
-					<h4>{{ displayName }}</h4>
+						<img
+							:src="userIcon"
+						>
+						<h4>{{ displayName }}</h4>
+					</div>
+					<div
+						v-if="showUserMenu"
+						:class="['user-menu', { show: showUserMenu }]"
+					>
+						<p>Settings</p>
+						<p>Logout</p>
+					</div>
 				</div>
 			</div>
 		</nav>
@@ -92,10 +101,15 @@ const { user } = useAuth();
 const logged = computed(() => !!user.value);
 const displayName = computed(() => user.value?.displayName || "User");
 const scrolled = ref(false);
+const showUserMenu = ref(false);
 const userIcon = ref("/images/icons/user.png");
 
 function onScroll() {
 	scrolled.value = window.scrollY > 0;
+}
+
+function onUserClick() {
+	showUserMenu.value = !showUserMenu.value;
 }
 
 onMounted(() => {
