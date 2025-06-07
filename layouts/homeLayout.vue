@@ -3,6 +3,7 @@
 		<!-- Components -->
 		<AppNavBar />
 		<AppBackground />
+		<AppHomepage />
 
 		<main class="container">
 			<slot /> <!-- Inject page content here -->
