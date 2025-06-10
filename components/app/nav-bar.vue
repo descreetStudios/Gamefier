@@ -62,15 +62,11 @@
 					<NuxtLink
 						to="/login"
 						class="btn login"
-					>
-						Login
-					</NuxtLink>
+					> Login </NuxtLink>
 					<NuxtLink
 						to="/signup"
 						class="btn signup"
-					>
-						Sign Up
-					</NuxtLink>
+					> Sign Up </NuxtLink>
 				</div>
 				<div class="user-container">
 					<div
@@ -78,17 +74,17 @@
 						class="user-img"
 						@click="onUserClick"
 					>
-						<img
-							:src="userIcon"
-						>
-						<h4>{{ displayName }}</h4>
+						<img :src="userIcon">
+						<h4>{{ $userStore.displayName }}</h4>
 					</div>
 					<div
 						v-if="showUserMenu"
 						:class="['user-menu', { show: showUserMenu }]"
 					>
 						<p>Settings</p>
-						<p>Logout</p>
+						<p @click="logoutHandler">
+							Logout
+						</p>
 					</div>
 				</div>
 			</div>
@@ -97,9 +93,8 @@
 </template>
 
 <script setup>
-const { user } = useAuth();
-const logged = computed(() => !!user.value);
-const displayName = computed(() => user.value?.displayName || "User");
+const { $userStore } = useNuxtApp();
+const logged = computed(() => !!$userStore.userId);
 const scrolled = ref(false);
 const showUserMenu = ref(false);
 const userIcon = ref("/images/icons/user.png");
@@ -111,6 +106,12 @@ function onScroll() {
 function onUserClick() {
 	showUserMenu.value = !showUserMenu.value;
 }
+
+const { logout } = useAuth();
+const logoutHandler = async () => {
+	await logout();
+	window.location.reload();
+};
 
 onMounted(() => {
 	window.scrollTo(0, 0); // Reset scroll state

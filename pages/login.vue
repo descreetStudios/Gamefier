@@ -57,7 +57,6 @@
 </template>
 
 <script setup>
-import { sleep } from "@/utils/sleep";
 import { navigateTo } from "#app";
 
 const { $eventBus } = useNuxtApp();
@@ -76,7 +75,7 @@ async function onSubmit() {
 			duration: 3000,
 		});
 
-		// Timeout 
+		// Timeout
 		setTimeout(() => {
 			navigateTo("/dashboard");
 		}, 3000);
@@ -93,8 +92,8 @@ async function onSubmit() {
 const { loginWithGoogle } = useAuth();
 
 const onGoogleLogin = async () => {
-  await loginWithGoogle();
-  await navigateTo('/dashboard');
+	await loginWithGoogle();
+	await navigateTo("/dashboard");
 };
 </script>
 

@@ -1,37 +1,31 @@
+import type { useStore } from "~/stores/userStore";
+
 export default defineNuxtRouteMiddleware(async (to) => {
-  if (process.server) return;
+	const { $userStore } = useNuxtApp();
+	const userStore = $userStore as ReturnType<typeof useStore>;
 
-  const { user, userData, authLoading } = useAuth();
-  const excludedPaths = ["/", "/signup", "/login"];
-  
-  if (authLoading.value) {
-    await new Promise((resolve) => {
-      const unwatch = watch(authLoading, (loading) => {
-        if (!loading) {
-          unwatch();
-          resolve(undefined);
-        }
-      });
-    });
-  }
+	const excludedPaths = ["/", "/signup", "/login"];
 
-  console.log("🔍 Stato utente:", user.value);
-  console.log("🔍 Dati Firestore:", userData.value);
-  console.log("Role: ", userData.value?.role);
+	console.log("🔍 Stato utente(ID):", userStore.userId);
+	console.log("Role: ", userStore.role);
 
-  if (excludedPaths.includes(to.path)) {
-      return;
-  }
+	if (userStore.startup === true && !"/".includes(to.path)) {
+		console.log("Prima dell'update", userStore.startup);
+		userStore.storeUserData("startup", false);
+		console.log("Dopo l'update", userStore.startup);
 
-  if (user.value && ["/login", "/signup"].includes(to.path)) {
-    return navigateTo("/");
-  }
+		return navigateTo("/");
+	}
 
-  if (userData.value?.role!=="admin" && ["/admin"].includes(to.path)) {
-    return navigateTo("/");
-  }
-
-  if (!user.value) {
+	if (!userStore.userId && !excludedPaths.includes(to.path)) {
 		return navigateTo("/login");
+	}
+
+	if (userStore.userId && ["/login", "/signup"].includes(to.path)) {
+		return navigateTo("/");
+	}
+
+	if (userStore.role !== "admin" && ["/admin"].includes(to.path)) {
+		return navigateTo("/");
 	}
 });

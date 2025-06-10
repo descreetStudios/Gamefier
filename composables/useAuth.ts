@@ -11,14 +11,16 @@ import { doc, setDoc, getDoc } from "firebase/firestore";
 import { GoogleAuthProvider, signInWithPopup, updateProfile } from "firebase/auth";
 
 export const useAuth = () => {
+	// Pinia Store
+	const { $userStore } = useNuxtApp();
+	const userStore = $userStore as ReturnType<typeof useStore>;
+
 	const { $auth } = useNuxtApp();
 	const { $db } = useNuxtApp();
 
 	const uid = ref("");
-
 	const user = useState<User | null>("user", () => null);
-	const authLoading = useState("authLoading", () => true);
-	let userData = useState<Record<string, any> | null>("userData", () => null);
+	const userData = useState<Record<string, unknown> | null>("userData", () => null);
 
 	const fetchUserData = async (uid: string) => {
 		if (!uid) return;
@@ -27,23 +29,19 @@ export const useAuth = () => {
 
 		if (userSnapshot.exists()) {
 			userData.value = userSnapshot.data();
+			userStore.storeUserData("userId", uid);
+			userStore.storeUserData("role", userData.value?.role);
+			userStore.storeUserData("displayName", userData.value?.displayName);
 		}
-
-		authLoading.value = false;
 	};
 
 	const initAuth = async () => {
-		authLoading.value = true;
-
 		onAuthStateChanged($auth, async (u) => {
-			console.log("🔍 Utente rilevato da Firebase:", u);
+			console.log("🔍 Utente rilevato da FireAuth:", u);
 			user.value = u;
 
-			if (u) {
-				await fetchUserData(u.uid);
-			}
-			else {
-				authLoading.value = false;
+			if (user.value) {
+				await fetchUserData(user.value?.uid);
 			}
 		});
 	};
@@ -51,9 +49,10 @@ export const useAuth = () => {
 	const loginWithGoogle = async () => {
 		const provider = new GoogleAuthProvider();
 		try {
-		await signInWithPopup($auth, provider);
-		} catch (err) {
-		console.error('Error during Google login:', err);
+			await signInWithPopup($auth, provider);
+		}
+		catch (err) {
+			console.error("Error during Google login:", err);
 		}
 	};
 
@@ -86,15 +85,14 @@ export const useAuth = () => {
 	};
 
 	const logout = async () => {
-        await signOut($auth);
-        user.value = null;
-        userData.value = null;
-    };
+		await signOut($auth);
+		user.value = null;
+		userData.value = null;
+	};
 
 	return {
 		user,
 		userData,
-		authLoading,
 		initAuth,
 		login,
 		signup,

@@ -1,6 +1,12 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-	modules: ["@nuxt/eslint", "@nuxtjs/google-fonts", "nuxt-vuefire"],
+	modules: [
+		"@nuxt/eslint",
+		"@nuxtjs/google-fonts",
+		"nuxt-vuefire",
+		"@pinia/nuxt",
+	],
+	plugins: ["~/plugins/store-injector.ts"],
 
 	devtools: { enabled: true },
 	css: ["@picocss/pico/css/pico.min.css", "@/assets/css/theme.css"],
