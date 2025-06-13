@@ -17,7 +17,11 @@
 		<div class="homepage__content">
 			<h1>The place where education meets games!</h1>
 			<p>Explore the features!</p>
-			<p>V</p>
+			<div class="homepage__content__arrows">
+				<span />
+				<span />
+				<span />
+			</div>
 		</div>
 
 		<!-- Section 1 -->
@@ -30,8 +34,8 @@
 				alt="Shape 1"
 				class="section-shape shape-features"
 			>
-			<h2>Feature Highlights</h2>
-			<p>Learn through interactive challenges, quizzes, and storytelling.</p>
+			<h2>What's Gamefier?</h2>
+			<p>We help teaching by integrating Games!</p>
 		</section>
 
 		<!-- Section 2 -->
@@ -44,8 +48,9 @@
 				alt="Shape 2"
 				class="section-shape shape-games"
 			>
-			<h2>Games That Teach</h2>
-			<p>Discover games designed with learning outcomes in mind.</p>
+			<h2>How can i create a game?</h2>
+			<p>1. Make an account</p>
+			<p>2. Start to create using templates!</p>
 		</section>
 
 		<!-- Section 3 -->
@@ -68,7 +73,7 @@
 			class="homepage__section alt"
 		>
 			<img
-				src="/images/Shape1.png"
+				src="/images/Shape4.png"
 				alt="Shape 4"
 				class="section-shape shape-start"
 			>

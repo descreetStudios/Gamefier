@@ -15,7 +15,4 @@
 </script>
 
 <style lang="scss" scoped>
-	.container {
-		padding-top: 7rem; // Space for navbar
-	}
 </style>
