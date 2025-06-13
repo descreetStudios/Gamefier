@@ -11,17 +11,19 @@ export const useStore = defineStore("userStore", {
 	}),
 	actions: {
 		storeUserData(type: DataTypes, value: unknown) {
-			if (type === "userId") {
-				this.userId = value;
-			}
-			else if (type === "role") {
-				this.role = value;
-			}
-			else if (type === "displayName") {
-				this.displayName = value;
-			}
-			else if (type === "startup") {
-				this.startup = value;
+			switch (type) {
+				case "userId":
+					this.userId = value;
+					break;
+				case "role":
+					this.role = value;
+					break;
+				case "displayName":
+					this.displayName = value;
+					break;
+				case "startup":
+					this.startup = value;
+					break;
 			}
 		},
 	},

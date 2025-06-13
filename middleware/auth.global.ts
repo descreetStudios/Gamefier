@@ -9,7 +9,11 @@ export default defineNuxtRouteMiddleware(async (to) => {
 	console.log("🔍 Stato utente(ID):", userStore.userId);
 	console.log("Role: ", userStore.role);
 
-	if (userStore.startup === true && !"/".includes(to.path)) {
+	if (userStore.startup && "/".includes(to.path)) {
+		userStore.storeUserData("startup", false);
+	}
+
+	if (userStore.startup && !"/".includes(to.path)) {
 		console.log("Prima dell'update", userStore.startup);
 		userStore.storeUserData("startup", false);
 		console.log("Dopo l'update", userStore.startup);
