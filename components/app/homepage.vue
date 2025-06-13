@@ -41,7 +41,7 @@
 		<!-- Section 2 -->
 		<section
 			id="games"
-			class="homepage__section alt"
+			class="homepage__section first"
 		>
 			<img
 				src="/images/Shape2.png"
