@@ -16,7 +16,7 @@
 		<!-- Hero -->
 		<div class="homepage__content">
 			<h1>The place where education meets games!</h1>
-			<p>Explore the features!</p>
+			<p>How does it work?</p>
 			<div class="homepage__content__arrows">
 				<span />
 				<span />
@@ -35,7 +35,8 @@
 				class="section-shape shape-features"
 			>
 			<h2>What's Gamefier?</h2>
-			<p>We help teaching by integrating Games!</p>
+			<p>Gamefier is an online platform where teachers can enhance their lessons by integrating interactive games 
+				to engage their students, helping them learn and retain more information, with less effort.</p>
 		</section>
 
 		<!-- Section 2 -->
@@ -49,8 +50,10 @@
 				class="section-shape shape-games"
 			>
 			<h2>How can i create a game?</h2>
-			<p>1. Make an account</p>
-			<p>2. Start to create using templates!</p>
+			<NuxtLink to="/signup">
+				<p>1. Make an account</p>
+			</NuxtLink>
+			<p>2. Start creating using templates!</p>
 		</section>
 
 		<!-- Section 3 -->
@@ -64,7 +67,7 @@
 				class="section-shape shape-community"
 			>
 			<h2>Community</h2>
-			<p>Join a community of learners and educators collaborating together.</p>
+			<p>Join a community of learners and educators collaborating together, discover games created by others and share your own.</p>
 		</section>
 
 		<!-- Section 4 -->
@@ -78,7 +81,10 @@
 				class="section-shape shape-start"
 			>
 			<h2>Get Started</h2>
-			<p>Create your free account and start exploring today!</p>
+			<NuxtLink to="/signup">
+				<p>Create your free account</p> 
+			</NuxtLink>
+			<p>and start play-learning today!</p>
 		</section>
 	</div>
 </template>
