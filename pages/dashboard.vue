@@ -1,9 +1,35 @@
+<script setup>
+import { AppDashboardGames, AppDashboardTemplates, AppDashboardUser } from "#components";
+
+const activeView = ref("dashboard");
+
+const activeViewComponent = computed(() => {
+	switch (activeView.value) {
+		case "games":
+			return AppDashboardGames;
+		case "templates":
+			return AppDashboardTemplates;
+		default:
+			return AppDashboardUser;
+	}
+});
+</script>
+
 <template>
-	<div>
-		<h1>Dashboard</h1>
-		<p>Benvenuto nella tua area riservata!</p>
+	<div class="dashboard-layout">
+		<AppDashboardSidebar
+			:active="activeView"
+			@navigate="activeView = $event"
+		/>
+		<AppDashboardContent>
+			<component :is="activeViewComponent" />
+		</AppDashboardContent>
 	</div>
 </template>
 
-<script setup>
-</script>
+<style scoped>
+.dashboard-layout {
+	display: flex;
+	min-height: 100vh;
+}
+</style>
