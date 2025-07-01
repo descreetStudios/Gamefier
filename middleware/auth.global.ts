@@ -4,21 +4,13 @@ export default defineNuxtRouteMiddleware(async (to) => {
 	const { $userStore } = useNuxtApp();
 	const userStore = $userStore as ReturnType<typeof useStore>;
 
-	const excludedPaths = ["/", "/signup", "/login"];
+	const excludedPaths = ["/", "/signup", "/login", "/loading"];
 
-	console.log("🔍 Stato utente(ID):", userStore.userId);
-	console.log("Role: ", userStore.role);
+	// console.log("🔍 Stato utente(ID):", userStore.userId);
+	// console.log("Role: ", userStore.role);
 
-	if (userStore.startup && "/".includes(to.path)) {
-		userStore.storeUserData("startup", false);
-	}
-
-	if (userStore.startup && !"/".includes(to.path)) {
-		console.log("Prima dell'update", userStore.startup);
-		userStore.storeUserData("startup", false);
-		console.log("Dopo l'update", userStore.startup);
-
-		return navigateTo("/");
+	if (userStore.startup && (!"/loading".includes(to.path) || "/".includes(to.path))) {
+		return navigateTo({ path: "/loading", query: { pathTo: to.path } }, { redirectCode: 302 });
 	}
 
 	if (!userStore.userId && !excludedPaths.includes(to.path)) {

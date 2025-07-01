@@ -37,12 +37,13 @@ export const useAuth = () => {
 
 	const initAuth = async () => {
 		onAuthStateChanged($auth, async (u) => {
-			console.log("🔍 Utente rilevato da FireAuth:", u);
+			// console.log("🔍 Utente rilevato da FireAuth:", u);
 			user.value = u;
 
 			if (user.value) {
 				await fetchUserData(user.value?.uid);
 			}
+			userStore.storeUserData("loaded", true);
 		});
 	};
 

@@ -1,8 +1,30 @@
 <script setup>
 import { onMounted, onUnmounted } from "vue";
+import { useRoute } from "vue-router";
+
+const { $userStore } = useNuxtApp();
+
+const loaded = computed(() => $userStore.loaded);
+
+const route = useRoute();
+const targetPath = route.query.pathTo;
 
 onMounted(() => {
 	document.body.style.overflow = "hidden";
+	setTimeout(() => {
+		const intervalId = setInterval(() => {
+			if (loaded.value === true) {
+				if (targetPath && typeof targetPath === "string" && targetPath !== "/loading") {
+					navigateTo(targetPath);
+				}
+				else {
+					navigateTo("/");
+				}
+				$userStore.storeUserData("startup", false);
+				clearInterval(intervalId);
+			}
+		}, 1000);
+	}, 1000);
 });
 
 onUnmounted(() => {
