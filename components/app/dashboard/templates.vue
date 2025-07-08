@@ -1,3 +1,3 @@
 <template>
-	<span>Templates</span>
+	<AppCard />
 </template>

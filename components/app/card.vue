@@ -1,0 +1,56 @@
+<template>
+	<article class="card">
+		<img src="/images/DefaultQuizImage.png">
+		<article class="subcard">
+			Subcard content
+		</article>
+	</article>
+</template>
+
+<style lang="scss">
+.card {
+	width: 300px;
+	height: 200px;
+	background-color: var(--surface);
+	border: 1px solid var(--secondary-surface);
+	border-radius: 12px;
+	padding: 16px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+	font-size: 1.2rem;
+}
+
+.card img {
+    object-fit: cover;
+	object-position: center;
+    image-rendering: auto;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 80%;
+	object-fit: cover;
+	border-radius: 12px;
+	z-index: 0;
+}
+
+.subcard {
+	width: 101%;
+	height: 60px;
+	background-color: var(--surface);
+	border: 1px solid var(--secondary-surface);
+	border-radius: 8px;
+	position: absolute;
+	bottom: 0px;
+    margin-bottom: 0px;
+	transform: translateY(1px);
+	z-index: 2;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+</style>
