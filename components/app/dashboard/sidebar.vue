@@ -1,32 +1,35 @@
 <template>
 	<aside class="sidebar">
-		<div class="sidebar-logo">
-			<img
-				src="/images/logo/gamefier-logo-64px.png"
-				alt="GF"
-				class="logo-img"
-			>
-			<span class="logo-text">Gamefier</span>
-		</div>
+		<nuxt-link to="/">
+			<div class="sidebar-logo">
+				<img
+					src="/images/logo/gamefier-logo-64px.png"
+					alt="GF"
+					class="logo-img"
+				>
+				<span class="logo-text">Gamefier</span>
+			</div>
+		</nuxt-link>
+
 		<nav class="sidebar-nav">
 			<button
 				class="nav-link"
 				:class="{ active: active === 'dashboard' }"
-				@click="$emit('navigate', 'dashboard')"
+				@click="emit('navigate', 'dashboard')"
 			>
 				Dashboard
 			</button>
 			<button
 				class="nav-link"
 				:class="{ active: active === 'games' }"
-				@click="$emit('navigate', 'games')"
+				@click="emit('navigate', 'games')"
 			>
 				My Games
 			</button>
 			<button
 				class="nav-link"
 				:class="{ active: active === 'templates' }"
-				@click="$emit('navigate', 'templates')"
+				@click="emit('navigate', 'templates')"
 			>
 				Templates
 			</button>
@@ -34,17 +37,82 @@
 				v-if="admin"
 				class="nav-link"
 				:class="{ active: active === 'admin' }"
-				@click="$emit('navigate', 'admin')"
+				@click="emit('navigate', 'admin')"
 			>
 				Admin
 			</button>
+
+			<div
+				class="user-section"
+				:class="{ open: showUserLinks }"
+				@click="toggleUserLinks"
+			>
+				<div class="user-img">
+					<img
+						:src="userIcon"
+						alt="User Icon"
+					>
+					<h4>{{ $userStore.displayName }}</h4>
+				</div>
+
+				<div
+					class="user-nav-links"
+					:class="{ visible: showUserLinks }"
+				>
+					<button
+						class="nav-link"
+						:class="{ active: active === 'profile' }"
+						@click.stop="emit('navigate', 'profile')"
+					>
+						My Profile
+					</button>
+					<button
+						class="nav-link"
+						:class="{ active: active === 'settings' }"
+						@click.stop="emit('navigate', 'settings')"
+					>
+						Settings
+					</button>
+					<button
+						class="nav-link"
+						@click.stop="logoutHandler"
+					>
+						Logout
+					</button>
+				</div>
+			</div>
 		</nav>
 	</aside>
 </template>
 
+
 <script setup>
+import { ref } from "vue";
+
+const emit = defineEmits(["navigate"]);
+
+defineProps({
+	active: {
+		type: String,
+		required: true,
+	},
+});
+
+
 const { $userStore } = useNuxtApp();
 const admin = computed(() => $userStore.role === 'admin');
+const userIcon = ref("/images/icons/user.png");
+const showUserLinks = ref(false);
+
+const toggleUserLinks = () => {
+	showUserLinks.value = !showUserLinks.value;
+};
+
+const { logout } = useAuth();
+const logoutHandler = async () => {
+	await logout();
+	window.location.reload();
+};
 </script>
 
 <style lang="scss" scoped>

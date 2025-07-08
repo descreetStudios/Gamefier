@@ -11,5 +11,6 @@
     background: var(--bg);
     overflow-y: auto;
     min-height: 100vh;
+    margin-bottom: 0px;
 }
 </style>

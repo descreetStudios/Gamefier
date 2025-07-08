@@ -51,6 +51,10 @@
             a {
                 text-decoration: none;
                 color: var(--secondary-text);
+                -webkit-user-drag: none;
+                -khtml-user-drag: none;
+                -moz-user-drag: none;
+                -o-user-drag: none;
             }
 
             .dropdown-menu {
@@ -76,12 +80,20 @@
     color: var(--primary);
     display: flex;
     align-items: center;
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
 
     .logo-img {
         width: 64px;
         height: 64px;
         margin-bottom: 25px;
         margin-right: 10px;
+        -webkit-user-drag: none;
+        -khtml-user-drag: none;
+        -moz-user-drag: none;
+        -o-user-drag: none;
     }
 
     .logo-text {

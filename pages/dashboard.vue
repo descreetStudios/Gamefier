@@ -1,5 +1,5 @@
 <script setup>
-import { AppDashboardAdmin, AppDashboardGames, AppDashboardTemplates, AppDashboardUser } from "#components";
+import { AppDashboardAdmin, AppDashboardGames, AppDashboardProfile, AppDashboardSettings, AppDashboardTemplates, AppDashboardUser } from "#components";
 
 const activeView = ref("dashboard");
 
@@ -11,6 +11,10 @@ const activeViewComponent = computed(() => {
 			return AppDashboardTemplates;
 		case "admin":
 			return AppDashboardAdmin;
+		case "profile":
+			return AppDashboardProfile;
+		case "settings":
+			return AppDashboardSettings;
 		default:
 			return AppDashboardUser;
 	}
@@ -29,9 +33,13 @@ const activeViewComponent = computed(() => {
 	</div>
 </template>
 
-<style scoped>
+<style>
 .dashboard-layout {
 	display: flex;
 	min-height: 100vh;
+}
+
+html {
+	overflow-y: hidden;
 }
 </style>
