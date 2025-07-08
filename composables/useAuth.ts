@@ -49,11 +49,32 @@ export const useAuth = () => {
 
 	const loginWithGoogle = async () => {
 		const provider = new GoogleAuthProvider();
+
 		try {
-			await signInWithPopup($auth, provider);
-		}
-		catch (err) {
-			console.error("Error during Google login:", err);
+			const result = await signInWithPopup($auth, provider);
+			const user = result.user;
+
+			if (!user.displayName) {
+				await updateProfile(user, {
+					displayName: user.email?.split("@")[0] || user.uid,
+				});
+			}
+
+			const userRef = doc($db, "users", user.uid);
+			const userSnapshot = await getDoc(userRef);
+
+			if (!userSnapshot.exists()) {
+				await setDoc(userRef, {
+					uid: user.uid,
+					email: user.email,
+					displayName: user.displayName,
+					createdAt: new Date(),
+					role: "user",
+				});
+			}
+			await fetchUserData(user.uid);
+		} catch (err) {
+			console.error("Errore durante il login con Google:", err);
 		}
 	};
 

@@ -1,5 +1,5 @@
 <script setup>
-import { AppDashboardGames, AppDashboardTemplates, AppDashboardUser } from "#components";
+import { AppDashboardAdmin, AppDashboardGames, AppDashboardTemplates, AppDashboardUser } from "#components";
 
 const activeView = ref("dashboard");
 
@@ -9,6 +9,8 @@ const activeViewComponent = computed(() => {
 			return AppDashboardGames;
 		case "templates":
 			return AppDashboardTemplates;
+		case "admin":
+			return AppDashboardAdmin;
 		default:
 			return AppDashboardUser;
 	}

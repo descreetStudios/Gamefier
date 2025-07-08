@@ -30,9 +30,22 @@
 			>
 				Templates
 			</button>
+			<button 
+				v-if="admin"
+				class="nav-link"
+				:class="{ active: active === 'admin' }"
+				@click="$emit('navigate', 'admin')"
+			>
+				Admin
+			</button>
 		</nav>
 	</aside>
 </template>
+
+<script setup>
+const { $userStore } = useNuxtApp();
+const admin = computed(() => $userStore.role === 'admin');
+</script>
 
 <style lang="scss" scoped>
 @use '@/assets/scss/sidebar.scss';

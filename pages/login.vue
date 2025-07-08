@@ -92,8 +92,26 @@ async function onSubmit() {
 const { loginWithGoogle } = useAuth();
 
 const onGoogleLogin = async () => {
+	try {
 	await loginWithGoogle();
-	await navigateTo("/dashboard");
+		$eventBus.emit("alert", {
+			message: "Log in success! Redirecting...",
+			type: "success",
+			duration: 3000,
+		});
+
+		setTimeout(() => {
+			navigateTo("/dashboard");
+		}, 3000);
+	}
+	catch (err) {
+		$eventBus.emit("alert", {
+			message: err.message || "Log in failed.",
+			type: "error",
+			duration: 4000,
+		});
+	}
+
 };
 </script>
 
