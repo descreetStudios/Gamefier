@@ -3,9 +3,10 @@
 
     &__background {
         position: fixed;
+        background-color: rgb(19, 19, 19);
         height: 120vh;
         z-index: -1;
-        bottom: 20%;
+        scale: 1.25;
         img {
             height: 120%;
             object-fit: cover;
@@ -27,10 +28,12 @@
             font-size: 3rem;
             margin-bottom: 1rem;
             letter-spacing: 0.03em;
+            color: rgb(255, 255, 255);
         }
 
         p {
             font-size: 1.2rem;
+            color: rgb(193, 203, 219);
             margin-bottom: 0.25rem;
         }
 

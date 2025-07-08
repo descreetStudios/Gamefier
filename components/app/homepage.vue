@@ -35,8 +35,10 @@
 				class="section-shape shape-features"
 			>
 			<h2>What's Gamefier?</h2>
-			<p>Gamefier is an online platform where teachers can enhance their lessons by integrating interactive games 
-				to engage their students, helping them learn and retain more information, with less effort.</p>
+			<p>
+				Gamefier is an online platform where teachers can enhance their lessons by integrating interactive games
+				to engage their students, helping them learn and retain more information, with less effort.
+			</p>
 		</section>
 
 		<!-- Section 2 -->
@@ -45,9 +47,10 @@
 			class="homepage__section first"
 		>
 			<img
-				src="/images/Shape2.png"
+				src="/images/Robot.png"
 				alt="Shape 2"
 				class="section-shape shape-games"
+				style="scale: 1.3; margin-left: 10px;"
 			>
 			<h2>How can i create a game?</h2>
 			<NuxtLink to="/signup">
@@ -82,7 +85,7 @@
 			>
 			<h2>Get Started</h2>
 			<NuxtLink to="/signup">
-				<p>Create your free account</p> 
+				<p>Create your free account</p>
 			</NuxtLink>
 			<p>and start play-learning today!</p>
 		</section>
