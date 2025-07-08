@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/require-explicit-emits -->
 <template>
 	<aside class="sidebar">
 		<nuxt-link to="/">
@@ -33,7 +34,7 @@
 			>
 				Templates
 			</button>
-			<button 
+			<button
 				v-if="admin"
 				class="nav-link"
 				:class="{ active: active === 'admin' }"
@@ -85,7 +86,6 @@
 	</aside>
 </template>
 
-
 <script setup>
 import { ref } from "vue";
 
@@ -98,9 +98,8 @@ defineProps({
 	},
 });
 
-
 const { $userStore } = useNuxtApp();
-const admin = computed(() => $userStore.role === 'admin');
+const admin = computed(() => $userStore.role === "admin");
 const userIcon = ref("/images/icons/user.png");
 const showUserLinks = ref(false);
 

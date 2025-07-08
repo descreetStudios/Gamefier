@@ -1,11 +1,24 @@
 <template>
-	<article class="card">
-		<img src="/images/DefaultQuizImage.png">
+	<article
+		class="card"
+		@click="$emit('card-click')"
+	>
+		<img :src="imgSrc">
 		<article class="subcard">
-			Subcard content
+			<slot>Quiz</slot>
 		</article>
 	</article>
 </template>
+
+<script setup>
+defineProps({
+	imgSrc: {
+		type: String,
+		default: "/images/DefaultQuizImage.png",
+	},
+});
+defineEmits(["card-click"]);
+</script>
 
 <style lang="scss">
 .card {
@@ -21,6 +34,13 @@
 	align-items: center;
 	position: relative;
 	font-size: 1.2rem;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+	cursor: pointer;
+}
+
+.card:hover {
+	transform: scale(1.03);
+	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .card img {
@@ -49,7 +69,7 @@
 	transform: translateY(1px);
 	z-index: 2;
 	display: flex;
-	justify-content: center;
+	justify-content: left;
 	align-items: center;
 	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
