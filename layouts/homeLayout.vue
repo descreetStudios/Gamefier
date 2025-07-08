@@ -9,7 +9,7 @@
 		<AppHomepage />
 
 		<main class="container">
-			<slot /> <!-- Inject page content here -->
+			<slot />
 		</main>
 	</div>
 </template>

@@ -33,13 +33,9 @@ const activeViewComponent = computed(() => {
 	</div>
 </template>
 
-<style>
+<style lang="scss" scoped>
 .dashboard-layout {
 	display: flex;
 	min-height: 100vh;
-}
-
-html {
-	overflow-y: hidden;
 }
 </style>
