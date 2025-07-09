@@ -95,6 +95,7 @@ export const useAuth = () => {
 			await setDoc(doc($db, "users", uid.value), {
 				uid: uid.value,
 				displayName: displayName,
+				displayNameLowerCase: displayName.toLowerCase(),
 				email: email,
 				createdAt: new Date(),
 				role: "user",
