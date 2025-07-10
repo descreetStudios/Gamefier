@@ -3,13 +3,15 @@ import {
 	signInWithEmailAndPassword,
 	signOut,
 	onAuthStateChanged,
-	type User,
+
+	GoogleAuthProvider,
+	signInWithPopup,
+	updateProfile,
 } from "firebase/auth";
+import type { User } from "firebase/auth";
 
 import { doc, setDoc, getDoc } from "firebase/firestore";
 // Google Login
-import { GoogleAuthProvider, signInWithPopup, updateProfile } from "firebase/auth";
-
 export const useAuth = () => {
 	// Pinia Store
 	const { $userStore } = useNuxtApp();
@@ -73,7 +75,8 @@ export const useAuth = () => {
 				});
 			}
 			await fetchUserData(user.uid);
-		} catch (err) {
+		}
+		catch (err) {
 			console.error("Errore durante il login con Google:", err);
 		}
 	};

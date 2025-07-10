@@ -93,7 +93,7 @@ const { loginWithGoogle } = useAuth();
 
 const onGoogleLogin = async () => {
 	try {
-	await loginWithGoogle();
+		await loginWithGoogle();
 		$eventBus.emit("alert", {
 			message: "Log in success! Redirecting...",
 			type: "success",
@@ -111,7 +111,6 @@ const onGoogleLogin = async () => {
 			duration: 4000,
 		});
 	}
-
 };
 </script>
 
