@@ -1,44 +1,51 @@
 import { initializeApp, getApps } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth } from "firebase/auth";
+import { getAuth, connectAuthEmulator } from "firebase/auth";
+import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 
 export default defineNuxtPlugin(() => {
-	const config = useRuntimeConfig();
+  const config = useRuntimeConfig();
 
-	const firebaseConfig = {
-		apiKey: config.public.NUXT_PUBLIC_FIREBASE_API_KEY as string,
-		authDomain: config.public.NUXT_PUBLIC_FIREBASE_AUTH_DOMAIN as string,
-		projectId: config.public.NUXT_PUBLIC_FIREBASE_PROJECT_ID as string,
-		storageBucket: config.public.NUXT_PUBLIC_FIREBASE_STORAGE_BUCKET as string,
-		messagingSenderId: config.public.NUXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID as string,
-		appId: config.public.NUXT_PUBLIC_FIREBASE_APP_ID as string,
-		measurementId: config.public.NUXT_PUBLIC_FIREBASE_MEASUREMENT_ID as string,
-	};
+  const firebaseConfig = {
+    apiKey: config.public.NUXT_PUBLIC_FIREBASE_API_KEY as string,
+    authDomain: config.public.NUXT_PUBLIC_FIREBASE_AUTH_DOMAIN as string,
+    projectId: config.public.NUXT_PUBLIC_FIREBASE_PROJECT_ID as string,
+    storageBucket: config.public.NUXT_PUBLIC_FIREBASE_STORAGE_BUCKET as string,
+    messagingSenderId: config.public.NUXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID as string,
+    appId: config.public.NUXT_PUBLIC_FIREBASE_APP_ID as string,
+    measurementId: config.public.NUXT_PUBLIC_FIREBASE_MEASUREMENT_ID as string,
+  };
 
-	// Use existing app if initialized, else initialize a new one
-	const app = getApps().length
-		? getApps()[0]
-		: initializeApp(firebaseConfig);
+  // Inizializza app Firebase solo se non già inizializzata
+  const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 
-	const db = getFirestore(app);
-	// Analytics may fail on server
-	let analytics;
-	try {
-		analytics = getAnalytics(app);
-	}
-	catch {
-		analytics = null;
-	}
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+  const functions = getFunctions(app);
 
-	const auth = getAuth(app);
+  // Connessione emulatori solo in sviluppo
+  if (process.env.NODE_ENV === "development") {
+    connectFirestoreEmulator(db, "localhost", 8080);
+    connectAuthEmulator(auth, "http://localhost:9099");
+    connectFunctionsEmulator(functions, "localhost", 5001);
+  }
 
-	return {
-		provide: {
-			firebase: app,
-			db,
-			analytics,
-			auth,
-		},
-	};
+  // Analytics può fallire in SSR o emulatori, gestiamo con try/catch
+  let analytics;
+  try {
+    analytics = getAnalytics(app);
+  } catch {
+    analytics = null;
+  }
+
+  return {
+    provide: {
+      firebase: app,
+      db,
+      auth,
+      analytics,
+      functions,
+    },
+  };
 });
