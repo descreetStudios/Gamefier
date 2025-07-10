@@ -22,10 +22,9 @@ export default defineNuxtConfig({
 			NUXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: process.env.FIREBASE_MESSAGING_SENDER_ID,
 			NUXT_PUBLIC_FIREBASE_APP_ID: process.env.FIREBASE_APP_ID,
 			NUXT_PUBLIC_FIREBASE_MEASUREMENT_ID: process.env.FIREBASE_MEASUREMENT_ID,
-		}
+		},
 	},
 
-	compatibilityDate: "2025-05-15",
 	compatibilityDate: "2025-05-15",
 
 	vite: {
