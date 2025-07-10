@@ -4,7 +4,7 @@
 		<div
 			class="homepage__background"
 			:style="{
-				transform: `translateY(${bgOffset}px) translateX(${mouseX * 10}px) translateY(${mouseY * 10}px)`,
+				transform: `translateY(${bgOffset - 100}px) translateX(${mouseX * 10}px) translateY(${mouseY * 10}px)`,
 			}"
 		>
 			<img
@@ -30,33 +30,37 @@
 			class="homepage__section"
 		>
 			<img
-				src="/images/Shape1.png"
-				alt="Shape 1"
-				class="section-shape shape-features"
+				src="/images/features.png"
+				alt="Features"
 			>
-			<h2>What's Gamefier?</h2>
-			<p>
-				Gamefier is an online platform where teachers can enhance their lessons by integrating interactive games
-				to engage their students, helping them learn and retain more information, with less effort.
-			</p>
+			<div class="text-block">
+				<h2>What's Gamefier?</h2>
+				<p class="paragraphs">
+					Gamefier is an online platform where teachers can enhance their lessons by integrating interactive
+					games
+					to engage their students, helping them learn and retain more information, with less effort.
+				</p>
+			</div>
 		</section>
 
 		<!-- Section 2 -->
 		<section
 			id="games"
-			class="homepage__section first"
+			class="homepage__section_reversed"
 		>
 			<img
-				src="/images/Robot.png"
-				alt="Shape 2"
-				class="section-shape shape-games"
-				style="scale: 1.3; margin-left: 10px;"
+				src="/images/games.png"
+				alt="Games"
 			>
-			<h2>How can i create a game?</h2>
-			<NuxtLink to="/signup">
-				<p>1. Make an account</p>
-			</NuxtLink>
-			<p>2. Start creating using templates!</p>
+			<div class="text-block">
+				<h2>How can i create a game?</h2>
+				<div class="paragraphs">
+					<NuxtLink to="/signup">
+						<p>1. Make an account</p>
+					</NuxtLink>
+					<p>2. Start creating using templates!</p>
+				</div>
+			</div>
 		</section>
 
 		<!-- Section 3 -->
@@ -65,29 +69,36 @@
 			class="homepage__section"
 		>
 			<img
-				src="/images/Shape3.png"
-				alt="Shape 3"
-				class="section-shape shape-community"
+				src="/images/community.png"
+				alt="Community"
 			>
-			<h2>Community</h2>
-			<p>Join a community of learners and educators collaborating together, discover games created by others and share your own.</p>
+			<div class="text-block">
+				<h2>Community</h2>
+				<p class="paragraphs">
+					Join a community of learners and educators collaborating together, discover games created by others
+					and share your own.
+				</p>
+			</div>
 		</section>
 
 		<!-- Section 4 -->
 		<section
 			id="get-started"
-			class="homepage__section alt"
+			class="homepage__section_reversed"
 		>
 			<img
-				src="/images/Shape4.png"
-				alt="Shape 4"
-				class="section-shape shape-start"
+				src="/images/getStarted.png"
+				alt="Get Started"
 			>
-			<h2>Get Started</h2>
-			<NuxtLink to="/signup">
-				<p>Create your free account</p>
-			</NuxtLink>
-			<p>and start play-learning today!</p>
+			<div class="text-block">
+				<h2>Get Started</h2>
+				<div class="paragraphs">
+					<NuxtLink to="/signup">
+						<p>Create your free account</p>
+					</NuxtLink>
+					<p>and start play-learning today!</p>
+				</div>
+			</div>
 		</section>
 	</div>
 </template>

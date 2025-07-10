@@ -3,7 +3,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 4rem;
+    height: 6rem;
     z-index: 999; // Keep it on top
 
     background: transparent;
@@ -24,7 +24,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0rem 0;
+    padding: 1rem 0;
     margin-bottom: 1rem; // Distances navbar from content
     font-family: "Figtree", sans-serif;
 
@@ -50,7 +50,7 @@
 
             a {
                 text-decoration: none;
-                color: rgb(193, 203, 219);
+                color: rgb(240, 240, 240);
                 -webkit-user-drag: none;
                 -khtml-user-drag: none;
                 -moz-user-drag: none;
@@ -60,9 +60,14 @@
             .dropdown-menu {
                 display: none;
                 position: absolute;
-                background: var(--surface);
-                box-shadow: 0 4px 20px var(--shadow);
+                left: 50%;
+                transform: translateX(-40%);
+                text-align: center;
+                background-color: rgba(255, 255, 255, 0.082);
+                border: 1px solid rgb(207, 213, 226, 0.2);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
                 border-radius: var(--pico-border-radius);
+                margin-top: 1rem;
                 min-width: 160px;
                 padding: 0.5rem 0;
                 z-index: 10;
@@ -113,12 +118,12 @@
 
     &.login {
         background: transparent;
-        color: var(--primary-text);
+        color: white;
     }
 
     &.signup {
         background: var(--primary);
-        color: var(--inv-primary-text);
+        color: white;
         margin-left: 0.6rem;
     }
 }
@@ -131,7 +136,9 @@
     display: flex;
     align-items: center;
     padding-right: 15px;
-    border: 1px var(--inv-secondary-text) solid;
+    background-color: rgba(255, 255, 255, 0.082);
+    border: 1px solid rgb(207, 213, 226, 0.2);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     border-radius: var(--border-radius);
     gap: 10px;
     cursor: pointer;
@@ -164,8 +171,8 @@
     transform: translateX(-50%);
     margin-top: 8px;
     top: calc(100% + 10px);
-    background: var(--surface);
-    border: 1px solid var(--inv-secondary-text);
+    background-color: rgba(255, 255, 255, 0.082);
+    border: 1px solid rgb(207, 213, 226, 0.2);
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     min-width: 200px;

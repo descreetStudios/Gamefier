@@ -51,7 +51,7 @@
     input[type="password"] {
         padding: 0.75rem 1rem;
         border-radius: 10px;
-        border: none;
+        border: 1px solid var(--border);
         background-color: var(--secondary-surface);
         color: var(--primary-text);
         font-size: 1rem;
@@ -74,7 +74,7 @@
     input[type="password"] {
         padding: 0.75rem 1rem;
         border-radius: 10px;
-        border: none;
+        border: 1px solid var(--border);
         background-color: var(--secondary-surface);
         color: var(--primary-text);
         font-size: 1rem;

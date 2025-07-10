@@ -1,7 +1,21 @@
 @echo off
 setlocal enabledelayedexpansion
 
-REM Cerca la prima cartella che inizia con "firebase-export"
+REM Check if Java process is running
+tasklist /FI "IMAGENAME eq java.exe" | find /I "java.exe" >nul
+if %ERRORLEVEL% EQU 0 (
+    echo Java process is already running. Skipping Firebase Emulator startup.
+    set "SKIP_FIREBASE=1"
+)
+
+REM Check if Node process is running
+tasklist /FI "IMAGENAME eq node.exe" | find /I "node.exe" >nul
+if %ERRORLEVEL% EQU 0 (
+    echo Node process is already running. Skipping npm run dev.
+    set "SKIP_NPM=1"
+)
+
+REM Look for first folder starting with "firebase-export"
 set "EXPORT_FOLDER="
 
 for /d %%f in (firebase-export*) do (
@@ -9,19 +23,24 @@ for /d %%f in (firebase-export*) do (
     goto found
 )
 
-REM Nessuna cartella trovata, crea "firebase-export"
+REM No folder found, create "firebase-export"
 set "EXPORT_FOLDER=firebase-export"
 mkdir "%EXPORT_FOLDER%"
-echo Nessuna cartella trovata. Creata: %EXPORT_FOLDER%
+echo No export folder found. Created: %EXPORT_FOLDER%
 
 :found
-echo Usando cartella di export/import: %EXPORT_FOLDER%
+echo Using export/import folder: %EXPORT_FOLDER%
 
-REM Avvia Firebase Emulator in nuova finestra con variabile ambiente impostata
-start "Firebase Emulator" cmd /k "set FIREBASE_EMULATOR_WARNINGS_SUPPRESSED=true && firebase emulators:start --import=%EXPORT_FOLDER% --export-on-exit=%EXPORT_FOLDER%"
+REM Start Firebase Emulator if not skipped
+if not defined SKIP_FIREBASE (
+    echo Starting Firebase Emulator...
+    start "Firebase Emulator" cmd /k "set FIREBASE_EMULATOR_WARNINGS_SUPPRESSED=true && firebase emulators:start --import=%EXPORT_FOLDER% --export-on-exit=%EXPORT_FOLDER%"
+)
 
-REM Avvia npm run dev nello stesso terminale
-echo Avvio npm run dev...
-npm run dev
+REM Start npm run dev if not skipped
+if not defined SKIP_NPM (
+    echo Starting npm run dev...
+    npm run dev
+)
 
 endlocal

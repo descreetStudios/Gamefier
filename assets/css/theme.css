@@ -34,10 +34,10 @@ sass --watch assets/scss/theme.scss assets/css/theme.css
   --inv-bg-rgb: 242, 242, 242;
   --surface: rgb(30, 30, 30);
   --surface-rgb: 30, 30, 30;
-  --secondary-surface: rgb(46, 52, 58);
-  --secondary-surface-rgb: 46, 52, 58;
-  --border: rgb(0, 0, 0);
-  --border-rgb: 0, 0, 0;
+  --secondary-surface: rgb(28, 33, 44);
+  --secondary-surface-rgb: 28, 33, 44;
+  --border: rgb(42, 49, 64);
+  --border-rgb: 42, 49, 64;
   --border-radius: 1vw;
   --shadow: rgba(0, 0, 0, 0.4);
   --glowing: rgb(238, 238, 238);
@@ -84,12 +84,12 @@ sass --watch assets/scss/theme.scss assets/css/theme.css
   --inv-bg-rgb: 19, 19, 19
   --surface: rgb(255, 255, 255);
   --surface-rgb: 255, 255, 255;
-  --secondary-surface: rgb(209, 213, 235);
-  --secondary-surface-rgb: 209, 213, 235;
-  --border: rgb(192, 186, 186);
-  --border-rgb: 192, 186, 186;
+  --secondary-surface: rgb(159, 214, 253);
+  --secondary-surface-rgb: 159, 214, 253;
+  --border: rgb(207, 213, 226);
+  --border-rgb: 207, 213, 226;
   --border-radius: 1vw;
-  --shadow: rgba(0, 0, 0, 0.1);
+  --shadow: rgba(0, 0, 0, 0.15);
   --glowing: rgb(59, 130, 246);
   --glowing-rgb: 59, 130, 246;
   --error: rgb(255, 89, 89);
