@@ -10,32 +10,32 @@ const route = useRoute();
 const targetPath = route.query.pathTo;
 
 onMounted(() => {
-	document.body.style.overflow = "hidden";
-	setTimeout(() => {
-		const intervalId = setInterval(() => {
-			if (loaded.value === true) {
-				if (targetPath && typeof targetPath === "string" && targetPath !== "/loading") {
-					navigateTo(targetPath);
-				}
-				else {
-					navigateTo("/");
-				}
-				$userStore.storeUserData("startup", false);
-				clearInterval(intervalId);
-			}
-		}, 1000);
-	}, 1000);
+    document.body.style.overflow = "hidden";
+    setTimeout(() => {
+        const intervalId = setInterval(() => {
+            if (loaded.value === true) {
+                if (targetPath && typeof targetPath === "string" && targetPath !== "/loading") {
+                    navigateTo(targetPath);
+                }
+                else {
+                    navigateTo("/");
+                }
+                $userStore.storeUserData("startup", false);
+                clearInterval(intervalId);
+            }
+        }, 1000);
+    }, 1000);
 });
 
 onUnmounted(() => {
-	document.body.style.overflow = "";
+    document.body.style.overflow = "";
 });
 </script>
 
 <template>
-	<div class="loader-overlay">
-		<div class="loader" />
-	</div>
+    <div class="loader-overlay">
+        <div class="loader" />
+    </div>
 </template>
 
 <style lang="scss" scoped>
@@ -77,5 +77,11 @@ onUnmounted(() => {
     100% {
         transform: rotate(calc(var(--s, 1)*1turn))
     }
+}
+</style>
+
+<style lang="scss">
+.firebase-emulator-warning {
+    display: none;
 }
 </style>

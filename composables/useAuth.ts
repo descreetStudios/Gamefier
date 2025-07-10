@@ -70,6 +70,7 @@ export const useAuth = () => {
 					uid: user.uid,
 					email: user.email,
 					displayName: user.displayName,
+					displayNameLowerCase: user.displayName.toLowerCase(),
 					createdAt: new Date(),
 					role: "user",
 				});

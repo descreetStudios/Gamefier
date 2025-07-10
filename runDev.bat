@@ -16,4 +16,12 @@ echo Nessuna cartella trovata. Creata: %EXPORT_FOLDER%
 
 :found
 echo Usando cartella di export/import: %EXPORT_FOLDER%
-firebase emulators:start --import=%EXPORT_FOLDER% --export-on-exit=%EXPORT_FOLDER%
+
+REM Avvia Firebase Emulator in nuova finestra con variabile ambiente impostata
+start "Firebase Emulator" cmd /k "set FIREBASE_EMULATOR_WARNINGS_SUPPRESSED=true && firebase emulators:start --import=%EXPORT_FOLDER% --export-on-exit=%EXPORT_FOLDER%"
+
+REM Avvia npm run dev nello stesso terminale
+echo Avvio npm run dev...
+npm run dev
+
+endlocal
