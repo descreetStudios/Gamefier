@@ -1,11 +1,11 @@
 .sidebar {
-    width: 240px;
+    width: 15vw;
     height: 100vh;
     background: var(--bg);
     color: var(--primary-text);
     display: flex;
     flex-direction: column;
-    padding: 1rem;
+    padding: 0.5rem;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
     border-right: 1px solid var(--inv-secondary-text);
     position: relative;
@@ -14,20 +14,20 @@
 .sidebar-logo {
     display: flex;
     align-items: center;
-    gap: 0.8rem;
-    font-size: 1.4rem;
+    justify-content: center;
+    font-size: 1.5rem;
     font-weight: 600;
-    margin-bottom: 2rem;
 }
 
 .logo-img {
-    width: 50px;
+    width: fit-content;
     height: 50px;
     object-fit: contain;
 }
 
 .logo-text {
     color: var(--primary-text);
+    margin-left: 0.5rem;
     margin-top: 0.5rem;
 }
 
@@ -49,6 +49,8 @@
     position: relative;
     transition: all 0.3s ease;
     margin: 3px 0;
+    margin-left: 2.5px;
+    margin-right: 7px;
 }
 
 .nav-link::before {
@@ -61,6 +63,10 @@
     background-color: var(--primary-hover);
     transition: width 0.3s ease;
     opacity: 0.1;
+}
+
+.logout-link::before {
+    background-color: red;
 }
 
 .nav-link:hover::before {
@@ -81,18 +87,16 @@
 .user-section {
     position: absolute;
     bottom: 0;
-    left: 1.5rem;
-    right: 1.5rem;
-    background: var(--bg);
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+    left: 0;
+    right: 0;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
     transition: transform 1s ease-out;
     overflow: hidden;
     cursor: pointer;
-
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    gap: 0.5rem;
 }
 
 .user-section.open {
@@ -100,30 +104,50 @@
 }
 
 .user-img {
+    position: relative;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 5px;
     padding-bottom: 0.5rem;
     width: 100%;
 }
 
-.user-img img {
+.user-icon {
     width: 64px;
     height: 64px;
     border-radius: 50%;
     object-fit: cover;
+    flex-shrink: 0;
+}
+
+.arrow {
+    position: absolute;
+    right: 0.5rem;
+    margin-top: 5px;
+    width: 25px;
+    height: auto;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+    color: var(--primary-text);
+}
+
+.rotatedArrow {
+    transform: rotate(180deg);
 }
 
 .user-img h4 {
     margin: 0;
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: var(--primary-text);
     white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    padding-right: 40px;
+    flex-grow: 1;
 }
 
 .user-nav-links {
-    width: 100%;
     overflow: hidden;
     max-height: 0;
     opacity: 0;
@@ -134,7 +158,6 @@
         transform 0.6s ease;
     pointer-events: none;
     display: flex;
-    padding: 0 0.75rem 0 0.1rem;
     flex-direction: column;
     gap: 0.75rem;
 }

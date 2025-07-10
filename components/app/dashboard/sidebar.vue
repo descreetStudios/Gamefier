@@ -12,6 +12,8 @@
 			</div>
 		</nuxt-link>
 
+		<hr>
+
 		<nav class="sidebar-nav">
 			<button
 				class="nav-link"
@@ -50,10 +52,15 @@
 			>
 				<div class="user-img">
 					<img
+						class="user-icon"
 						:src="userIcon"
 						alt="User Icon"
 					>
 					<h4>{{ $userStore.displayName }}</h4>
+					<arrow
+						class="arrow"
+						:class="{ rotatedArrow: showUserLinks }"
+					/>
 				</div>
 
 				<div
@@ -75,7 +82,8 @@
 						Settings
 					</button>
 					<button
-						class="nav-link"
+						class="nav-link logout-link"
+						style="color: var(--error);"
 						@click.stop="logoutHandler"
 					>
 						Logout
@@ -88,6 +96,7 @@
 
 <script setup>
 import { ref } from "vue";
+import arrow from "~/assets/icons/arrow.svg";
 
 const emit = defineEmits(["navigate"]);
 

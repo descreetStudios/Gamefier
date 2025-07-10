@@ -42,7 +42,7 @@ sass --watch assets/scss/theme.scss assets/css/theme.css
   --shadow: rgba(0, 0, 0, 0.4);
   --glowing: rgb(238, 238, 238);
   --glowing-rgb: 238, 238, 238;
-  --error: rgb(248, 113, 113);
+  --error: rgb(255, 89, 89);
   --error-rgb: 248, 113, 113;
   --warning: rgb(250, 153, 42);
   --warning-rgb: 250, 153, 42;
@@ -92,7 +92,7 @@ sass --watch assets/scss/theme.scss assets/css/theme.css
   --shadow: rgba(0, 0, 0, 0.1);
   --glowing: rgb(59, 130, 246);
   --glowing-rgb: 59, 130, 246;
-  --error: rgb(248, 113, 113);
+  --error: rgb(255, 89, 89);
   --error-rgb: 248, 113, 113;
   --warning: rgb(250, 153, 42);
   --warning-rgb: 250, 153, 42;
