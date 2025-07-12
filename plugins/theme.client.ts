@@ -1,5 +1,5 @@
 export default defineNuxtPlugin(() => {
 	if (import.meta.client) {
-		document.documentElement.setAttribute("data-theme", "dark");
+		document.documentElement.setAttribute("data-theme", "light");
 	}
 });
