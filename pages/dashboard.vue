@@ -23,13 +23,13 @@ const activeViewComponent = computed(() => {
 
 <template>
 	<div class="dashboard-layout">
-		<AppDashboardSidebar
+		<app-dashboard-sidebar
 			:active="activeView"
 			@navigate="activeView = $event"
 		/>
-		<AppDashboardContent>
+		<app-dashboard-content>
 			<component :is="activeViewComponent" />
-		</AppDashboardContent>
+		</app-dashboard-content>
 	</div>
 </template>
 

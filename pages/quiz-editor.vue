@@ -2,6 +2,16 @@
 	<div>
 		<p>Quiz Editor</p>
 
+		<!-- PROPERTY CARD -->
+		<app-editor-property-card>
+			<template #title>
+				<h4>PROPERTY</h4>
+			</template>
+			<template #content>
+				<!-- Input content -->
+			</template>
+		</app-editor-property-card>
+
 		<!-- TEXT BOX -->
 		<p>Text Box: {{ textBoxTest }}</p>
 		<input
@@ -92,5 +102,9 @@ const switchTest = ref(false);
 p {
 	margin: 0.25rem 0.25rem 0.125rem;
 	font-size: 0.875rem;
+}
+
+article {
+	margin-left: 30px;
 }
 </style>
