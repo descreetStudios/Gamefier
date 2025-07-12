@@ -63,6 +63,18 @@
 			<option>Thai</option>
 			<option>French</option>
 		</select>
+
+		<!-- SWITCH -->
+		<p>Switch: {{ switchTest }}</p>
+		<label class="switch">
+			<input
+				v-model="switchTest"
+				name="terms"
+				type="checkbox"
+				role="switch"
+			>
+			Correct answer
+		</label>
 	</div>
 </template>
 
@@ -71,67 +83,11 @@ const textBoxTest = ref("");
 const numberBoxTest = ref(0);
 const colorPickerTest = ref("");
 const choiceBoxTest = ref("");
+const switchTest = ref(false);
 </script>
 
 <style lang="scss" scoped>
-input.textBoxTest,
-input.numberBoxTest,
-input.colorPickerTest,
-input.filePickerTest,
-select.choiceBoxTest {
-	margin: 0.25rem 0.25rem 0.125rem;
-	border-radius: 10px;
-	height: 2rem;
-	width: 150px;
-}
-
-input.colorPickerTest {
-	border-radius: 13px;
-	height: 2rem;
-	width: 2rem;
-	padding: 0.2rem; // between the color zone and the border
-}
-
-input.filePickerTest {
-	height: 2.4rem;
-	width: 300px;
-	padding: 0.25rem 0.5rem;
-	border: 1px solid var(--border);
-	cursor: pointer;
-	font-size: 0.875rem;
-}
-
-input.filePickerTest::-webkit-file-upload-button {
-	padding: 0.2rem 0.5rem;
-	margin-right: 0.5rem;
-	border: none;
-	background: rgb(var(--secondary-surface-rgb));
-	color: rgb(var(--primary-text-rgb));
-	border-radius: 10px;
-	cursor: pointer;
-	font-size: 0.875rem;
-	transition: background 0.2s ease;
-	box-shadow: 0 2px 5px var(--shadow);
-}
-
-input.filePickerTest::-webkit-file-upload-button:hover {
-	background: var(--primary-hover);
-}
-
-select.choiceBoxTest {
-	height: 2.5rem;
-	width: 200px;
-	padding: 0 0.5rem;
-	font-size: 0.875rem;
-	background-color: var(--secondary-surface-rgb);
-	color: var(--primary-text);
-}
-
-select.choiceBoxTest:focus {
-	outline: none;
-	border-color: var(--pico-primary, #0d6efd);
-	box-shadow: 0 0 0 2px var(--pico-primary, #0d6efd);
-}
+@use "/assets/scss/controls.scss";
 
 p {
 	margin: 0.25rem 0.25rem 0.125rem;
