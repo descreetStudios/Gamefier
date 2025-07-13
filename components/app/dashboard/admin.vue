@@ -1,5 +1,7 @@
 <template>
 	<div>
+		<AppGlobalAlert />
+
 		<h1>Admin Page</h1>
 		<p>Welcome to your admin page!</p>
 		<form @submit.prevent="searchUsersByDisplayNameStartsWith">
@@ -36,10 +38,12 @@ import { httpsCallable } from "firebase/functions";
 
 const { $db } = useNuxtApp();
 const { $functions } = useNuxtApp();
+const { $eventBus } = useNuxtApp();
 
-const userSearchName = ref(null);
+const userSearchName = ref("");
 const users = ref([]);
 const oldUsers = ref([]);
+const called = ref(false);
 
 // Search users whose displayName starts with the input
 async function searchUsersByDisplayNameStartsWith() {
@@ -48,6 +52,11 @@ async function searchUsersByDisplayNameStartsWith() {
 	if (!lowerCaseSearchQuery) {
 		users.value = [];
 		oldUsers.value = [];
+		$eventBus.emit("alert", {
+			message: "Please enter a valid name",
+			type: "error",
+			duration: 3000,
+		});
 		return;
 	}
 
@@ -66,11 +75,26 @@ async function searchUsersByDisplayNameStartsWith() {
 			users.value.push({ id: doc.id, ...doc.data() });
 			oldUsers.value = users.value.map(user => ({ ...user }));
 		});
-		console.log(users.value);
+		const count = users.value.length;
+		const message = `Found ${count} user${count !== 1 ? 's' : ''}.`;
+		if (!called.value) {
+			$eventBus.emit("alert", {
+				message: message,
+				type: "success",
+				duration: 3000,
+			});
+		}
+		// console.log(users.value);
 	}
-	catch (error) {
-		console.error("Error during 'starts with' search:", error);
+	catch (err) {
+		$eventBus.emit("alert", {
+			message: err.message || "An error occurred while searching for users.",
+			type: "error",
+			duration: 3000,
+		});
+		// console.error("Error during 'starts with' search:", err);
 	}
+	called.value = false;
 }
 
 // Update user profile (both Firestore and Auth)
@@ -84,54 +108,67 @@ async function updateProfile(user) {
 	}
 
 	const userDocRef = doc($db, "users", user.id);
-	const updatedFirestoreFields = {};
-	const updatedAuthFields = {};
+	const updatedFields = {};
 
 	if (user.displayName !== oldUser.displayName) {
-		updatedAuthFields.displayName = user.displayName;
-		updatedFirestoreFields.displayName = user.displayName;
-		updatedFirestoreFields.displayNameLowerCase = user.displayName.toLowerCase();
+		updatedFields.displayName = user.displayName;
+		updatedFields.displayNameLowerCase = user.displayName.toLowerCase();
 	}
 	if (user.email !== oldUser.email) {
-		updatedFirestoreFields.email = user.email;
-		updatedAuthFields.email = user.email;
+		updatedFields.email = user.email;
 	}
 	if (user.role !== oldUser.role) {
-		updatedFirestoreFields.role = user.role;
+		updatedFields.role = user.role;
 	}
 	if (user.password) {
-		updatedAuthFields.password = user.password;
+		updatedFields.password = user.password;
 	}
 
-	if (!Object.keys(updatedFirestoreFields).length > 0 && !Object.keys(updatedAuthFields).length > 0) {
-		console.log("No changes detected for the user.");
+	if (!Object.keys(updatedFields).length > 0) {
+		$eventBus.emit("alert", {
+			message: "No changes detected for the user.",
+			type: "error",
+			duration: 3000,
+		});
+		// console.log("No changes detected for the user.");
 	}
 	else {
-		if (Object.keys(updatedFirestoreFields).length > 0) {
-			try {
-				await updateDoc(userDocRef, updatedFirestoreFields);
-				console.log("User profile updated in Firestore:", updatedFirestoreFields);
-				searchUsersByDisplayNameStartsWith();
-			}
-			catch (error) {
-				console.error("Error updating Firestore profile:", error);
-			}
-		}
-		if (Object.keys(updatedAuthFields).length > 0) {
+		if (Object.keys(updatedFields).length > 0) {
 			try {
 				const result = await callable({
 					uid: user.id,
 					fieldsToUpdate: {
-						displayName: updatedAuthFields.displayName,
-						email: updatedAuthFields.email,
-						password: updatedAuthFields.password
+						displayName: updatedFields.displayName,
+						email: updatedFields.email,
+						password: updatedFields.password
 					}
 				})
-				console.log('Response:', result.data)
-			} catch (error) {
-				console.error("Error updating Firebase Auth profile:", error);
+				if (updatedFields.password) {
+					delete updatedFields.password;
+				}
+				await updateDoc(userDocRef, updatedFields);
+				$eventBus.emit("alert", {
+					message: "User profile updated successfully.",
+					type: "success",
+					duration: 3000,
+				});
+				// console.log('Response:', result.data)
+				called.value = true;
+				searchUsersByDisplayNameStartsWith();
+			}
+			catch (err) {
+				$eventBus.emit("alert", {
+					message: err.message || "An error occurred while updating the user profile.",
+					type: "error",
+					duration: 3000,
+				});
+				// console.error("Error updating Firestore profile:", err);
 			}
 		}
+
 	}
 }
+
+// Global alert
+
 </script>
