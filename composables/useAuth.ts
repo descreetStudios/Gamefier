@@ -3,7 +3,6 @@ import {
 	signInWithEmailAndPassword,
 	signOut,
 	onAuthStateChanged,
-
 	GoogleAuthProvider,
 	signInWithPopup,
 	updateProfile,
@@ -70,7 +69,7 @@ export const useAuth = () => {
 					uid: user.uid,
 					email: user.email,
 					displayName: user.displayName,
-					displayNameLowerCase: user.displayName.toLowerCase(),
+					displayNameLowerCase: user.displayName?.toLowerCase(),
 					createdAt: new Date(),
 					role: "user",
 				});

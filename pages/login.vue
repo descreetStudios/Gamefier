@@ -27,6 +27,7 @@
 						v-model="password"
 						type="password"
 						placeholder="Password"
+						minlength="8"
 						required
 						autocomplete="current-password"
 					>
