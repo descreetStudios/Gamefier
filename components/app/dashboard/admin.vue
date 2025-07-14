@@ -92,7 +92,6 @@ async function searchUsersByDisplayNameStartsWith() {
 			type: "error",
 			duration: 3000,
 		});
-		// console.error("Error during 'starts with' search:", err);
 	}
 	called.value = false;
 }
@@ -108,65 +107,63 @@ async function updateProfile(user) {
 	}
 
 	const userDocRef = doc($db, "users", user.id);
-	const updatedFields = {};
+	const updatedStoreFields = {};
+	const updatedAuthFields = {};
 
 	if (user.displayName !== oldUser.displayName) {
-		updatedFields.displayName = user.displayName;
-		updatedFields.displayNameLowerCase = user.displayName.toLowerCase();
+		updatedStoreFields.displayName = user.displayName;
+		updatedAuthFields.displayName = user.displayName;
+		updatedStoreFields.displayNameLowerCase = user.displayName.toLowerCase();
 	}
 	if (user.email !== oldUser.email) {
-		updatedFields.email = user.email;
+		updatedStoreFields.email = user.email;
+		updatedAuthFields.email = user.email;
 	}
 	if (user.role !== oldUser.role) {
-		updatedFields.role = user.role;
+		updatedStoreFields.role = user.role;
 	}
 	if (user.password) {
-		updatedFields.password = user.password;
+		updatedAuthFields.password = user.password;
 	}
 
-	if (!Object.keys(updatedFields).length > 0) {
+	if (!Object.keys(updatedStoreFields).length > 0 && !Object.keys(updatedAuthFields).length > 0) {
 		$eventBus.emit("alert", {
 			message: "No changes detected for the user.",
 			type: "error",
 			duration: 3000,
 		});
-		// console.log("No changes detected for the user.");
 	}
 	else {
-		if (Object.keys(updatedFields).length > 0) {
-			try {
+		try {
+			if (Object.keys(updatedAuthFields).length > 0) {
 				const result = await callable({
 					uid: user.id,
 					fieldsToUpdate: {
-						displayName: updatedFields.displayName,
-						email: updatedFields.email,
-						password: updatedFields.password
+						displayName: updatedAuthFields.displayName,
+						email: updatedAuthFields.email,
+						password: updatedAuthFields.password
 					}
 				})
-				if (updatedFields.password) {
-					delete updatedFields.password;
-				}
-				await updateDoc(userDocRef, updatedFields);
-				$eventBus.emit("alert", {
-					message: "User profile updated successfully.",
-					type: "success",
-					duration: 3000,
-				});
 				// console.log('Response:', result.data)
-				called.value = true;
-				searchUsersByDisplayNameStartsWith();
 			}
-			catch (err) {
-				$eventBus.emit("alert", {
-					message: err.message || "An error occurred while updating the user profile.",
-					type: "error",
-					duration: 3000,
-				});
-				// console.error("Error updating Firestore profile:", err);
-			}
+			await updateDoc(userDocRef, updatedStoreFields);
+			$eventBus.emit("alert", {
+				message: "User profile updated successfully.",
+				type: "success",
+				duration: 3000,
+			});
+			called.value = true;
+			searchUsersByDisplayNameStartsWith();
 		}
-
+		catch (err) {
+			$eventBus.emit("alert", {
+				message: err.message || "An error occurred while updating the user profile.",
+				type: "error",
+				duration: 3000,
+			});
+		}
 	}
+
 }
 
 // Global alert
