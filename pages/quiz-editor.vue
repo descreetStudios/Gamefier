@@ -255,8 +255,158 @@
 		</div>
 
 		<div class="content">
-			<div class="render" />
-			<div class="slides" />
+			<div class="render">
+				<h2 class="render__question">
+					If a tomato is a fruit, does that make ketchup a smoothie?
+				</h2>
+				<div class="render__middle">
+					<img
+						class="render__middle__image"
+						src="/images/Background.png"
+						@dragstart.prevent
+					>
+					<div
+						class="render__middle__options"
+					>
+						<div class="render__middle__options__option">
+							<div class="render__middle__options__option__cardbg">
+								<div class="render__middle__options__option__cardbg__card">
+									<h4 class="render__middle__options__option__cardbg__card__text">
+										Option1
+									</h4>
+								</div>
+							</div>
+						</div>
+						<div class="render__middle__options__option">
+							<div class="render__middle__options__option__cardbg">
+								<div class="render__middle__options__option__cardbg__card">
+									<h4 class="render__middle__options__option__cardbg__card__text">
+										Option2
+									</h4>
+								</div>
+							</div>
+						</div>
+						<div class="render__middle__options__option">
+							<div class="render__middle__options__option__cardbg">
+								<div class="render__middle__options__option__cardbg__card">
+									<h4 class="render__middle__options__option__cardbg__card__text">
+										Option3
+									</h4>
+								</div>
+							</div>
+						</div>
+						<div class="render__middle__options__option">
+							<div class="render__middle__options__option__cardbg">
+								<div class="render__middle__options__option__cardbg__card">
+									<h4 class="render__middle__options__option__cardbg__card__text">
+										Option4
+									</h4>
+								</div>
+							</div>
+						</div>
+						<div class="render__middle__options__option">
+							<div class="render__middle__options__option__cardbg">
+								<div class="render__middle__options__option__cardbg__card">
+									<h4 class="render__middle__options__option__cardbg__card__text">
+										Option5
+									</h4>
+								</div>
+							</div>
+						</div>
+						<div class="render__middle__options__option">
+							<div class="render__middle__options__option__cardbg">
+								<div class="render__middle__options__option__cardbg__card">
+									<h4 class="render__middle__options__option__cardbg__card__text">
+										Option6
+									</h4>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="separator" />
+			<div class="slides">
+				<app-editor-slide-card>
+					<template #slide-title>
+						<h4>Test</h4>
+					</template>
+					<template #slide-content>
+						<img
+							src="/images/Background.png"
+							@dragstart.prevent
+						>
+					</template>
+				</app-editor-slide-card>
+				<app-editor-slide-card>
+					<template #slide-title>
+						<h4>Test</h4>
+					</template>
+					<template #slide-content>
+						<img
+							src="/images/Background.png"
+							@dragstart.prevent
+						>
+					</template>
+				</app-editor-slide-card>
+				<app-editor-slide-card>
+					<template #slide-title>
+						<h4>Test</h4>
+					</template>
+					<template #slide-content>
+						<img
+							src="/images/Background.png"
+							@dragstart.prevent
+						>
+					</template>
+				</app-editor-slide-card>
+				<app-editor-slide-card>
+					<template #slide-title>
+						<h4>Test</h4>
+					</template>
+					<template #slide-content>
+						<img
+							src="/images/Background.png"
+							@dragstart.prevent
+						>
+					</template>
+				</app-editor-slide-card>
+				<app-editor-slide-card>
+					<template #slide-title>
+						<h4>Test</h4>
+					</template>
+					<template #slide-content>
+						<img
+							src="/images/Background.png"
+							@dragstart.prevent
+						>
+					</template>
+				</app-editor-slide-card>
+				<app-editor-slide-card>
+					<template #slide-title>
+						<h4>Test</h4>
+					</template>
+					<template #slide-content>
+						<img
+							src="/images/Background.png"
+							@dragstart.prevent
+						>
+					</template>
+				</app-editor-slide-card>
+				<app-editor-slide-card>
+					<template #slide-title>
+						<h4>Test</h4>
+					</template>
+					<template #slide-content>
+						<img
+							src="/images/Background.png"
+							@dragstart.prevent
+						>
+					</template>
+				</app-editor-slide-card>
+
+				<app-editor-slide-card-plus />
+			</div>
 		</div>
 	</div>
 </template>

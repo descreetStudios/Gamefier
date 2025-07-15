@@ -11,6 +11,7 @@
 						src="/images/logo/gamefier-logo-64px.png"
 						alt="GF"
 						class="logo-img"
+						@dragstart.prevent
 					>
 					<strong class="logo-text">Gamefier</strong>
 				</NuxtLink>
@@ -74,7 +75,10 @@
 						class="user-img"
 						@click="onUserClick"
 					>
-						<img :src="userIcon">
+						<img
+							:src="userIcon"
+							@dragstart.prevent
+						>
 						<h4>{{ $userStore.displayName }}</h4>
 					</div>
 					<div

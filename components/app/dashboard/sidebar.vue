@@ -7,6 +7,7 @@
 					src="/images/logo/gamefier-logo-64px.png"
 					alt="GF"
 					class="logo-img"
+					@dragstart.prevent
 				>
 				<span class="logo-text">Gamefier</span>
 			</div>

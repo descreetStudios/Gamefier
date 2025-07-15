@@ -33,10 +33,6 @@
         display: flex;
         align-items: center;
         margin-right: 10px;
-        -webkit-user-drag: none;
-        -khtml-user-drag: none;
-        -moz-user-drag: none;
-        -o-user-drag: none;
     }
 
     &-center {
@@ -95,10 +91,6 @@
         height: 64px;
         margin-bottom: 25px;
         margin-right: 10px;
-        -webkit-user-drag: none;
-        -khtml-user-drag: none;
-        -moz-user-drag: none;
-        -o-user-drag: none;
     }
 
     .logo-text {
@@ -151,16 +143,12 @@
         height: 64px;
         border-radius: 50%;
         object-fit: cover;
-        -webkit-user-drag: none;
-        -khtml-user-drag: none;
-        -moz-user-drag: none;
-        -o-user-drag: none;
     }
     h4 {
         margin: 0;
         font-weight: 600;
         font-size: 1.1rem;
-        color: rgb(193, 203, 219);
+        color: white;
         white-space: nowrap;
     }
 }
@@ -183,10 +171,11 @@
         margin: 0;
         border-radius: var(--border-radius);
         padding: 8px 10px;
+        color: white;
         cursor: pointer;
 
         &:hover {
-            background: var(--inv-secondary-text);
+            background-color: rgba(207, 213, 226, 0.2);
         }
     }
 }

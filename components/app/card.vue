@@ -3,7 +3,10 @@
 		class="card"
 		@click="$emit('card-click')"
 	>
-		<img :src="imgSrc">
+		<img
+			:src="imgSrc"
+			@dragstart.prevent
+		>
 		<article class="subcard">
 			<slot>Quiz</slot>
 		</article>
@@ -56,11 +59,6 @@ defineEmits(["card-click"]);
 	object-fit: cover;
 	border-radius: 12px;
 	z-index: 0;
-
-	-webkit-user-drag: none;
-	-khtml-user-drag: none;
-	-moz-user-drag: none;
-	-o-user-drag: none;
 }
 
 .subcard {
@@ -78,7 +76,6 @@ defineEmits(["card-click"]);
 	justify-content: left;
 	align-items: center;
 	box-shadow: 0 2px 6px var(--shadow);
-
 }
 
 p {
