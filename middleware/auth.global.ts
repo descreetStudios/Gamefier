@@ -10,7 +10,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
 	// console.log("Role: ", userStore.role);
 
 	if (userStore.startup && (!"/loading".includes(to.path) || "/".includes(to.path))) {
-		return navigateTo({ path: "/loading", query: { pathTo: to.path } }, { redirectCode: 302 });
+		return navigateTo({ path: "/loading", query: { pathTo: to.path } });
 	}
 
 	if (!userStore.userId && !excludedPaths.includes(to.path)) {

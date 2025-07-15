@@ -22,37 +22,49 @@
 				<li class="dropdown">
 					<NuxtLink to="#">About</NuxtLink>
 					<ul class="dropdown-menu menu">
-						<li><NuxtLink to="#">About content</NuxtLink></li>
+						<li>
+							<NuxtLink to="#">About content</NuxtLink>
+						</li>
 					</ul>
 				</li>
 				<li class="dropdown">
 					<NuxtLink to="#">Services</NuxtLink>
 					<ul class="dropdown-menu menu">
-						<li><NuxtLink to="#">Services content</NuxtLink></li>
+						<li>
+							<NuxtLink to="#">Services content</NuxtLink>
+						</li>
 					</ul>
 				</li>
 				<li class="dropdown">
 					<NuxtLink to="#">Products</NuxtLink>
 					<ul class="dropdown-menu menu">
-						<li><NuxtLink to="#">Products content</NuxtLink></li>
+						<li>
+							<NuxtLink to="#">Products content</NuxtLink>
+						</li>
 					</ul>
 				</li>
 				<li class="dropdown">
 					<NuxtLink to="#">Features</NuxtLink>
 					<ul class="dropdown-menu menu">
-						<li><NuxtLink to="#">Features content</NuxtLink></li>
+						<li>
+							<NuxtLink to="#">Features content</NuxtLink>
+						</li>
 					</ul>
 				</li>
 				<li class="dropdown">
 					<NuxtLink to="#">Contact</NuxtLink>
 					<ul class="dropdown-menu menu">
-						<li><NuxtLink to="#">Contact content</NuxtLink></li>
+						<li>
+							<NuxtLink to="#">Contact content</NuxtLink>
+						</li>
 					</ul>
 				</li>
 				<li class="dropdown">
 					<NuxtLink to="/dashboard">Dashboard</NuxtLink>
 					<ul class="dropdown-menu menu">
-						<li><NuxtLink to="/dashboard">User dashboard</NuxtLink></li>
+						<li>
+							<NuxtLink to="/dashboard">User dashboard</NuxtLink>
+						</li>
 					</ul>
 				</li>
 			</ul>
@@ -85,7 +97,12 @@
 						v-if="showUserMenu"
 						:class="['user-menu', { show: showUserMenu }]"
 					>
-						<p>Settings</p>
+						<p @click="profileHandler">
+							My Profile
+						</p>
+						<p @click="settingsHandler">
+							Settings
+						</p>
 						<p @click="logoutHandler">
 							Logout
 						</p>
@@ -115,6 +132,14 @@ const { logout } = useAuth();
 const logoutHandler = async () => {
 	await logout();
 	window.location.reload();
+};
+
+const profileHandler = () => {
+	return navigateTo({ path: "/dashboard", query: { activeViewComponent: "profile" } });
+};
+
+const settingsHandler = () => {
+	return navigateTo({ path: "/dashboard", query: { activeViewComponent: "settings" } });
 };
 
 onMounted(() => {

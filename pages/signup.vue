@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<AppGlobalAlert />
+		<app-global-alert />
 
 		<main class="login-page">
 			<section class="login-card">
@@ -155,17 +155,44 @@ async function onSubmit() {
 		});
 	}
 	catch (err) {
+		const message = getAuthErrorMessage(err.code);
 		$eventBus.emit("alert", {
-			message: err.message || "Sign up failed.",
+			message,
 			type: "error",
 			duration: 4000,
 		});
 	}
 }
 
-function onGooglesignup() {
-	alert("Google signup");
-}
+const { loginWithGoogle, user } = useAuth();
+
+const onGooglesignup = async () => {
+	try {
+		await loginWithGoogle();
+
+		if (!user.value) {
+			return;
+		}
+
+		$eventBus.emit("alert", {
+			message: "Log in success! Redirecting...",
+			type: "success",
+			duration: 3000,
+		});
+
+		setTimeout(() => {
+			navigateTo("/dashboard");
+		}, 3000);
+	}
+	catch (err) {
+		const message = getAuthErrorMessage(err.code);
+		$eventBus.emit("alert", {
+			message,
+			type: "error",
+			duration: 4000,
+		});
+	}
+};
 </script>
 
 <style lang="scss">

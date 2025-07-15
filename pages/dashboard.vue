@@ -2,6 +2,28 @@
 import { AppDashboardAdmin, AppDashboardGames, AppDashboardProfile, AppDashboardSettings, AppDashboardTemplates, AppDashboardUser } from "#components";
 
 const activeView = ref("dashboard");
+const route = useRoute();
+const targetPath = route.query.activeViewComponent;
+const router = useRouter();
+
+function navigate(view) {
+	activeView.value = view;
+
+	router.replace({
+		path: "/dashboard",
+		query: { activeViewComponent: view },
+	});
+}
+
+if (targetPath && typeof targetPath === "string") {
+	activeView.value = targetPath;
+}
+else {
+	router.replace({
+		path: "/dashboard",
+		query: { activeViewComponent: "dashboard" },
+	});
+}
 
 const activeViewComponent = computed(() => {
 	switch (activeView.value) {
@@ -25,7 +47,7 @@ const activeViewComponent = computed(() => {
 	<div class="dashboard-layout">
 		<app-dashboard-sidebar
 			:active="activeView"
-			@navigate="activeView = $event"
+			@navigate="navigate"
 		/>
 		<app-dashboard-content>
 			<component :is="activeViewComponent" />
