@@ -47,10 +47,6 @@
             a {
                 text-decoration: none;
                 color: rgb(240, 240, 240);
-                -webkit-user-drag: none;
-                -khtml-user-drag: none;
-                -moz-user-drag: none;
-                -o-user-drag: none;
             }
 
             .dropdown-menu {
@@ -81,10 +77,6 @@
     color: rgb(255, 255, 255);
     display: flex;
     align-items: center;
-    -webkit-user-drag: none;
-    -khtml-user-drag: none;
-    -moz-user-drag: none;
-    -o-user-drag: none;
 
     .logo-img {
         width: 64px;

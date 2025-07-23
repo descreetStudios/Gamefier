@@ -10,6 +10,7 @@
 			<img
 				src="/images/Background.png"
 				alt="Background"
+				@dragstart.prevent
 			>
 		</div>
 
@@ -32,6 +33,7 @@
 			<img
 				src="/images/features.png"
 				alt="Features"
+				@dragstart.prevent
 			>
 			<div class="text-block">
 				<h2>What's Gamefier?</h2>
@@ -51,6 +53,7 @@
 			<img
 				src="/images/games.png"
 				alt="Games"
+				@dragstart.prevent
 			>
 			<div class="text-block">
 				<h2>How can i create a game?</h2>
@@ -71,6 +74,7 @@
 			<img
 				src="/images/community.png"
 				alt="Community"
+				@dragstart.prevent
 			>
 			<div class="text-block">
 				<h2>Community</h2>
@@ -89,6 +93,7 @@
 			<img
 				src="/images/getStarted.png"
 				alt="Get Started"
+				@dragstart.prevent
 			>
 			<div class="text-block">
 				<h2>Get Started</h2>

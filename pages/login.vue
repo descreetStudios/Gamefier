@@ -8,6 +8,7 @@
 					src="/images/logo/gamefier-logo-64px.png"
 					alt="L"
 					class="logo"
+					@dragstart.prevent
 				>
 				<h1 class="login-title">
 					Log in
@@ -46,11 +47,15 @@
 						src="/images/icons/google-icon.svg"
 						alt="G"
 						class="google-icon"
+						@dragstart.prevent
 					>
 					Log in with Google
 				</button>
 				<footer class="login-footer">
-					Don't have an account? <NuxtLink to="/signup">Sign up</NuxtLink>
+					Don't have an account? <NuxtLink
+						to="/signup"
+						@dragstart.prevent
+					>Sign up</NuxtLink>
 				</footer>
 			</section>
 		</main>

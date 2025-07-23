@@ -6,6 +6,7 @@
 				<NuxtLink
 					to="/"
 					class="logo-link"
+					@dragstart.prevent
 				>
 					<img
 						src="/images/logo/gamefier-logo-64px.png"
@@ -18,7 +19,10 @@
 			</div>
 
 			<!-- Dropdown items (Center) -->
-			<ul class="navbar-center nav">
+			<ul
+				class="navbar-center nav"
+				@dragstart.prevent
+			>
 				<li class="dropdown">
 					<NuxtLink to="#">About</NuxtLink>
 					<ul class="dropdown-menu menu">

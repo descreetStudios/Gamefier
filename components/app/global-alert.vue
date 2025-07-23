@@ -41,6 +41,7 @@ onBeforeUnmount(() => {
 				class="image"
 				:src="getIcon(type)"
 				alt="I"
+				@dragstart.prevent
 			>
 			<div class="message-card-content">
 				{{ message }}

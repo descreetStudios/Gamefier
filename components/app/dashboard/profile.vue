@@ -8,12 +8,14 @@
 				class="userIcon"
 				:src="userIcon"
 				alt="user icon"
+				@dragstart.prevent
 			>
 			<div class="editOverlay" />
 			<img
 				class="editIconOverlay"
 				:src="editIcon"
 				alt="edit icon overlay"
+				@dragstart.prevent
 			>
 		</div>
 		<h4 class="displayname">
@@ -73,7 +75,6 @@ const editIcon = ref("/images/icons/edit.png");
 
 		.editIconOverlay {
 			opacity: 0;
-			z-index: 1;
 			padding: 6rem;
 			transition: opacity 0.3s ease;
 		}
@@ -88,13 +89,5 @@ const editIcon = ref("/images/icons/edit.png");
 		color: var(--primary-text);
 		margin-left: 1.5rem;
 	}
-
-}
-
-img {
-	-webkit-user-drag: none;
-	-khtml-user-drag: none;
-	-moz-user-drag: none;
-	-o-user-drag: none;
 }
 </style>
