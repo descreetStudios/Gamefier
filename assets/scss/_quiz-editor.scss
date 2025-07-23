@@ -20,7 +20,7 @@ html {
     .sidebar {
         display: flex;
         flex-direction: column;
-        width: calc($sidebar-width - 1rem);
+        width: calc($sidebar-width - 2rem);
         height: calc(100vh - 1rem);
         border-radius: 0.5rem;
         background-color: var(--surface);
@@ -85,8 +85,10 @@ html {
             display: flex;
             flex-direction: column;
             flex: 1 1 auto;
+            aspect-ratio: 16 / 9;
             overflow: hidden;
             padding: 2rem;
+            min-width: 0;
 
             &__question {
                 width: 100%;
@@ -103,15 +105,15 @@ html {
             &__middle {
                 flex: 1;
                 display: flex;
+                flex-wrap: nowrap;
                 justify-content: space-between;
                 align-items: center;
                 gap: 2rem;
 
                 &__image {
-                    width: 1020px;
-                    max-width: 30rem;
-                    margin-left: 5rem;
+                    max-width: 40%;
                     height: auto;
+                    margin-left: 5rem;
                     display: flex;
                     justify-content: flex-start;
                     align-items: center;
@@ -154,7 +156,7 @@ html {
             justify-content: flex-start;
             align-items: center;
 
-            height: 10.2rem;
+            height: 11rem;
             overflow-x: auto;
             overflow-y: hidden;
             gap: 2.6rem;
@@ -163,7 +165,8 @@ html {
 
             > * {
                 flex: 0 0 auto;
-                scale: 0.95;
+                width: 10rem;
+                scale: 0.8;
             }
         }
     }
