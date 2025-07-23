@@ -30,8 +30,9 @@
     border: 1px solid var(--border);
 
     width: 300px;
-    height: 180px;
-    overflow: hidden;
+    min-height: 180px;
+    height: auto;
+    overflow: visible;
 
     transition: transform 0.25s ease, box-shadow 0.25s ease;
 
