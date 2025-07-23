@@ -46,6 +46,15 @@
 				Admin
 			</button>
 
+			<button
+				v-if="admin"
+				class="nav-link"
+				:class="{ active: active === 'banAppeals' }"
+				@click="emit('navigate', 'banAppeals')"
+			>
+				Ban Appeals
+			</button>
+
 			<div
 				class="user-section"
 				:class="{ open: showUserLinks }"

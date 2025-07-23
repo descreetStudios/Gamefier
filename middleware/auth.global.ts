@@ -6,7 +6,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
 	const excludedPaths = ["/", "/signup", "/login", "/loading"];
 
-	// console.log("🔍 Stato utente(ID):", userStore.userId);
+	// console.log("User state(ID):", userStore.userId);
 	// console.log("Role: ", userStore.role);
 
 	if (userStore.startup && (!"/loading".includes(to.path) || "/".includes(to.path))) {
@@ -15,6 +15,14 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
 	if (!userStore.userId && !excludedPaths.includes(to.path)) {
 		return navigateTo("/login");
+	}
+
+	if (userStore.role !== "banned" && ["/banned"].includes(to.path)) {
+		return navigateTo("/");
+	}
+
+	if (userStore.role === "banned" && to.path !== "/banned") {
+		return navigateTo("/banned");
 	}
 
 	if (userStore.userId && ["/login", "/signup"].includes(to.path)) {

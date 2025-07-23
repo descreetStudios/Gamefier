@@ -24,7 +24,19 @@
 						Administrator
 					</option>
 				</select>
-				<input v-model="user.password" type="password" minlength="8">
+				<input v-if="user.role === 'banned'" v-model="user.banReason" type="text" placeholder="Ban reason"
+					required>
+				<select v-if="user.role === 'banned'" v-model="user.banType" name="banType">
+					<option value="temporary">
+						Temporary
+					</option>
+					<option value="permanent">
+						Permanent
+					</option>
+				</select>
+				<input v-if="user.role === 'banned' && user.banType === 'temporary'" v-model="user.banExpiresAt"
+					type="date" required>
+				<input v-model="user.password" type="password" placeholder="New password" minlength="8">
 				<input type="submit" value="Update Profile">
 			</form>
 		</div>
@@ -32,13 +44,14 @@
 </template>
 
 <script setup>
-import { collection, query, where, getDocs, doc, updateDoc } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, updateDoc, deleteField, Timestamp } from "firebase/firestore";
 import { ref } from "vue";
 import { httpsCallable } from "firebase/functions";
 
 const { $db } = useNuxtApp();
 const { $functions } = useNuxtApp();
 const { $eventBus } = useNuxtApp();
+const { $userStore } = useNuxtApp();
 
 const userSearchName = ref("");
 const users = ref([]);
@@ -72,11 +85,19 @@ async function searchUsersByDisplayNameStartsWith() {
 		users.value = [];
 		oldUsers.value = [];
 		querySnapshot.forEach((doc) => {
-			users.value.push({ id: doc.id, ...doc.data() });
+			const data = doc.data();
+			if (!data.banType) {
+				data.banType = "temporary";
+			}
+			if (data.banExpiresAt) {
+				const date = data.banExpiresAt.toDate ? data.banExpiresAt.toDate() : new Date(data.banExpiresAt);
+				data.banExpiresAt = date.toISOString().split('T')[0];
+			}
+			users.value.push({ id: doc.id, ...data });
 			oldUsers.value = users.value.map(user => ({ ...user }));
 		});
 		const count = users.value.length;
-		const message = `Found ${count} user${count !== 1 ? 's' : ''}.`;
+		const message = `Found ${count} user${count !== 1 ? "s" : ""}.`;
 		if (!called.value) {
 			$eventBus.emit("alert", {
 				message: message,
@@ -99,7 +120,7 @@ async function searchUsersByDisplayNameStartsWith() {
 // Update user profile (both Firestore and Auth)
 async function updateProfile(user) {
 	const oldUser = oldUsers.value.find(u => u.id === user.id);
-	const callable = httpsCallable($functions, 'updateUserAuth')
+	const callable = httpsCallable($functions, "updateUserAuth");
 
 	if (!oldUser) {
 		console.warn("User not found in backup for update.");
@@ -125,6 +146,41 @@ async function updateProfile(user) {
 	if (user.password) {
 		updatedAuthFields.password = user.password;
 	}
+	if (user.role !== "banned" && (user.banReason || user.banType || user.banExpiresAt || user.bannedBy)) {
+		updatedStoreFields.banReason = deleteField();
+		updatedStoreFields.banType = deleteField();
+		updatedStoreFields.banExpiresAt = deleteField();
+		updatedStoreFields.bannedBy = deleteField();
+	}
+	else {
+		if (user.banReason !== oldUser.banReason) {
+			updatedStoreFields.banReason = user.banReason;
+		}
+		if (user.banType !== oldUser.banType) {
+			updatedStoreFields.banType = user.banType;
+		}
+		if (user.banExpiresAt && (user.banExpiresAt !== oldUser.banExpiresAt)) {
+			const date = new Date(user.banExpiresAt + 'T00:00:00');
+			Timestamp.fromDate(date);
+			if (date <= new Date()) {
+				$eventBus.emit("alert", {
+					message: "Please enter a valid date.",
+					type: "error",
+					duration: 3000,
+				});
+				return;	
+			}
+			else {
+				updatedStoreFields.banExpiresAt = date;
+			}
+		}
+		else {
+			updatedStoreFields.banExpiresAt = deleteField();
+		}
+		if (!user.bannedBy || (user.bannedBy !== oldUser.bannedBy)) {
+			updatedStoreFields.bannedBy = $userStore.displayName;
+		}
+	}
 
 	if (!Object.keys(updatedStoreFields).length > 0 && !Object.keys(updatedAuthFields).length > 0) {
 		$eventBus.emit("alert", {
@@ -136,14 +192,14 @@ async function updateProfile(user) {
 	else {
 		try {
 			if (Object.keys(updatedAuthFields).length > 0) {
-				const result = await callable({
+				const _result = await callable({
 					uid: user.id,
 					fieldsToUpdate: {
 						displayName: updatedAuthFields.displayName,
 						email: updatedAuthFields.email,
-						password: updatedAuthFields.password
-					}
-				})
+						password: updatedAuthFields.password,
+					},
+				});
 				// console.log('Response:', result.data)
 			}
 			await updateDoc(userDocRef, updatedStoreFields);
@@ -163,9 +219,5 @@ async function updateProfile(user) {
 			});
 		}
 	}
-
 }
-
-// Global alert
-
 </script>

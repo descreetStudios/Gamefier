@@ -10,6 +10,7 @@ import {
 import type { User } from "firebase/auth";
 
 import { doc, setDoc, getDoc } from "firebase/firestore";
+
 // Google Login
 export const useAuth = () => {
 	// Pinia Store
@@ -23,26 +24,13 @@ export const useAuth = () => {
 	const user = useState<User | null>("user", () => null);
 	const userData = useState<Record<string, unknown> | null>("userData", () => null);
 
-	const fetchUserData = async (uid: string) => {
-		if (!uid) return;
-		const userRef = doc($db, "users", uid);
-		const userSnapshot = await getDoc(userRef);
-
-		if (userSnapshot.exists()) {
-			userData.value = userSnapshot.data();
-			userStore.storeUserData("userId", uid);
-			userStore.storeUserData("role", userData.value?.role);
-			userStore.storeUserData("displayName", userData.value?.displayName);
-		}
-	};
-
 	const initAuth = async () => {
 		onAuthStateChanged($auth, async (u) => {
 			// console.log("🔍 Utente rilevato da FireAuth:", u);
 			user.value = u;
 
 			if (user.value) {
-				await fetchUserData(user.value?.uid);
+				await userStore.syncUserData(user.value?.uid);
 			}
 			userStore.storeUserData("loaded", true);
 		});
@@ -74,7 +62,7 @@ export const useAuth = () => {
 					role: "user",
 				});
 			}
-			await fetchUserData(user.uid);
+			await userStore.syncUserData(user.uid);
 		}
 		catch (err) {
 			console.error("Errore durante il login con Google:", err);

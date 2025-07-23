@@ -1,5 +1,5 @@
 <script setup>
-import { AppDashboardAdmin, AppDashboardGames, AppDashboardProfile, AppDashboardSettings, AppDashboardTemplates, AppDashboardUser } from "#components";
+import { AppDashboardAdmin, AppDashboardGames, AppDashboardProfile, AppDashboardSettings, AppDashboardTemplates, AppDashboardUser, AppDashboardBanAppeals } from "#components";
 
 const activeView = ref("dashboard");
 const route = useRoute();
@@ -33,6 +33,8 @@ const activeViewComponent = computed(() => {
 			return AppDashboardTemplates;
 		case "admin":
 			return AppDashboardAdmin;
+		case "banAppeals":
+			return AppDashboardBanAppeals;
 		case "profile":
 			return AppDashboardProfile;
 		case "settings":
