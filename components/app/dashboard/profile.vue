@@ -57,10 +57,6 @@ const editIcon = ref("/images/icons/edit.png");
 			border: 1px solid var(--inv-bg);
 		}
 
-		.userIcon {
-			background-color: red;
-		}
-
 		.editOverlay {
 			transition: opacity 0.3s ease;
 			background-color: black;

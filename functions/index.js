@@ -68,22 +68,22 @@ exports.updateUserAuth = functions.https.onCall(async (request) => {
 	}
 });
 
-exports.unbanExpiredUsers = functions.pubsub.schedule("every 1 minutes").onRun(async () => {
-	const now = admin.firestore.Timestamp.now();
+// exports.unbanExpiredUsers = functions.pubsub.schedule("every 1 minutes").onRun(async () => {
+// 	const now = admin.firestore.Timestamp.now();
 
-	const snapshot = await admin.firestore().collection("users")
-		.where("role", "==", "banned")
-		.where("banExpiresAt", "<=", now)
-		.get();
+// 	const snapshot = await admin.firestore().collection("users")
+// 		.where("role", "==", "banned")
+// 		.where("banExpiresAt", "<=", now)
+// 		.get();
 
-	const batch = admin.firestore().batch();
-	snapshot.docs.forEach((doc) => {
-		batch.update(doc.ref, {
-			role: "user",
-			banExpiresAt: admin.firestore.FieldValue.delete(),
-		});
-	});
+// 	const batch = admin.firestore().batch();
+// 	snapshot.docs.forEach((doc) => {
+// 		batch.update(doc.ref, {
+// 			role: "user",
+// 			banExpiresAt: admin.firestore.FieldValue.delete(),
+// 		});
+// 	});
 
-	await batch.commit();
-	console.log(`✅ Unbanned ${snapshot.size} users`);
-});
+// 	await batch.commit();
+// 	console.log(`✅ Unbanned ${snapshot.size} users`);
+// });
