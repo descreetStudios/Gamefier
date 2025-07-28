@@ -4,92 +4,34 @@
 
 		<main class="login-page">
 			<section class="login-card">
-				<img
-					src="/images/logo/gamefier-logo-64px.png"
-					alt="L"
-					class="logo"
-					@dragstart.prevent
-				>
+				<img src="/images/logo/gamefier-logo-64px.png" alt="L" class="logo" @dragstart.prevent>
 				<h1 class="login-title">
 					Sign up
 				</h1>
-				<form
-					class="signup-form"
-					@submit.prevent="onSubmit"
-				>
-					<input
-						v-model="displayName"
-						type="text"
-						placeholder="Display Name"
-						required
-						autocomplete="displayName"
-					>
-					<input
-						v-model="email"
-						type="email"
-						placeholder="Email"
-						required
-						autocomplete="email"
-					>
-					<input
-						v-model="confirmEmail"
-						type="email"
-						placeholder="Confirm Email"
-						required
-						autocomplete="email"
-					>
-					<input
-						v-model="password"
-						type="password"
-						placeholder="Password"
-						minlength="8"
-						required
-						autocomplete="new-password"
-					>
-					<input
-						v-model="confirmPassword"
-						type="password"
-						placeholder="Confirm Password"
-						required
-						autocomplete="new-password"
-					>
-					<p
-						v-if="showError"
-						class="error"
-					>
-						<img
-							src="/images/icons/warning.png"
-							alt="!"
-							class="error-icon"
-							@dragstart.prevent
-						>
+				<form class="signup-form" @submit.prevent="onSubmit">
+					<input v-model="displayName" type="text" placeholder="Display Name" required
+						autocomplete="displayName">
+					<input v-model="email" type="email" placeholder="Email" required autocomplete="email">
+					<input v-model="confirmEmail" type="email" placeholder="Confirm Email" required
+						autocomplete="email">
+					<input v-model="password" type="password" placeholder="Password" minlength="8" required
+						autocomplete="new-password">
+					<input v-model="confirmPassword" type="password" placeholder="Confirm Password" required
+						autocomplete="new-password">
+					<p v-if="showError" class="error">
+						<img src="/images/icons/warning.png" alt="!" class="error-icon" @dragstart.prevent>
 						{{ errorMessage }}
 					</p>
-					<button
-						type="submit"
-						class="btn-login"
-						:disabled="!formValid"
-					>
+					<button type="submit" class="btn-login" :disabled="!formValid">
 						Sign up
 					</button>
 				</form>
-				<button
-					class="btn-google"
-					@click="onGooglesignup"
-				>
-					<img
-						src="/images/icons/google-icon.svg"
-						alt="G"
-						class="google-icon"
-						@dragstart.prevent
-					>
+				<button class="btn-google" @click="onGooglesignup">
+					<img src="/images/icons/google-icon.svg" alt="G" class="google-icon" @dragstart.prevent>
 					Sign up with Google
 				</button>
 				<footer class="signup-footer">
-					Already have an account? <NuxtLink
-						to="/login"
-						@dragstart.prevent
-					>Log in</NuxtLink>
+					Already have an account? <NuxtLink to="/login" @dragstart.prevent>Log in</NuxtLink>
 				</footer>
 			</section>
 		</main>
@@ -101,7 +43,7 @@ import { sleep } from "@/utils/sleep";
 import { navigateTo } from "#app";
 
 const { $eventBus } = useNuxtApp();
-const { signup, signupUserData } = useAuth();
+const { signup } = useAuth();
 
 const displayName = ref("");
 const email = ref("");
@@ -146,19 +88,19 @@ const errorMessage = computed(() => {
 
 async function onSubmit() {
 	try {
-		const duration = 3000;
-		await signup(email.value, password.value);
-		await signupUserData(email.value, displayName.value);
+	const duration = 3000;
+	console.log()
+	await signup(email.value, password.value, displayName.value);
 
-		$eventBus.emit("alert", {
-			message: "Sign up success! Redirecting...",
-			type: "success",
-			duration: duration,
-		});
+	$eventBus.emit("alert", {
+		message: "Sign up success! Redirecting...",
+		type: "success",
+		duration: duration,
+	});
 
-		sleep(duration).then(() => {
-			navigateTo("/dashboard");
-		});
+	sleep(duration).then(() => {
+		navigateTo("/dashboard");
+	});
 	}
 	catch (err) {
 		const message = getAuthErrorMessage(err.code);

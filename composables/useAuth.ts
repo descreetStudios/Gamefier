@@ -8,8 +8,17 @@ import {
 	updateProfile,
 } from "firebase/auth";
 import type { User } from "firebase/auth";
-
+import { httpsCallable } from "firebase/functions";
 import { doc, setDoc, getDoc } from "firebase/firestore";
+
+interface UsernameCheckRequest {
+	displayName: string;
+}
+
+interface UsernameCheckResponse {
+	available: boolean;
+}
+
 
 // Google Login
 export const useAuth = () => {
@@ -19,6 +28,8 @@ export const useAuth = () => {
 
 	const { $auth } = useNuxtApp();
 	const { $db } = useNuxtApp();
+	const { $functions } = useNuxtApp();
+
 
 	const uid = ref("");
 	const user = useState<User | null>("user", () => null);
@@ -73,18 +84,10 @@ export const useAuth = () => {
 		await signInWithEmailAndPassword($auth, email, password);
 	};
 
-	const signup = async (email: string, password: string, displayName: string) => {
-		const userCredential = await createUserWithEmailAndPassword($auth, email, password);
-		await updateProfile(userCredential.user, {
-			displayName: displayName,
-		});
-		uid.value = userCredential.user.uid;
-	};
-
-	const signupUserData = async (email: string, displayName: string) => {
+	const signupUserData = async (uid: string, email: string, displayName: string) => {
 		try {
-			await setDoc(doc($db, "users", uid.value), {
-				uid: uid.value,
+			await setDoc(doc($db, "users", uid), {
+				uid: uid,
 				displayName: displayName,
 				displayNameLowerCase: displayName.toLowerCase(),
 				email: email,
@@ -96,6 +99,34 @@ export const useAuth = () => {
 		catch (error) {
 			console.error("Errore nel salvataggio dei dati:", error);
 		}
+	};
+
+	const signup = async (email: string, password: string, displayName: string) => {
+		const checkUsernameAvailability = httpsCallable<UsernameCheckRequest, UsernameCheckResponse>(
+			$functions,
+			"checkUsernameAvailability"
+		);
+		const isUsernameAvailable = async (displayName: string): Promise<boolean> => {
+			try {
+				const result = await checkUsernameAvailability({ displayName });
+				return result.data.available;
+			} catch (error) {
+				console.error("Errore durante la verifica:", error);
+				return false;
+			}
+		};
+		const available = await isUsernameAvailable(displayName);
+		if (!available) {
+			const error = new Error("The username is not available.");
+			(error as any).code = "displayName-not-available";
+			throw error;
+		}
+		const userCredential = await createUserWithEmailAndPassword($auth, email, password);
+		uid.value = userCredential.user.uid;
+		await signupUserData(uid.value, email, displayName);
+		await updateProfile(userCredential.user, {
+			displayName: displayName,
+		});
 	};
 
 	const logout = async () => {
@@ -110,7 +141,6 @@ export const useAuth = () => {
 		initAuth,
 		login,
 		signup,
-		signupUserData,
 		logout,
 		loginWithGoogle,
 	};

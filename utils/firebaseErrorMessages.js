@@ -22,6 +22,8 @@ export function getAuthErrorMessage(code) {
 			return "The sign-in process was not completed.";
 		case "auth/popup-blocked":
 			return "The sign-in popup was blocked by your browser.";
+		case "displayName-not-available":
+			return "The username is not available."
 		default:
 			return "An unexpected error occurred. Please try again.";
 	}
