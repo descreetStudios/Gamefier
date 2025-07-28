@@ -1,4 +1,5 @@
 <script setup>
+import { query } from "firebase/firestore";
 import { onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 
@@ -7,15 +8,15 @@ const { $userStore } = useNuxtApp();
 const loaded = computed(() => $userStore.loaded);
 
 const route = useRoute();
-const targetPath = route.query.pathTo;
+const { pathTo, ...otherParams } = route.query;
 
 onMounted(() => {
     document.body.style.overflow = "hidden";
     setTimeout(() => {
         const intervalId = setInterval(() => {
             if (loaded.value === true) {
-                if (targetPath && typeof targetPath === "string" && targetPath !== "/loading") {
-                    navigateTo(targetPath);
+                if (pathTo && typeof pathTo === "string" && pathTo !== "/loading") {
+                    navigateTo({ path: pathTo, query: { ...otherParams } });
                 }
                 else {
                     navigateTo("/");
