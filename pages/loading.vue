@@ -1,5 +1,4 @@
 <script setup>
-import { query } from "firebase/firestore";
 import { onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 
