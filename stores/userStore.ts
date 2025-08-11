@@ -1,5 +1,7 @@
 import { defineStore } from "pinia";
 import { doc, getDoc } from "firebase/firestore";
+import { useNuxtApp } from "nuxt/app";
+import type { Firestore } from "firebase/firestore";
 
 type DataTypes = "startup" | "loaded";
 
@@ -19,8 +21,9 @@ export const useStore = defineStore("userStore", {
 	actions: {
 		async syncUserData(uid: string) {
 			const { $db } = useNuxtApp();
+			const db = $db as Firestore;
 			if (!uid) return;
-			const userRef = doc($db, "users", uid);
+			const userRef = doc(db, "users", uid);
 			const userSnapshot = await getDoc(userRef);
 			if (userSnapshot.exists()) {
 				const userData = userSnapshot.data();

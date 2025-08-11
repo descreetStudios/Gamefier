@@ -184,7 +184,7 @@ async function searchUsersByDisplayNameStartsWith() {
 // Update user profile (both Firestore and Auth)
 async function updateProfile(user) {
 	const oldUser = oldUsers.value.find(u => u.id === user.id);
-	const callable = httpsCallable($functions, "updateUserAuth");
+	const updateUserAuth = httpsCallable($functions, "updateUserAuth");
 
 	if (!oldUser) {
 		console.warn("User not found in backup for update.");
@@ -196,9 +196,20 @@ async function updateProfile(user) {
 	const updatedAuthFields = {};
 
 	if (user.displayName !== oldUser.displayName) {
-		updatedStoreFields.displayName = user.displayName;
-		updatedAuthFields.displayName = user.displayName;
-		updatedStoreFields.displayNameLowerCase = user.displayName.toLowerCase();
+		const available = await isUsernameAvailable(user.displayName);
+		if (!available) {
+			$eventBus.emit("alert", {
+				message: "Username not available",
+				type: "error",
+				duration: 3000,
+			});
+			return;
+		}
+		else {
+			updatedStoreFields.displayName = user.displayName;
+			updatedAuthFields.displayName = user.displayName;
+			updatedStoreFields.displayNameLowerCase = user.displayName.toLowerCase();
+		}
 	}
 	if (user.email !== oldUser.email) {
 		updatedStoreFields.email = user.email;
@@ -238,9 +249,6 @@ async function updateProfile(user) {
 				updatedStoreFields.banExpiresAt = date;
 			}
 		}
-		else {
-			updatedStoreFields.banExpiresAt = deleteField();
-		}
 		if (!user.bannedBy || (user.bannedBy !== oldUser.bannedBy)) {
 			updatedStoreFields.bannedBy = $userStore.displayName;
 		}
@@ -256,7 +264,7 @@ async function updateProfile(user) {
 	else {
 		try {
 			if (Object.keys(updatedAuthFields).length > 0) {
-				const _result = await callable({
+				const _result = await updateUserAuth({
 					uid: user.id,
 					fieldsToUpdate: {
 						displayName: updatedAuthFields.displayName,
@@ -264,7 +272,7 @@ async function updateProfile(user) {
 						password: updatedAuthFields.password,
 					},
 				});
-				// console.log('Response:', result.data)
+				console.log("Response:", result.data);
 			}
 			await updateDoc(userDocRef, updatedStoreFields);
 			$eventBus.emit("alert", {
@@ -284,6 +292,20 @@ async function updateProfile(user) {
 		}
 	}
 }
+
+const isUsernameAvailable = async (displayName) => {
+	const checkUsernameAvailability = httpsCallable($functions, "checkUsernameAvailability"); ;
+	try {
+		const result = await checkUsernameAvailability({
+			displayName,
+		});
+		return result.data.available;
+	}
+	catch (error) {
+		console.error("Errore durante la verifica:", error);
+		return false;
+	}
+};
 </script>
 
 <style lang="scss" scoped>
