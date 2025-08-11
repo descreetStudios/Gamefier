@@ -16,7 +16,7 @@ service cloud.firestore {
         isAdmin() ||
         (
           request.auth.uid == userId
-          && request.resource.data.keys().hasOnly(['email', 'displayName', 'photoURL'])
+          && request.resource.data.diff(resource.data).changedKeys().hasOnly(['email', 'displayName', 'photoURL', 'banAppealText'])
         )
       );
     }

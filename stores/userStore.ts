@@ -8,11 +8,13 @@ export const useStore = defineStore("userStore", {
 		startup: true as unknown | boolean,
 		loaded: false as unknown | boolean,
 		userId: null as unknown | string,
+		displayName: null as unknown | string,
 		role: null as unknown | string,
 		banReason: null as unknown | string,
 		banExpiresAt: null as unknown | string,
 		bannedBy: null as unknown | string,
-		displayName: null as unknown | string,
+		banAppealText: null as unknown | string,
+		banAppealAlreadySent: null as unknown | false,
 	}),
 	actions: {
 		async syncUserData(uid: string) {
@@ -29,6 +31,10 @@ export const useStore = defineStore("userStore", {
 				this.banReason = userData.banReason || null;
 				this.banExpiresAt = userData.banExpiresAt || null;
 				this.bannedBy = userData.bannedBy || null;
+				this.banAppealText = userData.banAppealText || null;
+				if (userData.banAppealText) {
+					this.banAppealAlreadySent = true;
+				}
 			}
 		},
 		storeUserData(type: DataTypes, value: unknown) {

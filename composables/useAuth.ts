@@ -19,7 +19,6 @@ interface UsernameCheckResponse {
 	available: boolean;
 }
 
-
 // Google Login
 export const useAuth = () => {
 	// Pinia Store
@@ -29,7 +28,6 @@ export const useAuth = () => {
 	const { $auth } = useNuxtApp();
 	const { $db } = useNuxtApp();
 	const { $functions } = useNuxtApp();
-
 
 	const uid = ref("");
 	const user = useState<User | null>("user", () => null);
@@ -104,13 +102,14 @@ export const useAuth = () => {
 	const signup = async (email: string, password: string, displayName: string) => {
 		const checkUsernameAvailability = httpsCallable<UsernameCheckRequest, UsernameCheckResponse>(
 			$functions,
-			"checkUsernameAvailability"
+			"checkUsernameAvailability",
 		);
 		const isUsernameAvailable = async (displayName: string): Promise<boolean> => {
 			try {
 				const result = await checkUsernameAvailability({ displayName });
 				return result.data.available;
-			} catch (error) {
+			}
+			catch (error) {
 				console.error("Errore durante la verifica:", error);
 				return false;
 			}
@@ -118,7 +117,9 @@ export const useAuth = () => {
 		const available = await isUsernameAvailable(displayName);
 		if (!available) {
 			const error = new Error("The username is not available.");
-			(error as any).code = "displayName-not-available";
+			if (typeof error === "object" && error !== null && "code" in error) {
+				(error as { code: string }).code = "displayName-not-available";
+			}
 			throw error;
 		}
 		const userCredential = await createUserWithEmailAndPassword($auth, email, password);
