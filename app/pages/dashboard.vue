@@ -18,7 +18,7 @@ function navigate(view) {
 }
 
 if (targetPath && typeof targetPath === "string") {
-	if ($userStore.role !== "admin" && targetPath === "admin") {
+	if ($userStore.role !== "admin" && (targetPath === "admin" || targetPath === "banAppeals")) {
 		activeView.value = "dasboard";
 		router.replace({
 			path: "/dashboard",
