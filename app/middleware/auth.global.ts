@@ -1,4 +1,5 @@
 import type { useStore } from "../../stores/userStore";
+import { useNuxtApp, defineNuxtRouteMiddleware, navigateTo } from "nuxt/app";
 
 export default defineNuxtRouteMiddleware(async (to) => {
 	const { $userStore } = useNuxtApp();

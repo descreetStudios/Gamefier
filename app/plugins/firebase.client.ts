@@ -1,8 +1,10 @@
+import { defineNuxtPlugin, useRuntimeConfig } from "nuxt/app";
 import { initializeApp, getApps } from "firebase/app";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, connectAuthEmulator } from "firebase/auth";
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
+import type { FirebaseApp } from "firebase/app";
 
 export default defineNuxtPlugin(() => {
 	const config = useRuntimeConfig();
@@ -18,7 +20,8 @@ export default defineNuxtPlugin(() => {
 	};
 
 	// Inizializza app Firebase solo se non già inizializzata
-	const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+
+	const app = (getApps().length ? getApps()[0] : initializeApp(firebaseConfig)) as FirebaseApp;
 
 	const db = getFirestore(app);
 	const auth = getAuth(app);

@@ -7,9 +7,14 @@ import {
 	signInWithPopup,
 	updateProfile,
 } from "firebase/auth";
-import type { User } from "firebase/auth";
 import { httpsCallable } from "firebase/functions";
 import { doc, setDoc, getDoc } from "firebase/firestore";
+import { useNuxtApp, useState } from "nuxt/app";
+import { ref } from "vue";
+import type { useStore } from "@/../stores/userStore"; // Adjust the path as needed for your project
+import type { User, Auth } from "firebase/auth";
+import type { Firestore } from "firebase/firestore";
+import type { Functions } from "firebase/functions";
 
 interface UsernameCheckRequest {
 	displayName: string;
@@ -25,16 +30,19 @@ export const useAuth = () => {
 	const { $userStore } = useNuxtApp();
 	const userStore = $userStore as ReturnType<typeof useStore>;
 
-	const { $auth } = useNuxtApp();
 	const { $db } = useNuxtApp();
+	const { $auth } = useNuxtApp();
 	const { $functions } = useNuxtApp();
+	const db = $db as Firestore;
+	const auth = $auth as Auth;
+	const functions = $functions as Functions;
 
 	const uid = ref("");
 	const user = useState<User | null>("user", () => null);
 	const userData = useState<Record<string, unknown> | null>("userData", () => null);
 
 	const initAuth = async () => {
-		onAuthStateChanged($auth, async (u) => {
+		onAuthStateChanged(auth, async (u) => {
 			// console.log("🔍 Utente rilevato da FireAuth:", u);
 			user.value = u;
 
@@ -49,29 +57,29 @@ export const useAuth = () => {
 		const provider = new GoogleAuthProvider();
 
 		try {
-			const result = await signInWithPopup($auth, provider);
+			const result = await signInWithPopup(auth, provider);
 			const user = result.user;
 
 			if (!user.displayName) {
 				await updateProfile(user, {
 					displayName: user.email?.split("@")[0] || user.uid,
 				});
-			}
+				const userRef = doc(db, "users", user.uid);
 
-			const userRef = doc($db, "users", user.uid);
-			const userSnapshot = await getDoc(userRef);
+				const userSnapshot = await getDoc(userRef);
 
-			if (!userSnapshot.exists()) {
-				await setDoc(userRef, {
-					uid: user.uid,
-					email: user.email,
-					displayName: user.displayName,
-					displayNameLowerCase: user.displayName?.toLowerCase(),
-					createdAt: new Date(),
-					role: "user",
-				});
+				if (!userSnapshot.exists()) {
+					await setDoc(userRef, {
+						uid: user.uid,
+						email: user.email,
+						displayName: user.displayName,
+						displayNameLowerCase: user.displayName?.toLowerCase(),
+						createdAt: new Date(),
+						role: "user",
+					});
+				}
+				await userStore.syncUserData(user.uid);
 			}
-			await userStore.syncUserData(user.uid);
 		}
 		catch (err) {
 			console.error("Errore durante il login con Google:", err);
@@ -79,12 +87,12 @@ export const useAuth = () => {
 	};
 
 	const login = async (email: string, password: string) => {
-		await signInWithEmailAndPassword($auth, email, password);
+		await signInWithEmailAndPassword(auth, email, password);
 	};
 
 	const signupUserData = async (uid: string, email: string, displayName: string) => {
 		try {
-			await setDoc(doc($db, "users", uid), {
+			await setDoc(doc(db, "users", uid), {
 				uid: uid,
 				displayName: displayName,
 				displayNameLowerCase: displayName.toLowerCase(),
@@ -101,7 +109,7 @@ export const useAuth = () => {
 
 	const signup = async (email: string, password: string, displayName: string) => {
 		const checkUsernameAvailability = httpsCallable<UsernameCheckRequest, UsernameCheckResponse>(
-			$functions,
+			functions,
 			"checkUsernameAvailability",
 		);
 		const isUsernameAvailable = async (displayName: string): Promise<boolean> => {
@@ -122,7 +130,7 @@ export const useAuth = () => {
 			}
 			throw error;
 		}
-		const userCredential = await createUserWithEmailAndPassword($auth, email, password);
+		const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 		uid.value = userCredential.user.uid;
 		await signupUserData(uid.value, email, displayName);
 		await updateProfile(userCredential.user, {
@@ -131,7 +139,7 @@ export const useAuth = () => {
 	};
 
 	const logout = async () => {
-		await signOut($auth);
+		await signOut(auth);
 		user.value = null;
 		userData.value = null;
 	};
