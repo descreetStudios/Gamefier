@@ -1,12 +1,13 @@
 <script setup>
 import { AppDashboardAdmin, AppDashboardGames, AppDashboardProfile, AppDashboardSettings, AppDashboardTemplates, AppDashboardUser, AppDashboardBanAppeals } from "#components";
-
-const $userStore = useNuxtApp();
+import { useNuxtApp } from "nuxt/app";
 
 const activeView = ref("dashboard");
 const route = useRoute();
 const targetPath = route.query.activeViewComponent;
 const router = useRouter();
+const { $userStore } = useNuxtApp();
+const isAdmin = computed(() => $userStore.role === "admin");
 
 function navigate(view) {
 	activeView.value = view;
@@ -18,8 +19,8 @@ function navigate(view) {
 }
 
 if (targetPath && typeof targetPath === "string") {
-	if ($userStore.role !== "admin" && (targetPath === "admin" || targetPath === "banAppeals")) {
-		activeView.value = "dasboard";
+	if (!isAdmin.value && (targetPath === "admin" || targetPath === "banAppeals")) {
+		activeView.value = "dashboard";
 		router.replace({
 			path: "/dashboard",
 			query: { activeViewComponent: "dashboard" },
