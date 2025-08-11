@@ -59,27 +59,24 @@ export const useAuth = () => {
 		try {
 			const result = await signInWithPopup(auth, provider);
 			const user = result.user;
-
 			if (!user.displayName) {
 				await updateProfile(user, {
 					displayName: user.email?.split("@")[0] || user.uid,
 				});
-				const userRef = doc(db, "users", user.uid);
-
-				const userSnapshot = await getDoc(userRef);
-
-				if (!userSnapshot.exists()) {
-					await setDoc(userRef, {
-						uid: user.uid,
-						email: user.email,
-						displayName: user.displayName,
-						displayNameLowerCase: user.displayName?.toLowerCase(),
-						createdAt: new Date(),
-						role: "user",
-					});
-				}
-				await userStore.syncUserData(user.uid);
 			}
+			const userRef = doc(db, "users", user.uid);
+			const userSnapshot = await getDoc(userRef);
+			if (!userSnapshot.exists()) {
+				await setDoc(userRef, {
+					uid: user.uid,
+					email: user.email,
+					displayName: user.displayName,
+					displayNameLowerCase: user.displayName?.toLowerCase(),
+					createdAt: new Date(),
+					role: "user",
+				});
+			}
+			await userStore.syncUserData(user.uid);
 		}
 		catch (err) {
 			console.error("Errore durante il login con Google:", err);
