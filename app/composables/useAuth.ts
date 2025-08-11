@@ -11,6 +11,7 @@ import { httpsCallable } from "firebase/functions";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { useNuxtApp, useState } from "nuxt/app";
 import { ref } from "vue";
+import { createError } from "h3";
 import type { useStore } from "@/../stores/userStore"; // Adjust the path as needed for your project
 import type { User, Auth } from "firebase/auth";
 import type { Firestore } from "firebase/firestore";
@@ -51,6 +52,21 @@ export const useAuth = () => {
 			}
 			userStore.storeUserData("loaded", true);
 		});
+	};
+
+	const isUsernameAvailable = async (displayName: string): Promise<boolean> => {
+		const checkUsernameAvailability = httpsCallable<UsernameCheckRequest, UsernameCheckResponse>(
+			functions,
+			"checkUsernameAvailability",
+		);
+		try {
+			const result = await checkUsernameAvailability({ displayName });
+			return result.data.available;
+		}
+		catch (error) {
+			console.error("Errore durante la verifica:", error);
+			return false;
+		}
 	};
 
 	const loginWithGoogle = async () => {
@@ -105,27 +121,13 @@ export const useAuth = () => {
 	};
 
 	const signup = async (email: string, password: string, displayName: string) => {
-		const checkUsernameAvailability = httpsCallable<UsernameCheckRequest, UsernameCheckResponse>(
-			functions,
-			"checkUsernameAvailability",
-		);
-		const isUsernameAvailable = async (displayName: string): Promise<boolean> => {
-			try {
-				const result = await checkUsernameAvailability({ displayName });
-				return result.data.available;
-			}
-			catch (error) {
-				console.error("Errore durante la verifica:", error);
-				return false;
-			}
-		};
 		const available = await isUsernameAvailable(displayName);
 		if (!available) {
-			const error = new Error("The username is not available.");
-			if (typeof error === "object" && error !== null && "code" in error) {
-				(error as { code: string }).code = "displayName-not-available";
-			}
-			throw error;
+			throw createError({
+				statusCode: 409,
+				message: "Username not available",
+				data: { code: "displayName-not-available" },
+			});
 		}
 		const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 		uid.value = userCredential.user.uid;

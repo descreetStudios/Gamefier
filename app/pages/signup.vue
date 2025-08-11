@@ -161,7 +161,8 @@ async function onSubmit() {
 		});
 	}
 	catch (err) {
-		const message = getAuthErrorMessage(err.code);
+		const message = getAuthErrorMessage(err.data.code);
+		console.log(message);
 		$eventBus.emit("alert", {
 			message,
 			type: "error",
