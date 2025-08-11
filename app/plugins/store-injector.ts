@@ -1,4 +1,4 @@
-import { useStore } from "~/stores/userStore";
+import { useStore } from "../../stores/userStore";
 
 export default defineNuxtPlugin((nuxtApp) => {
 	const userStore = useStore();

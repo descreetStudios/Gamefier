@@ -12,14 +12,14 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "@nuxt/eslint": "^1.4.0",
+    "@nuxt/eslint": "^1.8.0",
     "@nuxtjs/google-fonts": "^3.2.0",
     "@picocss/pico": "^2.1.1",
     "@pinia/nuxt": "^0.11.1",
-    "eslint": "^9.27.0",
-    "firebase": "^11.8.1",
+    "eslint": "^9.33.0",
+    "firebase": "^12.1.0",
     "mitt": "^3.0.1",
-    "nuxt": "^3.17.5",
+    "nuxt": "^4.0.3",
     "nuxt-vuefire": "^1.0.5",
     "pinia": "^3.0.3",
     "vue": "^3.5.13",
@@ -27,9 +27,9 @@
     "vuefire": "^3.2.1"
   },
   "devDependencies": {
-    "sass": "^1.89.0",
+    "sass": "^1.90.0",
     "sass-loader": "^16.0.5",
-    "typescript": "^5.8.3",
+    "typescript": "^5.9.2",
     "vite-svg-loader": "^5.1.0"
   }
 }
