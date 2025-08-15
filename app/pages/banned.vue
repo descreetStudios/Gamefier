@@ -40,7 +40,16 @@
 					<p class="ban-card__detail ban-card__detail--reason">
 						<strong>Reason:</strong> {{ $userStore.banReason }}
 					</p>
-					<p class="ban-card__detail ban-card__detail--expires">
+					<p
+						v-if="isPermanent"
+						class="ban-card__detail ban-card__detail--expires"
+					>
+						<strong>This ban is:</strong> Permanent
+					</p>
+					<p
+						v-else
+						class="ban-card__detail ban-card__detail--expires"
+					>
 						<strong>Expires on:</strong> {{ date }}
 					</p>
 					<p class="ban-card__detail ban-card__detail--banned-by">
@@ -67,7 +76,12 @@
 						:disabled="banAppealAlreadySent"
 					>
 				</form>
-
+				<p
+					v-if="reviewed"
+					class="ban-card__reviewed"
+				>
+					Your ban has been reviewed by an admin
+				</p>
 				<p
 					class="ban-card__logout"
 					@click="logoutHandler"
@@ -82,12 +96,15 @@
 <script setup>
 import { doc, updateDoc } from "firebase/firestore";
 import { onMounted } from "vue";
+import { useNuxtApp } from "nuxt/app";
 
 const { $db, $eventBus, $userStore } = useNuxtApp();
 const { logout } = useAuth();
 
 const banAppealText = ref($userStore.banAppealText);
 const banAppealAlreadySent = computed(() => $userStore.banAppealAlreadySent);
+const reviewed = computed(() => !$userStore.banAppealPending);
+const isPermanent = computed(() => $userStore.banType == "permanent");
 const date = ref($userStore.banExpiresAt);
 
 onMounted(() => {
@@ -133,6 +150,10 @@ const logoutHandler = async () => {
 		window.location.reload();
 	}, 2000);
 };
+
+const mouseX = ref(0);
+const mouseY = ref(0);
+const bgOffset = ref(0);
 </script>
 
 <style lang="scss">
@@ -308,6 +329,17 @@ html {
 		&:hover::before {
 			width: 100%;
 		}
+	}
+
+	&__reviewed {
+		margin-top: 1rem;
+		padding: 0.5rem 1rem;
+		background-color: rgba(0, 128, 0, 0.1);
+		color: green;
+		border: 1px solid green;
+		border-radius: var(--border-radius);
+		font-weight: 500;
+		text-align: center;
 	}
 }
 

@@ -260,6 +260,9 @@ const updateProfile = async (user) => {
 		}
 		if (user.banType !== oldUser.banType) {
 			updatedStoreFields.banType = user.banType;
+			if (user.banType === "permanent") {
+				updatedStoreFields.banExpiresAt = deleteField();
+			}
 		}
 		if (user.banExpiresAt && (user.banExpiresAt !== oldUser.banExpiresAt)) {
 			const date = new Date(user.banExpiresAt + "T00:00:00");

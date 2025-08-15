@@ -69,7 +69,6 @@ const logoutHandler = async () => {
 	}, 2000);
 };
 
-// Mouse effect placeholders (you can implement or remove)
 const mouseX = ref(0);
 const mouseY = ref(0);
 const bgOffset = ref(0);

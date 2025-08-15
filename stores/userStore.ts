@@ -13,10 +13,12 @@ export const useStore = defineStore("userStore", {
 		displayName: null as unknown | string,
 		role: null as unknown | string,
 		banReason: null as unknown | string,
+		banType: null as unknown | string,
 		banExpiresAt: null as unknown | string,
 		bannedBy: null as unknown | string,
 		banAppealText: null as unknown | string,
-		banAppealAlreadySent: null as unknown | false,
+		banAppealPending: null as unknown | boolean,
+		banAppealAlreadySent: null as unknown | boolean,
 	}),
 	actions: {
 		async syncUserData(uid: string) {
@@ -29,12 +31,14 @@ export const useStore = defineStore("userStore", {
 				const userData = userSnapshot.data();
 
 				this.userId = uid;
-				this.role = userData.role || null;
-				this.displayName = userData.displayName || null;
-				this.banReason = userData.banReason || null;
-				this.banExpiresAt = userData.banExpiresAt || null;
-				this.bannedBy = userData.bannedBy || null;
-				this.banAppealText = userData.banAppealText || null;
+				this.role = userData.role ?? null;
+				this.displayName = userData.displayName ?? null;
+				this.banReason = userData.banReason ?? null;
+				this.banType = userData.banType ?? null;
+				this.banExpiresAt = userData.banExpiresAt ?? null;
+				this.bannedBy = userData.bannedBy ?? null;
+				this.banAppealText = userData.banAppealText ?? null;
+				this.banAppealPending = userData.banAppealPending ?? null;
 				if (userData.banAppealText) {
 					this.banAppealAlreadySent = true;
 				}
