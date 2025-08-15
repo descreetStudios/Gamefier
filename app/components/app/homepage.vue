@@ -68,7 +68,7 @@
 		<!-- Section 3 -->
 		<section
 			id="games"
-			class="homepage__section_reversed"
+			class="homepage__section"
 		>
 			<img
 				src="/images/games.png"
@@ -89,7 +89,7 @@
 		<!-- Section 4 -->
 		<section
 			id="community"
-			class="homepage__section"
+			class="homepage__section_reversed"
 		>
 			<img
 				src="/images/community.png"
@@ -108,7 +108,7 @@
 		<!-- Section 5 -->
 		<section
 			id="get-started"
-			class="homepage__section_reversed"
+			class="homepage__section"
 		>
 			<img
 				src="/images/getStarted.png"
@@ -129,7 +129,7 @@
 		<!-- Section 6 -->
 		<section
 			id="security"
-			class="homepage__section"
+			class="homepage__section_reversed"
 		>
 			<img
 				src="/images/security.png"
