@@ -23,7 +23,7 @@ export function getAuthErrorMessage(code) {
 		case "auth/popup-blocked":
 			return "The sign-in popup was blocked by your browser.";
 		case "displayName-not-available":
-			return "The username is not available.";
+			return "This username is already taken. Please choose another one.";
 		default:
 			return "An unexpected error occurred. Please try again.";
 	}

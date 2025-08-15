@@ -5,7 +5,15 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "displayName",
+          "fieldPath": "displayNameLowerCase",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "banAppealText",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "banReviewed",
           "order": "ASCENDING"
         },
         {

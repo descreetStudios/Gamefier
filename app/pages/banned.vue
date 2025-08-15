@@ -41,7 +41,7 @@
 						<strong>Reason:</strong> {{ $userStore.banReason }}
 					</p>
 					<p class="ban-card__detail ban-card__detail--expires">
-						<strong>Expires in:</strong> {{ $userStore.banExpiresAt }}
+						<strong>Expires on:</strong> {{ date }}
 					</p>
 					<p class="ban-card__detail ban-card__detail--banned-by">
 						<strong>Banned by:</strong> {{ $userStore.bannedBy }}
@@ -81,18 +81,27 @@
 
 <script setup>
 import { doc, updateDoc } from "firebase/firestore";
+import { onMounted } from "vue";
 
 const { $db, $eventBus, $userStore } = useNuxtApp();
 const { logout } = useAuth();
 
 const banAppealText = ref($userStore.banAppealText);
 const banAppealAlreadySent = computed(() => $userStore.banAppealAlreadySent);
+const date = ref($userStore.banExpiresAt);
+
+onMounted(() => {
+	if (date.value) {
+		date.value = date.value.toDate ? date.value.toDate() : new Date(date);
+		date.value = date.value.toISOString().split("T")[0];
+	}
+});
 
 const sendBanAppeal = async () => {
 	if (banAppealText.value && !banAppealAlreadySent.value) {
 		try {
 			const userDocRef = doc($db, "users", $userStore.userId);
-			await updateDoc(userDocRef, { banAppealText: banAppealText.value });
+			await updateDoc(userDocRef, { banAppealText: banAppealText.value, banAppealPending: true });
 			await $userStore.syncUserData($userStore.userId);
 
 			$eventBus.emit("alert", {

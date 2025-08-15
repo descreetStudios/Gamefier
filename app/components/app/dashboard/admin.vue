@@ -91,7 +91,16 @@
 					v-if="user.role === 'banned'"
 					v-model="user.banType"
 					name="banType"
+					required
 				>
+					<option
+						value=""
+						disabled
+						hidden
+					>
+						Select an option
+					</option>
+
 					<option value="temporary">
 						Temporary
 					</option>
@@ -124,7 +133,7 @@
 </template>
 
 <script setup>
-import { collection, query, where, getDocs, doc, updateDoc, deleteField, Timestamp } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, updateDoc, deleteField } from "firebase/firestore";
 import { ref } from "vue";
 import { httpsCallable } from "firebase/functions";
 
@@ -141,14 +150,14 @@ const called = ref(false);
 const userIcon = ref("/images/icons/user.png");
 const editIcon = ref("/images/icons/edit.png");
 // Search users whose displayName starts with the input
-async function searchUsersByDisplayNameStartsWith() {
+const searchUsersByDisplayNameStartsWith = async () => {
 	const usersRef = collection($db, "users");
 	const lowerCaseSearchQuery = userSearchName.value.toLowerCase();
 	if (!lowerCaseSearchQuery) {
 		users.value = [];
 		oldUsers.value = [];
 		$eventBus.emit("alert", {
-			message: "Please enter a valid name",
+			message: "Please enter a name to search.",
 			type: "error",
 			duration: 3000,
 		});
@@ -168,8 +177,8 @@ async function searchUsersByDisplayNameStartsWith() {
 		oldUsers.value = [];
 		querySnapshot.forEach((doc) => {
 			const data = doc.data();
-			if (!data.banType) {
-				data.banType = "temporary";
+			if (data.role !== "banned" && !data.banType) {
+				data.banType = "";
 			}
 			if (data.banExpiresAt) {
 				const date = data.banExpiresAt.toDate ? data.banExpiresAt.toDate() : new Date(data.banExpiresAt);
@@ -178,9 +187,9 @@ async function searchUsersByDisplayNameStartsWith() {
 			users.value.push({ id: doc.id, ...data });
 			oldUsers.value = users.value.map(user => ({ ...user }));
 		});
-		const count = users.value.length;
-		const message = `Found ${count} user${count !== 1 ? "s" : ""}.`;
 		if (!called.value) {
+			const count = users.value.length;
+			const message = `Found ${count} user${count !== 1 ? "s" : ""} matching your search.`;
 			$eventBus.emit("alert", {
 				message: message,
 				type: "success",
@@ -191,16 +200,16 @@ async function searchUsersByDisplayNameStartsWith() {
 	}
 	catch (err) {
 		$eventBus.emit("alert", {
-			message: err.message || "An error occurred while searching for users.",
+			message: `Failed to search for users. ${err?.message || "Please try again later."}`,
 			type: "error",
 			duration: 3000,
 		});
 	}
 	called.value = false;
-}
+};
 
 // Update user profile (both Firestore and Auth)
-async function updateProfile(user) {
+const updateProfile = async (user) => {
 	const oldUser = oldUsers.value.find(u => u.id === user.id);
 	const updateUserAuth = httpsCallable($functions, "updateUserAuth");
 
@@ -217,7 +226,7 @@ async function updateProfile(user) {
 		const available = await isUsernameAvailable(user.displayName);
 		if (!available) {
 			$eventBus.emit("alert", {
-				message: "Username not available",
+				message: "This username is already taken. Please choose another one.",
 				type: "error",
 				duration: 3000,
 			});
@@ -239,13 +248,15 @@ async function updateProfile(user) {
 	if (user.password) {
 		updatedAuthFields.password = user.password;
 	}
-	if (user.role !== "banned" && (user.banReason || user.banType || user.banExpiresAt || user.bannedBy)) {
+	if (user.role !== "banned" && (oldUser.banReason || oldUser.banType || oldUser.banExpiresAt || oldUser.bannedBy || oldUser.banAppealText || oldUser.banAppealPending)) {
 		updatedStoreFields.banReason = deleteField();
 		updatedStoreFields.banType = deleteField();
 		updatedStoreFields.banExpiresAt = deleteField();
 		updatedStoreFields.bannedBy = deleteField();
+		updatedStoreFields.banAppealText = deleteField();
+		updatedStoreFields.banAppealPending = deleteField();
 	}
-	else {
+	else if (user.role === "banned") {
 		if (user.banReason !== oldUser.banReason) {
 			updatedStoreFields.banReason = user.banReason;
 		}
@@ -254,10 +265,9 @@ async function updateProfile(user) {
 		}
 		if (user.banExpiresAt && (user.banExpiresAt !== oldUser.banExpiresAt)) {
 			const date = new Date(user.banExpiresAt + "T00:00:00");
-			Timestamp.fromDate(date);
 			if (date <= new Date()) {
 				$eventBus.emit("alert", {
-					message: "Please enter a valid date.",
+					message: "Invalid expiration date. Please select a future date for the temporary ban.",
 					type: "error",
 					duration: 3000,
 				});
@@ -267,14 +277,14 @@ async function updateProfile(user) {
 				updatedStoreFields.banExpiresAt = date;
 			}
 		}
-		if (!user.bannedBy || (user.bannedBy !== oldUser.bannedBy)) {
+		if (!user.bannedBy || user.bannedBy != $userStore.displayName) {
 			updatedStoreFields.bannedBy = $userStore.displayName;
 		}
 	}
 
 	if (!Object.keys(updatedStoreFields).length > 0 && !Object.keys(updatedAuthFields).length > 0) {
 		$eventBus.emit("alert", {
-			message: "No changes detected for the user.",
+			message: "No changes were made. Please update at least one field before submitting.",
 			type: "error",
 			duration: 3000,
 		});
@@ -290,11 +300,11 @@ async function updateProfile(user) {
 						password: updatedAuthFields.password,
 					},
 				});
-				console.log("Response:", result.data);
+				// console.log("Response:", result.data);
 			}
 			await updateDoc(userDocRef, updatedStoreFields);
 			$eventBus.emit("alert", {
-				message: "User profile updated successfully.",
+				message: `Profile for ${user.displayName} updated successfully.`,
 				type: "success",
 				duration: 3000,
 			});
@@ -303,13 +313,13 @@ async function updateProfile(user) {
 		}
 		catch (err) {
 			$eventBus.emit("alert", {
-				message: err.message || "An error occurred while updating the user profile.",
+				message: `Failed to update the profile for ${user.displayName}. ${err?.message || "Please try again."}`,
 				type: "error",
 				duration: 3000,
 			});
 		}
 	}
-}
+};
 
 const isUsernameAvailable = async (displayName) => {
 	const checkUsernameAvailability = httpsCallable($functions, "checkUsernameAvailability"); ;
@@ -320,7 +330,7 @@ const isUsernameAvailable = async (displayName) => {
 		return result.data.available;
 	}
 	catch (error) {
-		console.error("Errore durante la verifica:", error);
+		console.error("Error while checking username availability:", error);
 		return false;
 	}
 };
