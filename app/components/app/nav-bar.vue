@@ -1,4 +1,6 @@
 <template>
+	<AppGlobalAlert />
+
 	<div :class="['blur-container', { blurred: scrolled }]">
 		<nav class="navbar container">
 			<!-- Logo (Left) -->
@@ -118,7 +120,8 @@
 </template>
 
 <script setup>
-const { $userStore } = useNuxtApp();
+const { $eventBus, $userStore } = useNuxtApp();
+const { logout } = useAuth();
 const logged = computed(() => !!$userStore.userId);
 const scrolled = ref(false);
 const showUserMenu = ref(false);
@@ -132,10 +135,18 @@ function onUserClick() {
 	showUserMenu.value = !showUserMenu.value;
 }
 
-const { logout } = useAuth();
 const logoutHandler = async () => {
 	await logout();
-	window.location.reload();
+
+	$eventBus.emit("alert", {
+		message: "You have been logged out.",
+		type: "success",
+		duration: 2000,
+	});
+
+	setTimeout(() => {
+		window.location.reload();
+	}, 2000);
 };
 
 const profileHandler = () => {

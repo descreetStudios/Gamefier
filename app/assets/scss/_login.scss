@@ -8,7 +8,7 @@
 
 .login-card {
     background-color: var(--surface);
-    border-radius: 15px;
+    border-radius: var(--border-radius);
     box-shadow: 0 6px 15px var(--shadow);
     padding: 3rem;
     width: 100%;
@@ -43,7 +43,7 @@
     input[type="email"],
     input[type="password"] {
         padding: 0.75rem 1rem;
-        border-radius: 10px;
+        border-radius: var(--border-radius);
         border: 1px solid var(--border);
         background-color: var(--secondary-surface);
         color: var(--primary-text);
@@ -66,7 +66,7 @@
     input[type="email"],
     input[type="password"] {
         padding: 0.75rem 1rem;
-        border-radius: 10px;
+        border-radius: var(--border-radius);
         border: 1px solid var(--border);
         background-color: var(--secondary-surface);
         color: var(--primary-text);
@@ -100,7 +100,6 @@
 .btn-google {
     background: var(--surface);
     border: none;
-    border-radius: 10px;
     font-weight: 500;
     color: var(--primary-text);
     cursor: pointer;

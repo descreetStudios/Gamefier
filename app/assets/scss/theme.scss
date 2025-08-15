@@ -1,6 +1,6 @@
 /* 
 ------------------- Compile with sass ------------------- 
-sass --watch assets/scss/theme.scss assets/css/theme.css
+sass --watch app/assets/scss/theme.scss assets/css/theme.css
 ---------------------------------------------------------
 */
 
@@ -8,10 +8,10 @@ sass --watch assets/scss/theme.scss assets/css/theme.css
 :root:not([data-theme]),
 [data-theme="dark"] {
   /* Primary */
-  --primary: rgb(68, 152, 255);
-  --primary-rgb: 68, 152, 255;
-  --primary-hover: rgb(59, 130, 246);
-  --primary-hover-rgb: 59, 130, 246;
+  --primary: rgb(48, 128, 230);
+  --primary-rgb: 48, 128, 230;
+  --primary-hover: rgb(36, 110, 210);
+  --primary-hover-rgb: 36, 110, 210;
   --primary-text: rgb(255, 255, 255);
   --primary-text-rgb: 255, 255, 255;
   --inv-primary-text: rgb(0, 0, 0);
@@ -27,7 +27,7 @@ sass --watch assets/scss/theme.scss assets/css/theme.css
   --inv-secondary-text: rgb(39, 41, 44);
   --inv-secondary-text-rgb: 39, 41, 44;
 
-   /* Tertiary */
+  /* Tertiary */
   --tertiary-text: rgb(112, 112, 112);
   --tertiary-text-rgb: 112, 112, 112;
 
@@ -62,10 +62,10 @@ sass --watch assets/scss/theme.scss assets/css/theme.css
 /* Light Theme */
 [data-theme="light"] {
   /* Primary */
-  --primary: rgb(68, 152, 255);
-  --primary-rgb: 68, 152, 255;
-  --primary-hover: rgb(59, 130, 246);
-  --primary-hover-rgb: 59, 130, 246;
+  --primary: rgb(48, 128, 230);
+  --primary-rgb: 48, 128, 230;
+  --primary-hover: rgb(36, 110, 210);
+  --primary-hover-rgb: 36, 110, 210;
   --primary-text: rgb(0, 0, 0);
   --primary-text-rgb: 0, 0, 0;
   --inv-primary-text: rgb(255, 255, 255);
@@ -81,7 +81,7 @@ sass --watch assets/scss/theme.scss assets/css/theme.css
   --inv-secondary-text: rgb(207, 207, 207);
   --inv-secondary-text-rgb: 207, 207, 207;
 
-   /* Tertiary */
+  /* Tertiary */
   --tertiary-text: rgb(112, 112, 112);
   --tertiary-text-rgb: 112, 112, 112;
 

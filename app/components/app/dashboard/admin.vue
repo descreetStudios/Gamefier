@@ -1,46 +1,58 @@
 <template>
-	<div>
+	<div class="admin">
 		<AppGlobalAlert />
 
-		<h1>Admin Page</h1>
+		<h1 class="admin__title">
+			Admin Page
+		</h1>
 
-		<fieldset>
+		<fieldset class="admin__search">
 			<legend>Search users by name</legend>
-			<form @submit.prevent="searchUsersByDisplayNameStartsWith">
+			<form
+				class="admin__searchForm"
+				@submit.prevent="searchUsersByDisplayNameStartsWith"
+			>
 				<input
 					v-model="userSearchName"
+					class="admin__searchForm_name"
 					type="text"
+					maxlength="30"
 				>
 				<input
+					class="admin__searchForm_button"
 					type="submit"
 					value="Search"
 				>
 			</form>
 		</fieldset>
+
 		<fieldset
 			v-for="user in users"
 			:key="user.id"
+			class="admin__userCard"
 		>
 			<legend>{{ user.displayName }} - #{{ user.id }}</legend>
-			<div class="profile">
-				<div class="profile__iconContainer">
+
+			<div class="userPreview">
+				<div class="userPreview__avatar">
 					<img
-						class="profile__iconContainer__icon"
+						class="userPreview__avatar__img"
 						:src="userIcon"
 						alt="user icon"
 						@dragstart.prevent
 					>
-					<div class="profile__iconContainer__editOverlay" />
+					<div class="userPreview__avatar__overlay" />
 					<img
-						class="profile__iconContainer__editIcon"
+						class="userPreview__avatar__edit"
 						:src="editIcon"
 						alt="edit icon overlay"
 						@dragstart.prevent
 					>
 				</div>
 			</div>
+
 			<form
-				class="settings"
+				class="userForm"
 				@submit.prevent="updateProfile(user)"
 			>
 				<input
@@ -51,6 +63,7 @@
 					v-model="user.email"
 					type="email"
 				>
+
 				<select
 					v-model="user.role"
 					name="role"
@@ -65,6 +78,7 @@
 						Administrator
 					</option>
 				</select>
+
 				<input
 					v-if="user.role === 'banned'"
 					v-model="user.banReason"
@@ -72,6 +86,7 @@
 					placeholder="Ban reason"
 					required
 				>
+
 				<select
 					v-if="user.role === 'banned'"
 					v-model="user.banType"
@@ -84,18 +99,21 @@
 						Permanent
 					</option>
 				</select>
+
 				<input
 					v-if="user.role === 'banned' && user.banType === 'temporary'"
 					v-model="user.banExpiresAt"
 					type="date"
 					required
 				>
+
 				<input
 					v-model="user.password"
 					type="password"
 					placeholder="New password"
 					minlength="8"
 				>
+
 				<input
 					type="submit"
 					value="Update Profile"
@@ -309,66 +327,118 @@ const isUsernameAvailable = async (displayName) => {
 </script>
 
 <style lang="scss" scoped>
-fieldset {
-	display: flex;
-	padding-left: 0.75rem;
-	padding-right: 0.75rem;
-	border-radius: var(--border-radius);
-	border: 0.1rem solid var(--inv-secondary-text);
-
-	legend {
-		margin-left: 1.25rem;
-		padding-left: 1rem;
-		padding-right: 1rem;
+.admin {
+	&__title {
+		font-size: 2.5rem;
+		font-weight: bold;
+		margin-bottom: 2rem;
 	}
 
-	.settings {
-		flex: 1;
-	}
+	&__search {
+		margin-bottom: 2rem;
+		padding: 1rem;
+		border: 2px solid var(--inv-secondary-text);
+		border-radius: var(--border-radius);
 
-	.profile {
-		align-items: center;
-		margin-right: 2rem;
-		margin-left: 1rem;
-		margin-top: 2rem;
+		legend {
+			padding: 0 1rem;
+			font-weight: bold;
+		}
 
-		&__iconContainer {
+		&Form {
 			position: relative;
-			width: 15rem;
-			height: 15rem;
+			display: flex;
+			gap: 1rem;
 
-			&__icon,
-			&__editOverlay,
-			&__editIcon {
+			&_button {
+				background-color: var(--primary);
 				position: absolute;
-				width: 100%;
-				height: 100%;
-				border-radius: 50%;
-				border: 1px solid var(--inv-bg);
-			}
-
-			&__editOverlay {
-				transition: opacity 0.3s ease;
-				background-color: black;
-				opacity: 0;
-				z-index: 1;
+				right: 0;
+				width: 15%;
 
 				&:hover {
-					opacity: 0.4;
-					cursor: pointer;
+					background-color: var(--primary-hover);
 				}
 			}
 
-			&__editIcon {
-				opacity: 0;
-				padding: 6rem;
-				transition: opacity 0.3s ease;
-			}
-
-			&:hover .profile__iconContainer__editIcon {
-				opacity: 1;
+			&_name {
+				flex: 1;
 			}
 		}
+	}
+
+	&__userCard {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 2rem;
+		padding: 1.5rem;
+		margin-bottom: 2rem;
+		border: 2px solid var(--inv-secondary-text);
+		border-radius: var(--border-radius);
+
+		legend {
+			padding: 0 1rem;
+			font-weight: bold;
+		}
+	}
+}
+
+.userPreview {
+	display: flex;
+	align-items: center;
+
+	&__avatar {
+		position: relative;
+		width: 15rem;
+		height: 15rem;
+
+		&__img,
+		&__overlay,
+		&__edit {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			border-radius: 50%;
+			border: 1px solid var(--inv-bg);
+		}
+
+		&__overlay {
+			background-color: black;
+			opacity: 0;
+			transition: opacity 0.3s ease;
+			z-index: 1;
+
+			&:hover {
+				opacity: 0.4;
+				cursor: pointer;
+			}
+		}
+
+		&__edit {
+			opacity: 0;
+			padding: 6rem;
+			transition: opacity 0.3s ease;
+		}
+
+		&:hover &__edit {
+			opacity: 1;
+		}
+	}
+}
+
+.userForm {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+
+	input,
+	select {
+		padding: 0.5rem;
+		font-size: 1rem;
+		border-radius: var(--border-radius);
+		border: 1px solid var(--inv-secondary-text);
+		margin-bottom: 0;
 	}
 }
 </style>

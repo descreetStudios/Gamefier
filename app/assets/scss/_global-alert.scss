@@ -1,56 +1,59 @@
 .message-card {
-    position: fixed;
-    top: 1rem;
-    left: 50%;
-    transform: translateX(-50%);
-    color: var(--primary-text);
-    padding: 20px;
-    border-radius: 8px;
-    max-width: 400px;
-    width: 100%;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    background-color: rgba(var(--secondary-surface-rgb), 0.5);
-    z-index: 9;
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--primary-text);
+  padding: 20px;
+  border-radius: var(--border-radius);
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: rgba(var(--secondary-surface-rgb), 0.5);
+  z-index: 9;
 
-    &--error {
-        background-color: rgba(var(--error-rgb), 0.1);
-        border-left: 4px solid rgb(var(--error-rgb));
-    }
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px); 
 
-    &--warning {
-        background-color: rgba(var(--warning-rgb), 0.1);
-        border-left: 4px solid rgb(var(--warning-rgb));
-    }
+  &--error {
+    background-color: rgba(var(--error-rgb), 0.1);
+    border-left: 4px solid rgb(var(--error-rgb));
+  }
 
-    &--success {
-        background-color: rgba(var(--success-rgb), 0.1);
-        border-left: 4px solid rgb(var(--success-rgb));
-    }
+  &--warning {
+    background-color: rgba(var(--warning-rgb), 0.1);
+    border-left: 4px solid rgb(var(--warning-rgb));
+  }
+
+  &--success {
+    background-color: rgba(var(--success-rgb), 0.1);
+    border-left: 4px solid rgb(var(--success-rgb));
+  }
 }
 
 .image {
-    position: relative;
-    width: 24px;
-    height: 24px;
+  position: relative;
+  width: 24px;
+  height: 24px;
 
-    left: calc(50% - 12px);
+  left: calc(50% - 12px);
 }
 
 .message-card-content {
-    margin-top: 10px;
-    text-align: center;
-    font-size: 16px;
+  margin-top: 10px;
+  text-align: center;
+  font-size: 16px;
 }
 
 .close-btn {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 20px;
-    position: absolute;
-    top: 5px;
-    right: 10px;
-    cursor: pointer;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  cursor: pointer;
 }
 
 .message-card-fade-enter-active {

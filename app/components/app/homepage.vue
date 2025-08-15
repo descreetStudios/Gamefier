@@ -47,6 +47,26 @@
 
 		<!-- Section 2 -->
 		<section
+			id="open-source"
+			class="homepage__section_reversed"
+		>
+			<img
+				src="/images/openSource.png"
+				alt="Open Source"
+				@dragstart.prevent
+			>
+			<div class="text-block">
+				<h2>Open Source, Open Future</h2>
+				<p class="paragraphs">
+					Gamefier is proudly open source. Our code is public, transparent, and built to grow with the help of
+					a passionate community. Whether you're a developer, educator, or curious learner — you're welcome to
+					contribute and shape the future of educational gaming with us.
+				</p>
+			</div>
+		</section>
+
+		<!-- Section 3 -->
+		<section
 			id="games"
 			class="homepage__section_reversed"
 		>
@@ -66,7 +86,7 @@
 			</div>
 		</section>
 
-		<!-- Section 3 -->
+		<!-- Section 4 -->
 		<section
 			id="community"
 			class="homepage__section"
@@ -85,7 +105,7 @@
 			</div>
 		</section>
 
-		<!-- Section 4 -->
+		<!-- Section 5 -->
 		<section
 			id="get-started"
 			class="homepage__section_reversed"
@@ -103,6 +123,44 @@
 					</NuxtLink>
 					<p>and start play-learning today!</p>
 				</div>
+			</div>
+		</section>
+
+		<!-- Section 6 -->
+		<section
+			id="security"
+			class="homepage__section"
+		>
+			<img
+				src="/images/security.png"
+				alt="Security"
+				@dragstart.prevent
+			>
+			<div class="text-block">
+				<h2>Security First</h2>
+				<p class="paragraphs">
+					Gamefier uses modern security protocols to keep your data safe. From encrypted connections to
+					protected user accounts, we make sure your learning experience is secure at every step.
+				</p>
+			</div>
+		</section>
+
+		<!-- Section 7 -->
+		<section
+			id="privacy"
+			class="homepage__section"
+		>
+			<img
+				src="/images/privacy.png"
+				alt="Privacy"
+				@dragstart.prevent
+			>
+			<div class="text-block">
+				<h2>We respect your privacy</h2>
+				<p class="paragraphs">
+					Your personal data is never shared or sold. At Gamefier, we follow strict privacy practices to
+					ensure a safe and respectful environment for teachers, students, and everyone who uses our platform.
+				</p>
 			</div>
 		</section>
 	</div>

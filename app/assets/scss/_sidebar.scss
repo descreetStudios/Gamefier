@@ -7,7 +7,7 @@
     flex-direction: column;
     padding: 0.5rem;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
-    border-right: 1px solid var(--inv-secondary-text);
+    border-right: 0.1rem solid var(--border);
     position: fixed;
 }
 
@@ -15,13 +15,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
-    font-weight: 600;
+    flex-wrap: wrap;
+    overflow: hidden;
+    max-width: 100%;
 }
 
 .logo-img {
-    width: fit-content;
-    height: 50px;
+    width: auto;
+    height: 3rem;
     object-fit: contain;
 }
 
@@ -29,6 +30,8 @@
     color: var(--primary-text);
     margin-left: 0.5rem;
     margin-top: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 600;
 }
 
 .sidebar-nav {
@@ -93,7 +96,7 @@
     margin-left: 0.5rem;
     margin-right: 0.5rem;
     transition: transform 1s ease-out;
-    overflow: hidden;
+    overflow: visible;
     cursor: pointer;
     display: flex;
     flex-direction: column;
@@ -111,6 +114,15 @@
     gap: 5px;
     padding-bottom: 0.5rem;
     width: 100%;
+    border-radius: 0.5rem;
+    background-color: var(--surface);
+    box-shadow:
+        -0.1rem 0 0.4rem var(--shadow),
+        0.1rem 0 0.4rem var(--shadow),
+        0 -0.2rem 0.6rem var(--shadow);
+    transition:
+        box-shadow 0.3s ease,
+        background-color 0.3s ease;
 }
 
 .user-icon {
@@ -172,4 +184,10 @@
 
 a {
     text-decoration: none;
+}
+
+hr {
+    border: none;
+    height: 0.1rem;
+    background-color: var(--border);
 }

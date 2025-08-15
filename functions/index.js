@@ -69,26 +69,25 @@ exports.updateUserAuth = functions.https.onCall(async (request) => {
 });
 
 exports.checkUsernameAvailability = functions.https.onCall(async (request) => {
-  const displayName = request.data.displayName;
+	const displayName = request.data.displayName;
 
-  if (!displayName || typeof displayName !== "string") {
-    throw new functions.https.HttpsError(
-      "invalid-argument",
-      "Il displayName è obbligatorio e deve essere una stringa."
-    );
-  }
+	if (!displayName || typeof displayName !== "string") {
+		throw new functions.https.HttpsError(
+			"invalid-argument",
+			"Il displayName è obbligatorio e deve essere una stringa.",
+		);
+	}
 
-  const normalizedName = displayName.trim().toLowerCase();
+	const normalizedName = displayName.trim().toLowerCase();
 
-  const snapshot = await admin.firestore()
-    .collection("users")
-    .where("displayNameLowerCase", "==", normalizedName)
-    .limit(1)
-    .get();
+	const snapshot = await admin.firestore()
+		.collection("users")
+		.where("displayNameLowerCase", "==", normalizedName)
+		.limit(1)
+		.get();
 
-  return { available: snapshot.empty };
+	return { available: snapshot.empty };
 });
-
 
 // exports.unbanExpiredUsers = functions.pubsub.schedule("every 1 minutes").onRun(async () => {
 // 	const now = admin.firestore.Timestamp.now();

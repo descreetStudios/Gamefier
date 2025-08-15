@@ -10,32 +10,32 @@ const route = useRoute();
 const { pathTo, ...otherParams } = route.query;
 
 onMounted(() => {
-    document.body.style.overflow = "hidden";
-    setTimeout(() => {
-        const intervalId = setInterval(() => {
-            if (loaded.value === true) {
-                if (pathTo && typeof pathTo === "string" && pathTo !== "/loading") {
-                    navigateTo({ path: pathTo, query: { ...otherParams } });
-                }
-                else {
-                    navigateTo("/");
-                }
-                $userStore.storeUserData("startup", false);
-                clearInterval(intervalId);
-            }
-        }, 1000);
-    }, 1000);
+	document.body.style.overflow = "hidden";
+	setTimeout(() => {
+		const intervalId = setInterval(() => {
+			if (loaded.value === true) {
+				if (pathTo && typeof pathTo === "string" && pathTo !== "/loading") {
+					navigateTo({ path: pathTo, query: { ...otherParams } });
+				}
+				else {
+					navigateTo("/");
+				}
+				$userStore.storeUserData("startup", false);
+				clearInterval(intervalId);
+			}
+		}, 1000);
+	}, 1000);
 });
 
 onUnmounted(() => {
-    document.body.style.overflow = "";
+	document.body.style.overflow = "";
 });
 </script>
 
 <template>
-    <div class="loader-overlay">
-        <div class="loader" />
-    </div>
+	<div class="loader-overlay">
+		<div class="loader" />
+	</div>
 </template>
 
 <style lang="scss" scoped>

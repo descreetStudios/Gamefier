@@ -1,5 +1,7 @@
 <!-- eslint-disable vue/require-explicit-emits -->
 <template>
+	<AppGlobalAlert />
+
 	<aside class="sidebar">
 		<nuxt-link to="/">
 			<div class="sidebar-logo">
@@ -117,7 +119,8 @@ defineProps({
 	},
 });
 
-const { $userStore } = useNuxtApp();
+const { $eventBus, $userStore } = useNuxtApp();
+const { logout } = useAuth();
 const admin = computed(() => $userStore.role === "admin");
 const userIcon = ref("/images/icons/user.png");
 const showUserLinks = ref(false);
@@ -126,10 +129,18 @@ const toggleUserLinks = () => {
 	showUserLinks.value = !showUserLinks.value;
 };
 
-const { logout } = useAuth();
 const logoutHandler = async () => {
 	await logout();
-	window.location.reload();
+
+	$eventBus.emit("alert", {
+		message: "You have been logged out.",
+		type: "success",
+		duration: 2000,
+	});
+
+	setTimeout(() => {
+		window.location.reload();
+	}, 2000);
 };
 </script>
 

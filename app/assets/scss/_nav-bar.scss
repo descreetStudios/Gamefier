@@ -4,7 +4,7 @@
     left: 0;
     width: 100%;
     height: 6rem;
-    z-index: 999; // Keep it on top
+    z-index: 1; // Keep it on top
 
     background: transparent;
     backdrop-filter: none;
@@ -101,8 +101,13 @@
     text-decoration: none;
 
     &.login {
+        background-color: var(--primary);
         background: transparent;
         color: white;
+
+        &:hover {
+            background-color: var(--primary-hover);
+        }
     }
 
     &.signup {
