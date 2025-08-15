@@ -1,3 +1,17 @@
+<template>
+	<div class="dashboard-layout">
+		<AppGlobalAlert />
+
+		<app-dashboard-sidebar
+			:active="activeView"
+			@navigate="navigate"
+		/>
+		<app-dashboard-content>
+			<component :is="activeViewComponent" />
+		</app-dashboard-content>
+	</div>
+</template>
+
 <script setup>
 import { AppDashboardAdmin, AppDashboardGames, AppDashboardProfile, AppDashboardSettings, AppDashboardTemplates, AppDashboardUser, AppDashboardBanAppeals } from "#components";
 import { useNuxtApp } from "nuxt/app";
@@ -56,18 +70,6 @@ const activeViewComponent = computed(() => {
 	}
 });
 </script>
-
-<template>
-	<div class="dashboard-layout">
-		<app-dashboard-sidebar
-			:active="activeView"
-			@navigate="navigate"
-		/>
-		<app-dashboard-content>
-			<component :is="activeViewComponent" />
-		</app-dashboard-content>
-	</div>
-</template>
 
 <style lang="scss" scoped>
 .dashboard-layout {

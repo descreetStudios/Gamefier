@@ -1,7 +1,5 @@
 <template>
 	<div class="admin">
-		<AppGlobalAlert />
-
 		<h1 class="admin__title">
 			Admin Page
 		</h1>

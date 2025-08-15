@@ -1,7 +1,5 @@
 <template>
 	<div>
-		<AppGlobalAlert />
-
 		<fieldset
 			v-for="user in users"
 			:key="user.id"

@@ -1,7 +1,5 @@
 <!-- eslint-disable vue/require-explicit-emits -->
 <template>
-	<AppGlobalAlert />
-
 	<aside class="sidebar">
 		<nuxt-link to="/">
 			<div class="sidebar-logo">

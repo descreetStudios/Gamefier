@@ -4,6 +4,7 @@
 <template>
 	<div>
 		<!-- Components -->
+		<AppGlobalAlert />
 		<AppNavBar />
 		<AppBackground />
 		<AppHomepage />

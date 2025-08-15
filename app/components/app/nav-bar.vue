@@ -1,6 +1,4 @@
 <template>
-	<AppGlobalAlert />
-
 	<div :class="['blur-container', { blurred: scrolled }]">
 		<nav class="navbar container">
 			<!-- Logo (Left) -->
