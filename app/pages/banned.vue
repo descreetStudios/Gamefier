@@ -103,7 +103,7 @@ const { logout } = useAuth();
 
 const banAppealText = ref($userStore.banAppealText);
 const banAppealAlreadySent = computed(() => $userStore.banAppealAlreadySent);
-const reviewed = computed(() => !$userStore.banAppealPending);
+const reviewed = computed(() => !$userStore.banAppealPending && $userStore.banAppealPending != null);
 const isPermanent = computed(() => $userStore.banType == "permanent");
 const date = ref($userStore.banExpiresAt);
 
@@ -119,7 +119,6 @@ const sendBanAppeal = async () => {
 		try {
 			const userDocRef = doc($db, "users", $userStore.userId);
 			await updateDoc(userDocRef, { banAppealText: banAppealText.value, banAppealPending: true });
-			await $userStore.syncUserData($userStore.userId);
 
 			$eventBus.emit("alert", {
 				message: "Ban appeal sent successfully.",
