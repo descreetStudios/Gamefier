@@ -1,7 +1,4 @@
 import { defineStore } from "pinia";
-import { doc, getDoc } from "firebase/firestore";
-import { useNuxtApp } from "nuxt/app";
-import type { Firestore } from "firebase/firestore";
 
 type DataTypes = "startup" | "loaded";
 
@@ -21,27 +18,28 @@ export const useStore = defineStore("userStore", {
 		banAppealAlreadySent: null as unknown | boolean,
 	}),
 	actions: {
-		async syncUserData(uid: string) {
-			const { $db } = useNuxtApp();
-			const db = $db as Firestore;
-			if (!uid) return;
-			const userRef = doc(db, "users", uid);
-			const userSnapshot = await getDoc(userRef);
-			if (userSnapshot.exists()) {
-				const userData = userSnapshot.data();
-
-				this.userId = uid;
-				this.role = userData.role ?? null;
-				this.displayName = userData.displayName ?? null;
-				this.banReason = userData.banReason ?? null;
-				this.banType = userData.banType ?? null;
-				this.banExpiresAt = userData.banExpiresAt ?? null;
-				this.bannedBy = userData.bannedBy ?? null;
-				this.banAppealText = userData.banAppealText ?? null;
-				this.banAppealPending = userData.banAppealPending ?? null;
-				if (userData.banAppealText) {
-					this.banAppealAlreadySent = true;
-				}
+		async syncUserData(userData: {
+			uid?: string;
+			role?: string;
+			displayName?: string;
+			banReason?: string;
+			banType?: string;
+			banExpiresAt?: string;
+			bannedBy?: string;
+			banAppealText?: string;
+			banAppealPending?: boolean;
+		}) {
+			this.userId = userData.uid ?? null;
+			this.role = userData.role ?? null;
+			this.displayName = userData.displayName ?? null;
+			this.banReason = userData.banReason ?? null;
+			this.banType = userData.banType ?? null;
+			this.banExpiresAt = userData.banExpiresAt ?? null;
+			this.bannedBy = userData.bannedBy ?? null;
+			this.banAppealText = userData.banAppealText ?? null;
+			this.banAppealPending = userData.banAppealPending ?? null;
+			if (userData.banAppealText) {
+				this.banAppealAlreadySent = true;
 			}
 		},
 		storeUserData(type: DataTypes, value: unknown) {

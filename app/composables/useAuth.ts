@@ -8,11 +8,11 @@ import {
 	updateProfile,
 } from "firebase/auth";
 import { httpsCallable } from "firebase/functions";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, onSnapshot } from "firebase/firestore";
 import { useNuxtApp, useState } from "nuxt/app";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { createError } from "h3";
-import type { useStore } from "@/../stores/userStore"; // Adjust the path as needed for your project
+import type { useStore } from "@/../stores/userStore";
 import type { User, Auth } from "firebase/auth";
 import type { Firestore } from "firebase/firestore";
 import type { Functions } from "firebase/functions";
@@ -40,17 +40,46 @@ export const useAuth = () => {
 
 	const uid = ref("");
 	const user = useState<User | null>("user", () => null);
-	const userData = useState<Record<string, unknown> | null>("userData", () => null);
+	const unsubscribe = ref<() => void>();
 
 	const initAuth = async () => {
 		onAuthStateChanged(auth, async (u) => {
-			// console.log("🔍 Utente rilevato da FireAuth:", u);
+			// console.log("Utente rilevato da FireAuth:", u);
 			user.value = u;
+			uid.value = u?.uid || "";
 
-			if (user.value) {
-				await userStore.syncUserData(user.value?.uid);
-			}
 			userStore.storeUserData("loaded", true);
+		});
+	};
+
+	const updateLocalCache = async () => {
+		watch(uid, (newUid, _, onCleanup) => {
+			if (!newUid) return;
+
+			const docRef = doc(db, "users", newUid);
+
+			const unsub = onSnapshot(
+				docRef,
+				async (snapshot) => {
+					if (snapshot.exists()) {
+						// console.log("Documento modificato:", snapshot.data());
+						await userStore.syncUserData(snapshot.data());
+					}
+					else {
+						logout();
+					}
+				},
+				(err) => {
+					console.error("Firestore error:", err);
+				},
+			);
+
+			unsubscribe.value = unsub;
+
+			onCleanup(() => {
+				unsub();
+				console.log("CleanUp");
+			});
 		});
 	};
 
@@ -92,7 +121,6 @@ export const useAuth = () => {
 					role: "user",
 				});
 			}
-			await userStore.syncUserData(user.uid);
 		}
 		catch (err) {
 			console.error("Errore durante il login con Google:", err);
@@ -140,13 +168,12 @@ export const useAuth = () => {
 	const logout = async () => {
 		await signOut(auth);
 		user.value = null;
-		userData.value = null;
 	};
 
 	return {
 		user,
-		userData,
 		initAuth,
+		updateLocalCache,
 		login,
 		signup,
 		logout,
