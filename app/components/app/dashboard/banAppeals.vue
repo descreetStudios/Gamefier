@@ -30,7 +30,7 @@
 
 			<form
 				class="ban-appeals__form"
-				@submit.prevent
+				@submit.prevent="eventHandler(user)"
 			>
 				<select
 					v-model="user.banType"
@@ -56,19 +56,19 @@
 						type="submit"
 						value="Update ban"
 						class="ban-appeals__btn ban-appeals__btn--blue"
-						@click="eventHandler(user, 1)"
+						@click="user.action = 1"
 					>
 					<input
 						type="submit"
 						value="Unban"
 						class="ban-appeals__btn ban-appeals__btn--green"
-						@click="eventHandler(user, 2)"
+						@click="user.action = 2"
 					>
 					<input
 						type="submit"
 						value="Refuse"
 						class="ban-appeals__btn ban-appeals__btn--red"
-						@click="eventHandler(user, 3)"
+						@click="user.action = 3"
 					>
 				</div>
 			</form>
@@ -227,8 +227,9 @@ const unban = async (user) => {
 	}
 };
 
-const eventHandler = async (user, action) => {
+const eventHandler = async (user) => {
 	try {
+		const action = user.action;
 		if (action === 1) await updateBan(user);
 		else if (action === 2) await unban(user);
 		else if (action === 3) await refuse(user);
