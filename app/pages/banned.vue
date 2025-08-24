@@ -6,7 +6,7 @@
 		<div
 			class="ban-page__background"
 			:style="{
-				transform: `translateY(${bgOffset - 100}px) translateX(${mouseX * 10}px) translateY(${mouseY * 10}px)`,
+				transform: `translateX(${mouseX * 10}px) translateY(${mouseY * 10}px)`,
 			}"
 		>
 			<img
@@ -152,16 +152,26 @@ const logoutHandler = async () => {
 
 const mouseX = ref(0);
 const mouseY = ref(0);
-const bgOffset = ref(0);
+
+const handleMouseMove = (event) => {
+	mouseX.value = (event.clientX / window.innerWidth - 0.5) * 2;
+	mouseY.value = (event.clientY / window.innerHeight - 0.5) * 2;
+};
+
+onMounted(() => {
+	window.addEventListener("mousemove", handleMouseMove);
+});
+
+onUnmounted(() => {
+	window.removeEventListener("mousemove", handleMouseMove);
+});
 </script>
 
-<style lang="scss">
-html {
-	overflow: hidden;
-}
-
+<style lang="scss" scoped>
 .ban-page {
-	position: relative;
+	position: fixed;
+	inset: 0;
+	overflow: hidden;
 	width: 100%;
 	min-height: 100vh;
 
@@ -171,7 +181,7 @@ html {
 		left: 0;
 		width: 100%;
 		height: 120vh;
-		background-color: var(--bg);
+		background-color: rgb(19, 19, 19);
 		scale: 1.25;
 		z-index: -1;
 		overflow: hidden;
@@ -205,7 +215,7 @@ html {
 	padding: 2rem;
 	padding-bottom: 1rem;
 	border-radius: var(--border-radius);
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 4px 12px var(--shadow);
 
 	&__brand {
 		align-items: center;
@@ -331,7 +341,7 @@ html {
 	}
 
 	&__reviewed {
-		margin-top: 1rem;
+		margin-bottom: 1rem;
 		padding: 0.5rem 1rem;
 		background-color: rgba(0, 128, 0, 0.1);
 		color: green;

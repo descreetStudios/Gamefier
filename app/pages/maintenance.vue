@@ -6,7 +6,7 @@
 		<div
 			class="maintenance-page__background"
 			:style="{
-				transform: `translateY(${bgOffset - 100}px) translateX(${mouseX * 10}px) translateY(${mouseY * 10}px)`,
+				transform: `translateX(${mouseX * 10}px) translateY(${mouseY * 10}px)`,
 			}"
 		>
 			<img
@@ -39,48 +39,34 @@
 				<p class="maintenance-card__message">
 					We're currently updating our systems to improve your experience. Please check back later.
 				</p>
-
-				<p
-					class="maintenance-card__logout"
-					@click="logoutHandler"
-				>
-					Log out
-				</p>
 			</div>
 		</section>
 	</div>
 </template>
 
 <script setup>
-const { $eventBus } = useNuxtApp();
-const { logout } = useAuth();
-
-const logoutHandler = async () => {
-	await logout();
-
-	$eventBus.emit("alert", {
-		message: "You have been logged out.",
-		type: "success",
-		duration: 2000,
-	});
-
-	setTimeout(() => {
-		window.location.reload();
-	}, 2000);
-};
-
 const mouseX = ref(0);
 const mouseY = ref(0);
-const bgOffset = ref(0);
+
+const handleMouseMove = (event) => {
+	mouseX.value = (event.clientX / window.innerWidth - 0.5) * 2;
+	mouseY.value = (event.clientY / window.innerHeight - 0.5) * 2;
+};
+
+onMounted(() => {
+	window.addEventListener("mousemove", handleMouseMove);
+});
+
+onUnmounted(() => {
+	window.removeEventListener("mousemove", handleMouseMove);
+});
 </script>
 
-<style lang="scss">
-html {
-    overflow: hidden;
-}
-
+<style lang="scss" scoped>
 .maintenance-page {
-    position: relative;
+	position: fixed;
+	inset: 0;
+	overflow: hidden;
     width: 100%;
     min-height: 100vh;
 
@@ -90,7 +76,7 @@ html {
         left: 0;
         width: 100%;
         height: 120vh;
-        background-color: var(--bg);
+        background-color: rgb(19, 19, 19);
         scale: 1.25;
         z-index: -1;
         overflow: hidden;
@@ -122,7 +108,7 @@ html {
     background-color: var(--surface);
     padding: 2rem;
     border-radius: var(--border-radius);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px var(--shadow);
     z-index: 1;
 
     &__brand {
@@ -158,38 +144,7 @@ html {
         text-align: center;
         color: var(--secondary-text);
         font-size: 1rem;
-        margin-bottom: 2rem;
-    }
-
-    &__logout {
-        margin: 0 auto;
-        padding: 0.5rem;
-        border-radius: var(--border-radius);
-        width: 50%;
-        text-align: center;
-        color: var(--error);
-        cursor: pointer;
-        font-weight: 500;
-        font-size: 0.95rem;
-        position: relative;
-        overflow: hidden;
-        z-index: 1;
-
-        &::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0;
-            height: 100%;
-            background-color: rgba(255, 0, 0, 0.1);
-            z-index: -1;
-            transition: width 0.3s ease;
-        }
-
-        &:hover::before {
-            width: 100%;
-        }
+        margin-bottom: 0;
     }
 }
 

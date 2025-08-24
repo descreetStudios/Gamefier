@@ -10,10 +10,10 @@
     flex: 1;
     padding: 2rem;
     background: var(--bg);
+    margin-bottom: 0px;
     overflow-y: auto;
     min-height: 100vh;
-    margin-bottom: 0px;
-    left: 15vw;
-    max-width: 84vw;
+    margin-left: 15vw;
+    max-width: calc(100vw - 15vw);
 }
 </style>

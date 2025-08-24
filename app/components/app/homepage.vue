@@ -1,6 +1,5 @@
 <template>
 	<div class="homepage">
-		<!-- Blurred background under navbar -->
 		<div
 			class="homepage__background"
 			:style="{
@@ -14,153 +13,49 @@
 			>
 		</div>
 
-		<!-- Hero -->
-		<div class="homepage__content">
-			<h1>The place where education meets games!</h1>
-			<p>How does it work?</p>
-			<div class="homepage__content__arrows">
-				<span />
-				<span />
-				<span />
-			</div>
-		</div>
-
-		<!-- Section 1 -->
-		<section
-			id="features"
-			class="homepage__section"
-		>
-			<img
-				src="/images/features.png"
-				alt="Features"
-				@dragstart.prevent
-			>
-			<div class="text-block">
-				<h2>What's Gamefier?</h2>
-				<p class="paragraphs">
-					Gamefier is an online platform where teachers can enhance their lessons by integrating interactive
-					games
-					to engage their students, helping them learn and retain more information, with less effort.
-				</p>
+		<section class="homepage__hero">
+			<h1 class="homepage__hero-title">
+				The place where education meets games!
+			</h1>
+			<p class="homepage__hero-subtitle">
+				How does it work?
+			</p>
+			<div class="homepage__hero-arrows">
+				<span /><span /><span />
 			</div>
 		</section>
 
-		<!-- Section 2 -->
+		<!-- Content Sections -->
 		<section
-			id="open-source"
-			class="homepage__section_reversed"
+			v-for="section in sections"
+			:id="section.id"
+			:key="section.id"
+			:class="`homepage__section ${section.reversed ? 'homepage__section--reversed' : ''}`"
 		>
 			<img
-				src="/images/openSource.png"
-				alt="Open Source"
+				:src="section.image"
+				:alt="section.title"
 				@dragstart.prevent
 			>
-			<div class="text-block">
-				<h2>Open Source, Open Future</h2>
-				<p class="paragraphs">
-					Gamefier is proudly open source. Our code is public, transparent, and built to grow with the help of
-					a passionate community. Whether you're a developer, educator, or curious learner — you're welcome to
-					contribute and shape the future of educational gaming with us.
-				</p>
-			</div>
-		</section>
-
-		<!-- Section 3 -->
-		<section
-			id="games"
-			class="homepage__section"
-		>
-			<img
-				src="/images/games.png"
-				alt="Games"
-				@dragstart.prevent
-			>
-			<div class="text-block">
-				<h2>How can i create a game?</h2>
-				<div class="paragraphs">
-					<NuxtLink to="/signup">
-						<p>1. Make an account</p>
-					</NuxtLink>
-					<p>2. Start creating using templates!</p>
+			<div class="homepage__text-block">
+				<h2 class="homepage__section-title">
+					{{ section.title }}
+				</h2>
+				<div class="homepage__section-paragraphs">
+					<template v-if="section.links">
+						<NuxtLink
+							v-for="(text, i) in section.links"
+							:key="i"
+							:to="text.to"
+						>
+							<p>{{ text.label }}</p>
+						</NuxtLink>
+						<p>{{ section.description }}</p>
+					</template>
+					<template v-else>
+						<p>{{ section.description }}</p>
+					</template>
 				</div>
-			</div>
-		</section>
-
-		<!-- Section 4 -->
-		<section
-			id="community"
-			class="homepage__section_reversed"
-		>
-			<img
-				src="/images/community.png"
-				alt="Community"
-				@dragstart.prevent
-			>
-			<div class="text-block">
-				<h2>Community</h2>
-				<p class="paragraphs">
-					Join a community of learners and educators collaborating together, discover games created by others
-					and share your own.
-				</p>
-			</div>
-		</section>
-
-		<!-- Section 5 -->
-		<section
-			id="get-started"
-			class="homepage__section"
-		>
-			<img
-				src="/images/getStarted.png"
-				alt="Get Started"
-				@dragstart.prevent
-			>
-			<div class="text-block">
-				<h2>Get Started</h2>
-				<div class="paragraphs">
-					<NuxtLink to="/signup">
-						<p>Create your free account</p>
-					</NuxtLink>
-					<p>and start play-learning today!</p>
-				</div>
-			</div>
-		</section>
-
-		<!-- Section 6 -->
-		<section
-			id="security"
-			class="homepage__section_reversed"
-		>
-			<img
-				src="/images/security.png"
-				alt="Security"
-				@dragstart.prevent
-			>
-			<div class="text-block">
-				<h2>Security First</h2>
-				<p class="paragraphs">
-					Gamefier uses modern security protocols to keep your data safe. From encrypted connections to
-					protected user accounts, we make sure your learning experience is secure at every step.
-				</p>
-			</div>
-		</section>
-
-		<!-- Section 7 -->
-		<section
-			id="privacy"
-			class="homepage__section"
-		>
-			<img
-				src="/images/privacy.png"
-				alt="Privacy"
-				@dragstart.prevent
-			>
-			<div class="text-block">
-				<h2>We respect your privacy</h2>
-				<p class="paragraphs">
-					Your personal data is never shared or sold. At Gamefier, we follow strict privacy practices to
-					ensure a safe and respectful environment for teachers, students, and everyone who uses our platform.
-				</p>
 			</div>
 		</section>
 	</div>
@@ -176,7 +71,6 @@ const handleScroll = () => {
 	const scrollHeight = document.documentElement.scrollHeight;
 	const viewportHeight = window.innerHeight;
 	const maxScroll = scrollHeight - viewportHeight;
-
 	const maxBgMove = 0.2 * viewportHeight;
 	const scrollPercent = Math.min(scrollTop / maxScroll, 1);
 	bgOffset.value = scrollPercent * maxBgMove;
@@ -196,8 +90,63 @@ onUnmounted(() => {
 	window.removeEventListener("scroll", handleScroll);
 	window.removeEventListener("mousemove", handleMouseMove);
 });
+
+const sections = [
+	{
+		id: "features",
+		title: "What's Gamefier?",
+		image: "/images/features.png",
+		description:
+			"Gamefier is an online platform where teachers can enhance their lessons by integrating interactive games to engage their students, helping them learn and retain more information, with less effort.",
+	},
+	{
+		id: "open-source",
+		title: "Open Source, Open Future",
+		image: "/images/openSource.png",
+		description:
+			"Our code is public, transparent, and built to grow with a passionate community. Whether you're a developer, educator, or curious learner — you're welcome to contribute.",
+		reversed: true,
+	},
+	{
+		id: "games",
+		title: "How can I create a game?",
+		image: "/images/games.png",
+		description: "2. Start creating using templates!",
+		links: [{ to: "/signup", label: "1. Make an account" }],
+	},
+	{
+		id: "community",
+		title: "Community",
+		image: "/images/community.png",
+		description:
+			"Join a community of learners and educators, discover games created by others, and share your own.",
+		reversed: true,
+	},
+	{
+		id: "get-started",
+		title: "Get Started",
+		image: "/images/getStarted.png",
+		description: "and start play-learning today!",
+		links: [{ to: "/signup", label: "Create your free account" }],
+	},
+	{
+		id: "security",
+		title: "Security First",
+		image: "/images/security.png",
+		description:
+			"Gamefier uses modern security protocols to keep your data safe. From encrypted connections to protected accounts, we make sure your learning is secure.",
+		reversed: true,
+	},
+	{
+		id: "privacy",
+		title: "We respect your privacy",
+		image: "/images/privacy.png",
+		description:
+			"Your personal data is never shared or sold. Gamefier follows strict privacy practices to ensure a safe and respectful environment.",
+	},
+];
 </script>
 
 <style lang="scss" scoped>
-@use "@/assets/scss/homepage.scss";
+@use '@/assets/scss/homepage.scss';
 </style>

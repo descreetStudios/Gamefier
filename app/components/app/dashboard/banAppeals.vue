@@ -1,20 +1,37 @@
 <template>
-	<div>
+	<div class="ban-appeals">
 		<fieldset
 			v-for="user in users"
 			:key="user.id"
+			class="ban-appeals__card"
 		>
 			<legend>{{ user.displayName }} - #{{ user.id }}</legend>
-			<p v-if="user.banType=='temporary'">
-				Ban expires at: {{ user.banExpiresAt }}
+
+			<p class="ban-appeals__info">
+				<span class="ban-appeals__highlight">
+					{{ user.banType === 'temporary' ? 'Ban expires at:' : 'Permanent ban' }}
+				</span>
+				<template v-if="user.banType === 'temporary'">
+					{{ user.banExpiresAt }}
+				</template>
 			</p>
-			<p v-else>
-				Permanent ban
+
+			<p class="ban-appeals__info">
+				<span class="ban-appeals__highlight">Ban reason:</span> {{ user.banReason }}
 			</p>
-			<p>Ban reason: {{ user.banReason }}</p>
-			<p>Banned by: {{ user.bannedBy }}</p>
-			<p>Ban appeal text: {{ user.banAppealText }}</p>
-			<form @submit.prevent>
+
+			<p class="ban-appeals__info">
+				<span class="ban-appeals__highlight">Banned by:</span> {{ user.bannedBy }}
+			</p>
+
+			<p class="ban-appeals__info">
+				<span class="ban-appeals__highlight">Ban appeal text:</span> {{ user.banAppealText }}
+			</p>
+
+			<form
+				class="ban-appeals__form"
+				@submit.prevent
+			>
 				<select
 					v-model="user.banType"
 					name="banType"
@@ -26,71 +43,83 @@
 						Permanent
 					</option>
 				</select>
+
 				<input
 					v-if="user.banType === 'temporary'"
 					v-model="user.banExpiresAt"
 					type="date"
 					required
 				>
-				<input
-					type="submit"
-					value="Update ban"
-					@click="eventHandler(user, 1)"
-				>
-				<input
-					type="submit"
-					value="Refuse"
-					@click="eventHandler(user, 2)"
-				>
-				<input
-					type="submit"
-					value="Unban"
-					@click="eventHandler(user, 3)"
-				>
+
+				<div class="ban-appeals__actions">
+					<input
+						type="submit"
+						value="Update ban"
+						class="ban-appeals__btn ban-appeals__btn--blue"
+						@click="eventHandler(user, 1)"
+					>
+					<input
+						type="submit"
+						value="Unban"
+						class="ban-appeals__btn ban-appeals__btn--green"
+						@click="eventHandler(user, 2)"
+					>
+					<input
+						type="submit"
+						value="Refuse"
+						class="ban-appeals__btn ban-appeals__btn--red"
+						@click="eventHandler(user, 3)"
+					>
+				</div>
 			</form>
 		</fieldset>
 	</div>
 </template>
 
 <script setup>
-import { collection, query, where, getDocs, doc, updateDoc, deleteField } from "firebase/firestore";
+import {
+	collection,
+	query,
+	where,
+	getDocs,
+	doc,
+	updateDoc,
+	deleteField,
+} from "firebase/firestore";
 import { onMounted, ref } from "vue";
 
-const { $db } = useNuxtApp();
-const { $eventBus } = useNuxtApp();
+const { $db, $eventBus } = useNuxtApp();
 
 const users = ref([]);
 const oldUsers = ref([]);
 const called = ref(false);
 
-onMounted(async () => {
-	searchPendingBanAppeals();
-});
+const formatDate = (input) => {
+	const date = input.toDate ? input.toDate() : new Date(input);
+	return date.toISOString().split("T")[0];
+};
 
 const searchPendingBanAppeals = async () => {
-	const usersRef = collection($db, "users");
-	const q = query(usersRef,
-		where("banAppealText", "!=", null),
-		where("banAppealPending", "==", true),
-	);
 	try {
-		const querySnapshot = await getDocs(q);
+		const q = query(
+			collection($db, "users"),
+			where("banAppealText", "!=", null),
+			where("banAppealPending", "==", true),
+		);
+		const snapshot = await getDocs(q);
+
 		users.value = [];
-		oldUsers.value = [];
-		querySnapshot.forEach((doc) => {
-			const data = doc.data();
-			if (data.banExpiresAt) {
-				const date = data.banExpiresAt.toDate ? data.banExpiresAt.toDate() : new Date(data.banExpiresAt);
-				data.banExpiresAt = date.toISOString().split("T")[0];
-			}
-			users.value.push({ id: doc.id, ...data });
-			oldUsers.value = users.value.map(user => ({ ...user }));
+		snapshot.forEach((docSnap) => {
+			const data = docSnap.data();
+			if (data.banExpiresAt) data.banExpiresAt = formatDate(data.banExpiresAt);
+			users.value.push({ id: docSnap.id, ...data });
 		});
+		oldUsers.value = users.value.map(u => ({ ...u }));
+
 		if (!called.value) {
 			const count = users.value.length;
-			const message = `Found ${count} banned user${count !== 1 ? "s" : ""} who submitted a ban appeal request.`;
 			$eventBus.emit("alert", {
-				message: message,
+				message: `Found ${count} banned user${count !== 1 ? "s" : ""} with pending appeals.`,
 				type: "success",
 				duration: 3000,
 			});
@@ -102,19 +131,108 @@ const searchPendingBanAppeals = async () => {
 	called.value = false;
 };
 
-const eventHandler = async (user, event) => {
-	try {
-		switch (event) {
-			case 1:
-				await updateBan(user);
-				break;
-			case 2:
-				await refuse(user);
-				break;
-			case 3:
-				await unban(user);
-				break;
+const updateBan = async (user) => {
+	const oldUser = oldUsers.value.find(u => u.id === user.id);
+	const userRef = doc($db, "users", user.id);
+	const updates = {};
+
+	if (user.banType !== oldUser.banType || user.banExpiresAt !== oldUser.banExpiresAt) {
+		updates.banType = user.banType;
+		if (user.banType === "permanent") {
+			updates.banExpiresAt = deleteField();
 		}
+		else {
+			if (!user.banExpiresAt) return;
+			const date = new Date(user.banExpiresAt + "T00:00:00");
+			if (date <= new Date()) {
+				$eventBus.emit("alert", {
+					message: "Invalid expiration date. Please select a future date.",
+					type: "error",
+					duration: 3000,
+				});
+				return;
+			}
+			updates.banExpiresAt = date;
+		}
+		updates.banAppealPending = false;
+	}
+	else {
+		$eventBus.emit("alert", {
+			message: "No changes detected. Modify ban type or expiration before submitting.",
+			type: "error",
+			duration: 3000,
+		});
+		return;
+	}
+
+	try {
+		await updateDoc(userRef, updates);
+		$eventBus.emit("alert", {
+			message: `Ban updated successfully for ${user.displayName}.`,
+			type: "success",
+			duration: 3000,
+		});
+	}
+	catch (err) {
+		$eventBus.emit("alert", {
+			message: `Failed to update ban for ${user.displayName}. ${err.message || "Try again."}`,
+			type: "error",
+			duration: 3000,
+		});
+	}
+};
+
+const refuse = async (user) => {
+	try {
+		await updateDoc(doc($db, "users", user.id), { banAppealPending: false });
+		$eventBus.emit("alert", {
+			message: `Ban appeal from ${user.displayName} refused.`,
+			type: "success",
+			duration: 3000,
+		});
+	}
+	catch (err) {
+		$eventBus.emit("alert", {
+			message: `Failed to refuse ban appeal from ${user.displayName}. ${err.message || "Try again."}`,
+			type: "error",
+			duration: 3000,
+		});
+	}
+};
+
+const unban = async (user) => {
+	const updates = {
+		role: "user",
+		banReason: deleteField(),
+		banType: deleteField(),
+		banExpiresAt: deleteField(),
+		bannedBy: deleteField(),
+		banAppealText: deleteField(),
+		banAppealPending: deleteField(),
+	};
+	try {
+		await updateDoc(doc($db, "users", user.id), updates);
+		$eventBus.emit("alert", {
+			message: `User ${user.displayName} unbanned successfully.`,
+			type: "success",
+			duration: 3000,
+		});
+	}
+	catch (err) {
+		$eventBus.emit("alert", {
+			message: `Failed to unban ${user.displayName}. ${err.message || "Try again."}`,
+			type: "error",
+			duration: 3000,
+		});
+	}
+};
+
+const eventHandler = async (user, action) => {
+	try {
+		if (action === 1) await updateBan(user);
+		else if (action === 2) await unban(user);
+		else if (action === 3) await refuse(user);
+
 		called.value = true;
 		await searchPendingBanAppeals();
 	}
@@ -127,109 +245,94 @@ const eventHandler = async (user, event) => {
 	}
 };
 
-const updateBan = async (user) => {
-	const oldUser = oldUsers.value.find(u => u.id === user.id);
-	const userDocRef = doc($db, "users", user.id);
-	const updatedStoreFields = {};
-	if (user.banType != oldUser.banType || user.banExpiresAt != oldUser.banExpiresAt) {
-		updatedStoreFields.banType = user.banType;
-		if (user.banType === "permanent") {
-			updatedStoreFields.banExpiresAt = deleteField();
-		}
-		else {
-			if (!user.banExpiresAt) {
-				return;
-			}
-			const date = new Date(user.banExpiresAt + "T00:00:00");
-			if (date <= new Date()) {
-				$eventBus.emit("alert", {
-					message: "Invalid expiration date. Please select a future date for the temporary ban.",
-					type: "error",
-					duration: 3000,
-				});
-				return;
-			}
-			else {
-				updatedStoreFields.banExpiresAt = date;
-			}
-		}
-		updatedStoreFields.banAppealPending = false;
-	}
-
-	if (!Object.keys(updatedStoreFields).length > 0) {
-		$eventBus.emit("alert", {
-			message: "No changes were made to the ban. Please modify the ban type or expiration date before submitting.",
-			type: "error",
-			duration: 3000,
-		});
-	}
-	else {
-		try {
-			await updateDoc(userDocRef, updatedStoreFields);
-			$eventBus.emit("alert", {
-				message: `Ban updated successfully for ${user.displayName}.`,
-				type: "success",
-				duration: 3000,
-			});
-		}
-		catch (err) {
-			$eventBus.emit("alert", {
-				message: `Failed to update the ban for ${user.displayName}. ${err?.message ? "Error: " + err.message : "Please try again."}`,
-				type: "error",
-				duration: 3000,
-			});
-		}
-	}
-};
-
-const refuse = async (user) => {
-	const userDocRef = doc($db, "users", user.id);
-	try {
-		await updateDoc(userDocRef, { banAppealPending: false });
-		$eventBus.emit("alert", {
-			message: `Ban appeal from ${user.displayName} has been refused.`,
-			type: "success",
-			duration: 3000,
-		});
-	}
-	catch (err) {
-		$eventBus.emit("alert", {
-			message: `Failed to refuse the ban appeal from ${user.displayName}. ${err?.message ? "Error: " + err.message : "Please try again."}`,
-			type: "error",
-			duration: 3000,
-		});
-	}
-};
-
-const unban = async (user) => {
-	const userDocRef = doc($db, "users", user.id);
-	const updatedStoreFields = {
-		role: "user",
-		banReason: deleteField(),
-		banType: deleteField(),
-		banExpiresAt: deleteField(),
-		bannedBy: deleteField(),
-		banAppealText: deleteField(),
-		banAppealPending: deleteField(),
-	};
-	try {
-		await updateDoc(userDocRef, updatedStoreFields);
-		$eventBus.emit("alert", {
-			message: `User ${user.displayName} has been successfully unbanned.`,
-			type: "success",
-			duration: 3000,
-		});
-	}
-	catch (err) {
-		$eventBus.emit("alert", {
-			message: `Failed to unban ${user.displayName}. ${err?.message ? "Error: " + err.message : "Please try again."}`,
-			type: "error",
-			duration: 3000,
-		});
-	}
-};
+onMounted(searchPendingBanAppeals);
 </script>
 
-<style>
+<style scoped lang="scss">
+.ban-appeals {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 
+  &__card {
+    padding: 1.5rem;
+    border: 2px solid var(--inv-secondary-text);
+    border-radius: var(--border-radius);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    legend {
+      padding: 0 1rem;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+  }
+
+  &__info {
+    margin: 0;
+
+    & .ban-appeals__highlight {
+      font-weight: bold;
+    }
+  }
+
+  &__highlight {
+    font-weight: bold;
+  }
+
+  &__form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+
+    select,
+    input[type="date"] {
+      padding: 0.5rem;
+      font-size: 1rem;
+      border-radius: var(--border-radius);
+      border: 1px solid var(--inv-secondary-text);
+      margin-bottom: 0;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex: 1;
+    gap: 1rem;
+    margin-top: 0;
+  }
+
+  &__btn {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    color: white;
+    transition: background-color 0.3s ease;
+
+    &--blue {
+      background-color: #007bff;
+      &:hover {
+        background-color: #0069d9;
+      }
+    }
+
+    &--green {
+      background-color: #28a745;
+      &:hover {
+        background-color: #218838;
+      }
+    }
+
+    &--red {
+      background-color: #dc3545;
+      &:hover {
+        background-color: #c82333;
+      }
+    }
+  }
+}
 </style>
