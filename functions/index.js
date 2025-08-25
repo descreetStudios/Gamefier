@@ -82,7 +82,7 @@ exports.checkUsernameAvailability = onCall(async (context) => {
 	return { available: snapshot.empty };
 });
 
-// Test local with it: http://localhost:5001/gamefier-86a8b/us-central1/testUnban
+// Test locally with: http://localhost:5001/gamefier-86a8b/us-central1/testUnban
 exports.testUnban = onRequest(async (req, res) => {
 	try {
 		const now = Timestamp.now();
