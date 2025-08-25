@@ -3,7 +3,22 @@
 		<h1 class="admin__title">
 			Admin Page
 		</h1>
-
+		<h2>Site Administration</h2>
+		<fieldset>
+			<legend>
+				Maintenance mode:
+				<span v-if="isMaintenanceModeEnabled">Enabled</span>
+				<span v-else>Disabled</span>
+			</legend>
+			<form @submit.prevent>
+				<input
+					type="submit"
+					:value="isMaintenanceModeEnabled ? 'Disable Maintenance Mode' : 'Enable Maintenance Mode'"
+					@click="updateMaintenanceMode(isMaintenanceModeEnabled ? 'off' : 'on')"
+				>
+			</form>
+		</fieldset>
+		<h2>User Moderation</h2>
 		<fieldset class="admin__search">
 			<legend>Search users by name</legend>
 			<form
@@ -131,8 +146,8 @@
 </template>
 
 <script setup>
-import { collection, query, where, getDocs, doc, updateDoc, deleteField } from "firebase/firestore";
-import { ref } from "vue";
+import { collection, query, where, doc, getDocs, getDoc, setDoc, updateDoc, deleteField } from "firebase/firestore";
+import { ref, onMounted } from "vue";
 import { httpsCallable } from "firebase/functions";
 
 const { $db } = useNuxtApp();
@@ -144,9 +159,15 @@ const userSearchName = ref("");
 const users = ref([]);
 const oldUsers = ref([]);
 const called = ref(false);
+const isMaintenanceModeEnabled = ref(null);
 
 const userIcon = ref("/images/icons/user.png");
 const editIcon = ref("/images/icons/edit.png");
+
+onMounted(async () => {
+	getMaintenanceModeStatus();
+});
+
 // Search users whose displayName starts with the input
 const searchUsersByDisplayNameStartsWith = async () => {
 	const usersRef = collection($db, "users");
@@ -330,11 +351,69 @@ const isUsernameAvailable = async (displayName) => {
 		});
 		return result.data.available;
 	}
-	catch (error) {
-		console.error("Error while checking username availability:", error);
+	catch (err) {
+		$eventBus.emit("alert", {
+			message: `Error while checking username availability: ${err}`,
+			type: "error",
+			duration: 3000,
+		});
 		return false;
 	}
 };
+
+const updateMaintenanceMode = async (event) => {
+	const docRef = doc($db, "site_settings", "general");
+
+	if (event === "on") {
+		try {
+			await setDoc(docRef, { maintenanceMode: true }, { merge: true });
+			isMaintenanceModeEnabled.value = true;
+			$eventBus.emit("alert", {
+				message: "Maintenance mode has been enabled.",
+				type: "success",
+				duration: 3000,
+			});
+		}
+		catch (err) {
+			$eventBus.emit("alert", {
+				message: `Error while enabling maintenance mode: ${err}`,
+				type: "error",
+				duration: 3000,
+			});
+		}
+	}
+	else if (event === "off") {
+		try {
+			await setDoc(docRef, { maintenanceMode: false }, { merge: true });
+			isMaintenanceModeEnabled.value = false;
+			$eventBus.emit("alert", {
+				message: "Maintenance mode has been disabled.",
+				type: "success",
+				duration: 3000,
+			});
+		}
+		catch (err) {
+			$eventBus.emit("alert", {
+				message: `Error while disabling maintenance mode: ${err}`,
+				type: "error",
+				duration: 3000,
+			});
+		}
+	}
+	else {
+		$eventBus.emit("alert", {
+			message: `Unexpected maintenance mode value: ${event}`,
+			type: "error",
+			duration: 3000,
+		});
+	}
+};
+const getMaintenanceModeStatus = async () => {
+	const docRef = doc($db, "site_settings", "general");
+	const siteSettings = await getDoc(docRef);
+	isMaintenanceModeEnabled.value = siteSettings.data()?.maintenanceMode;
+}
+;
 </script>
 
 <style lang="scss" scoped>

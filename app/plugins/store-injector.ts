@@ -1,8 +1,11 @@
 import { defineNuxtPlugin } from "nuxt/app";
-import { useStore } from "@/../stores/userStore";
+import { useUserStore } from "@/../stores/userStore";
+import { useSiteSettingsStore } from "@/../stores/siteSettingsStore";
 
 export default defineNuxtPlugin((nuxtApp) => {
-	const userStore = useStore();
+	const userStore = useUserStore();
+	const siteSettingsStore = useSiteSettingsStore();
 
 	nuxtApp.provide("userStore", userStore);
+	nuxtApp.provide("siteSettingsStore", siteSettingsStore);
 });

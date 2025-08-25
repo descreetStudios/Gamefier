@@ -3,8 +3,10 @@ import { onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 
 const { $userStore } = useNuxtApp();
+const { $siteSettingsStore } = useNuxtApp();
 
-const loaded = computed(() => $userStore.loaded);
+const userLoaded = computed(() => $userStore.loaded);
+const siteSettingsLoaded = computed(() => $siteSettingsStore.loaded);
 
 const route = useRoute();
 const { pathTo, ...otherParams } = route.query;
@@ -13,7 +15,7 @@ onMounted(() => {
 	document.body.style.overflow = "hidden";
 	setTimeout(() => {
 		const intervalId = setInterval(() => {
-			if (loaded.value === true) {
+			if (userLoaded.value === true && siteSettingsLoaded.value === true) {
 				if (pathTo && typeof pathTo === "string" && pathTo !== "/loading") {
 					navigateTo({ path: pathTo, query: { ...otherParams } });
 				}

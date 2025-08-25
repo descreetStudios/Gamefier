@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 
 type DataTypes = "startup" | "loaded";
 
-export const useStore = defineStore("userStore", {
+export const useUserStore = defineStore("userStore", {
 	state: () => ({
 		startup: true as unknown | boolean,
 		loaded: false as unknown | boolean,

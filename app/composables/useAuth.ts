@@ -12,7 +12,8 @@ import { doc, setDoc, getDoc, onSnapshot } from "firebase/firestore";
 import { useNuxtApp, useState } from "nuxt/app";
 import { ref, watch } from "vue";
 import { createError } from "h3";
-import type { useStore } from "@/../stores/userStore";
+import type { useUserStore } from "@/../stores/userStore";
+import type { useSiteSettingsStore } from "@/../stores/siteSettingsStore";
 import type { User, Auth } from "firebase/auth";
 import type { Firestore } from "firebase/firestore";
 import type { Functions } from "firebase/functions";
@@ -29,7 +30,9 @@ interface UsernameCheckResponse {
 export const useAuth = () => {
 	// Pinia Store
 	const { $userStore } = useNuxtApp();
-	const userStore = $userStore as ReturnType<typeof useStore>;
+	const { $siteSettingsStore } = useNuxtApp();
+	const userStore = $userStore as ReturnType<typeof useUserStore>;
+	const siteSettingsStore = $siteSettingsStore as ReturnType<typeof useSiteSettingsStore>;
 
 	const { $db } = useNuxtApp();
 	const { $auth } = useNuxtApp();
@@ -47,8 +50,6 @@ export const useAuth = () => {
 			// console.log("Utente rilevato da FireAuth:", u);
 			user.value = u;
 			uid.value = u?.uid || "";
-
-			userStore.storeUserData("loaded", true);
 		});
 	};
 
@@ -64,6 +65,7 @@ export const useAuth = () => {
 					if (snapshot.exists()) {
 						// console.log("Documento modificato:", snapshot.data());
 						await userStore.syncUserData(snapshot.data());
+						userStore.storeUserData("loaded", true);
 					}
 					else {
 						logout();
@@ -81,6 +83,13 @@ export const useAuth = () => {
 				console.log("CleanUp");
 			});
 		});
+
+		const siteSettingsRef = doc(db, "site_settings", "general");
+		const _unsubSettings = onSnapshot(siteSettingsRef, async (snapshot) => {
+			if (snapshot.exists()) {
+				await siteSettingsStore.syncSiteSettings(snapshot.data());
+			}
+		});
 	};
 
 	const isUsernameAvailable = async (displayName: string): Promise<boolean> => {
@@ -92,8 +101,8 @@ export const useAuth = () => {
 			const result = await checkUsernameAvailability({ displayName });
 			return result.data.available;
 		}
-		catch (error) {
-			console.error("Errore durante la verifica:", error);
+		catch (err) {
+			console.error("Errore durante la verifica:", err);
 			return false;
 		}
 	};
@@ -143,8 +152,8 @@ export const useAuth = () => {
 			});
 			console.log("Dati utente salvati in Firestore!");
 		}
-		catch (error) {
-			console.error("Errore nel salvataggio dei dati:", error);
+		catch (err) {
+			console.error("Errore nel salvataggio dei dati:", err);
 		}
 	};
 
