@@ -14,7 +14,7 @@ import { ref, watch } from "vue";
 import { createError } from "h3";
 import type { useUserStore } from "@/../stores/userStore";
 import type { useSiteSettingsStore } from "@/../stores/siteSettingsStore";
-import type { User, Auth } from "firebase/auth";
+import type { Auth } from "firebase/auth";
 import type { Firestore } from "firebase/firestore";
 import type { Functions } from "firebase/functions";
 
@@ -24,6 +24,15 @@ interface UsernameCheckRequest {
 
 interface UsernameCheckResponse {
 	available: boolean;
+}
+
+interface SerializableUser {
+	uid: string;
+	email: string | null;
+	displayName: string | null;
+	photoURL: string | null;
+	emailVerified: boolean;
+	providerId: string;
 }
 
 // Google Login
@@ -42,13 +51,22 @@ export const useAuth = () => {
 	const functions = $functions as Functions;
 
 	const uid = ref("");
-	const user = useState<User | null>("user", () => null);
+	const user = useState<SerializableUser | null>("user", () => null);
 	const unsubscribe = ref<() => void>();
 
 	const initAuth = async () => {
 		onAuthStateChanged(auth, async (u) => {
 			// console.log("Utente rilevato da FireAuth:", u);
-			user.value = u;
+			user.value = u
+				? {
+						uid: u.uid,
+						email: u.email,
+						displayName: u.displayName,
+						photoURL: u.photoURL,
+						emailVerified: u.emailVerified,
+						providerId: u.providerId,
+					}
+				: null;
 			uid.value = u?.uid || "";
 
 			userStore.storeUserData("loaded", true);
@@ -81,7 +99,6 @@ export const useAuth = () => {
 
 			onCleanup(() => {
 				unsub();
-				console.log("CleanUp");
 			});
 		});
 
