@@ -10,10 +10,10 @@ export const useSiteSettingsStore = defineStore("siteSettingsStore", {
 		async syncSiteSettings(siteSettings: {
 			maintenanceMode?: boolean;
 		}) {
-			if (siteSettings.maintenanceMode !== null) {
-				this.maintenanceMode = siteSettings.maintenanceMode ?? null;
-				this.loaded = true;
-			}
+			this.maintenanceMode = siteSettings.maintenanceMode ?? null;
+		},
+		setLoaded() {
+			this.loaded = true;
 		},
 	},
 });

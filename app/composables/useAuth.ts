@@ -50,6 +50,8 @@ export const useAuth = () => {
 			// console.log("Utente rilevato da FireAuth:", u);
 			user.value = u;
 			uid.value = u?.uid || "";
+
+			userStore.storeUserData("loaded", true);
 		});
 	};
 
@@ -65,7 +67,6 @@ export const useAuth = () => {
 					if (snapshot.exists()) {
 						// console.log("Documento modificato:", snapshot.data());
 						await userStore.syncUserData(snapshot.data());
-						userStore.storeUserData("loaded", true);
 					}
 					else {
 						logout();
@@ -89,6 +90,7 @@ export const useAuth = () => {
 			if (snapshot.exists()) {
 				await siteSettingsStore.syncSiteSettings(snapshot.data());
 			}
+			siteSettingsStore.setLoaded();
 		});
 	};
 
