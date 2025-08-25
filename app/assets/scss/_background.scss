@@ -1,6 +1,6 @@
 @use "sass:list";
 
-@mixin floatUpAnimation($duration) {
+@mixin float-up-animation($duration) {
     animation: floatUp $duration infinite linear;
 }
 
@@ -8,7 +8,7 @@
     transform: scale($factor);
 }
 
-.light {
+.bg-animation__light {
     position: absolute;
     width: 0;
     opacity: 0;
@@ -20,7 +20,7 @@
     margin: auto;
 }
 
-$elements: (
+$lights: (
     x1: (
         4s,
         1,
@@ -68,12 +68,12 @@ $elements: (
     )
 );
 
-@each $name, $vals in $elements {
-	.#{$name} {
-		@include floatUpAnimation(list.nth($vals, 1));
-		@include scale(list.nth($vals, 2));
-		left: list.nth($vals, 3);
-	}
+@each $name, $vals in $lights {
+    .bg-animation__light--#{$name} {
+        @include float-up-animation(list.nth($vals, 1));
+        @include scale(list.nth($vals, 2));
+        left: list.nth($vals, 3);
+    }
 }
 
 button:focus {

@@ -1,19 +1,39 @@
-.message-card {
+.global-alert {
   position: fixed;
   top: 1rem;
   left: 50%;
   transform: translateX(-50%);
-  color: var(--primary-text);
+  z-index: 100;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
   padding: 20px;
-  border-radius: var(--border-radius);
   max-width: 400px;
   width: 100%;
+
+  border-radius: var(--border-radius);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   background-color: rgba(var(--secondary-surface-rgb), 0.5);
-  z-index: 9;
+  color: var(--primary-text);
 
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px); 
+  -webkit-backdrop-filter: blur(10px);
+
+  &__icon {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 10px;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  &__message {
+    text-align: center;
+    font-size: 16px;
+  }
 
   &--error {
     background-color: rgba(var(--error-rgb), 0.1);
@@ -29,65 +49,40 @@
     background-color: rgba(var(--success-rgb), 0.1);
     border-left: 4px solid rgb(var(--success-rgb));
   }
-}
 
-.image {
-  position: relative;
-  width: 24px;
-  height: 24px;
+  &__fade-enter-active {
+    animation: global-alert__slide-in 0.5s cubic-bezier(0.45, 0, 0.55, 1) forwards;
+  }
 
-  left: calc(50% - 12px);
-}
+  &__fade-leave-active {
+    animation: global-alert__slide-out 0.5s cubic-bezier(0.45, 0, 0.55, 1) forwards;
+  }
 
-.message-card-content {
-  margin-top: 10px;
-  text-align: center;
-  font-size: 16px;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 20px;
-  position: absolute;
-  top: 5px;
-  right: 10px;
-  cursor: pointer;
-}
-
-.message-card-fade-enter-active {
-  animation: slideInFromTop 0.5s cubic-bezier(0.45, 0, 0.55, 1) forwards;
-}
-
-.message-card-fade-leave-active {
-  animation: slideOutToTop 0.5s cubic-bezier(0.45, 0, 0.55, 1) forwards;
-}
-
-.message-card-fade-enter,
-.message-card-fade-leave-to {
-  opacity: 0;
-  transform: translateX(-50%) translateY(-100%);
-}
-
-@keyframes slideInFromTop {
-  0% {
-    transform: translateX(-50%) translateY(-100%);
+  &__fade-enter,
+  &__fade-leave-to {
     opacity: 0;
+    transform: translateX(-50%) translateY(-100%);
+  }
+}
+
+@keyframes global-alert__slide-in {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-100%);
   }
   100% {
-    transform: translateX(-50%) translateY(0);
     opacity: 1;
+    transform: translateX(-50%) translateY(0);
   }
 }
 
-@keyframes slideOutToTop {
+@keyframes global-alert__slide-out {
   0% {
-    transform: translateX(-50%) translateY(0);
     opacity: 1;
+    transform: translateX(-50%) translateY(0);
   }
   100% {
-    transform: translateX(-50%) translateY(-100%);
     opacity: 0;
+    transform: translateX(-50%) translateY(-100%);
   }
 }

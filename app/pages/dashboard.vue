@@ -1,19 +1,29 @@
 <template>
-	<div class="dashboard-layout">
-		<AppGlobalAlert />
+	<div class="dashboard">
+		<app-global-alert class="dashboard__alert" />
 
 		<app-dashboard-sidebar
+			class="dashboard__sidebar"
 			:active="activeView"
 			@navigate="navigate"
 		/>
-		<app-dashboard-content>
+
+		<app-dashboard-content class="dashboard__content">
 			<component :is="activeViewComponent" />
 		</app-dashboard-content>
 	</div>
 </template>
 
 <script setup>
-import { AppDashboardAdmin, AppDashboardGames, AppDashboardProfile, AppDashboardSettings, AppDashboardTemplates, AppDashboardUser, AppDashboardBanAppeals } from "#components";
+import {
+	AppDashboardAdmin,
+	AppDashboardGames,
+	AppDashboardProfile,
+	AppDashboardSettings,
+	AppDashboardTemplates,
+	AppDashboardUser,
+	AppDashboardBanAppeals,
+} from "#components";
 import { useNuxtApp } from "nuxt/app";
 
 const activeView = ref("dashboard");
@@ -53,26 +63,19 @@ else {
 
 const activeViewComponent = computed(() => {
 	switch (activeView.value) {
-		case "games":
-			return AppDashboardGames;
-		case "templates":
-			return AppDashboardTemplates;
-		case "admin":
-			return AppDashboardAdmin;
-		case "banAppeals":
-			return AppDashboardBanAppeals;
-		case "profile":
-			return AppDashboardProfile;
-		case "settings":
-			return AppDashboardSettings;
-		default:
-			return AppDashboardUser;
+		case "games": return AppDashboardGames;
+		case "templates": return AppDashboardTemplates;
+		case "admin": return AppDashboardAdmin;
+		case "banAppeals": return AppDashboardBanAppeals;
+		case "profile": return AppDashboardProfile;
+		case "settings": return AppDashboardSettings;
+		default: return AppDashboardUser;
 	}
 });
 </script>
 
 <style lang="scss" scoped>
-.dashboard-layout {
+.dashboard {
 	display: flex;
 	min-height: 100vh;
 }

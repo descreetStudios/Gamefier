@@ -1,105 +1,65 @@
 <template>
-	<div :class="['blur-container', { blurred: scrolled }]">
+	<div :class="['navbar-blur', { 'navbar-blur--active': scrolled }]">
 		<nav class="navbar container">
 			<!-- Logo (Left) -->
-			<div class="navbar-left">
+			<div class="navbar__left">
 				<NuxtLink
 					to="/"
-					class="logo-link"
+					class="navbar__logo"
 					@dragstart.prevent
 				>
 					<img
 						src="/images/logo/gamefier-logo-64px.png"
-						alt="GF"
-						class="logo-img"
+						alt="Gamefier logo"
+						class="navbar__logo-img"
 						@dragstart.prevent
 					>
-					<strong class="logo-text">Gamefier</strong>
+					<strong class="navbar__logo-text">Gamefier</strong>
 				</NuxtLink>
 			</div>
 
-			<!-- Dropdown items (Center) -->
-			<ul
-				class="navbar-center nav"
-				@dragstart.prevent
-			>
-				<li class="dropdown">
-					<NuxtLink to="#">About</NuxtLink>
-					<ul class="dropdown-menu menu">
-						<li>
-							<NuxtLink to="#">About content</NuxtLink>
-						</li>
-					</ul>
-				</li>
-				<li class="dropdown">
-					<NuxtLink to="#">Services</NuxtLink>
-					<ul class="dropdown-menu menu">
-						<li>
-							<NuxtLink to="#">Services content</NuxtLink>
-						</li>
-					</ul>
-				</li>
-				<li class="dropdown">
-					<NuxtLink to="#">Products</NuxtLink>
-					<ul class="dropdown-menu menu">
-						<li>
-							<NuxtLink to="#">Products content</NuxtLink>
-						</li>
-					</ul>
-				</li>
-				<li class="dropdown">
-					<NuxtLink to="#">Features</NuxtLink>
-					<ul class="dropdown-menu menu">
-						<li>
-							<NuxtLink to="#">Features content</NuxtLink>
-						</li>
-					</ul>
-				</li>
-				<li class="dropdown">
-					<NuxtLink to="#">Contact</NuxtLink>
-					<ul class="dropdown-menu menu">
-						<li>
-							<NuxtLink to="#">Contact content</NuxtLink>
-						</li>
-					</ul>
-				</li>
-				<li class="dropdown">
-					<NuxtLink to="/dashboard">Dashboard</NuxtLink>
-					<ul class="dropdown-menu menu">
-						<li>
-							<NuxtLink to="/dashboard">User dashboard</NuxtLink>
-						</li>
-					</ul>
+			<!-- Navigation buttons (Center) -->
+			<ul class="navbar__menu">
+				<li
+					v-for="link in navLinks"
+					:key="link.label"
+					class="navbar__item"
+				>
+					<NuxtLink :to="link.to">{{ link.label }}</NuxtLink>
 				</li>
 			</ul>
 
-			<!-- Auth buttons (Right) -->
-			<div class="navbar-right">
-				<div v-if="!logged">
+			<!-- Auth/User (Right) -->
+			<div class="navbar__right">
+				<template v-if="!logged">
 					<NuxtLink
 						to="/login"
-						class="btn login"
-					> Login </NuxtLink>
+						class="btn btn--login"
+					>Login</NuxtLink>
 					<NuxtLink
 						to="/signup"
-						class="btn signup"
-					> Sign Up </NuxtLink>
-				</div>
-				<div class="user-container">
+						class="btn btn--signup"
+					>Sign Up</NuxtLink>
+				</template>
+
+				<div
+					v-else
+					class="navbar__user"
+				>
 					<div
-						v-if="logged"
-						class="user-img"
-						@click="onUserClick"
+						class="navbar__user-img"
+						@click="toggleUserMenu"
 					>
 						<img
 							:src="userIcon"
+							alt="User icon"
 							@dragstart.prevent
 						>
 						<h4>{{ $userStore.displayName }}</h4>
 					</div>
 					<div
 						v-if="showUserMenu"
-						:class="['user-menu', { show: showUserMenu }]"
+						class="navbar__user-menu"
 					>
 						<p @click="profileHandler">
 							My Profile
@@ -120,43 +80,44 @@
 <script setup>
 const { $eventBus, $userStore } = useNuxtApp();
 const { logout } = useAuth();
+
 const logged = computed(() => !!$userStore.userId);
 const scrolled = ref(false);
 const showUserMenu = ref(false);
 const userIcon = ref("/images/icons/user.png");
 
+const navLinks = [
+	{ label: "About", to: "#" },
+	{ label: "Services", to: "#" },
+	{ label: "Products", to: "#" },
+	{ label: "Features", to: "#" },
+	{ label: "Contact", to: "#" },
+	{ label: "Dashboard", to: "/dashboard" },
+];
+
 function onScroll() {
 	scrolled.value = window.scrollY > 0;
 }
 
-function onUserClick() {
+function toggleUserMenu() {
 	showUserMenu.value = !showUserMenu.value;
 }
 
 const logoutHandler = async () => {
 	await logout();
-
-	$eventBus.emit("alert", {
-		message: "You have been logged out.",
-		type: "success",
-		duration: 2000,
-	});
-
-	setTimeout(() => {
-		window.location.reload();
-	}, 2000);
+	$eventBus.emit("alert", { message: "You have been logged out.", type: "success", duration: 2000 });
+	setTimeout(() => window.location.reload(), 2000);
 };
 
 const profileHandler = () => {
-	return navigateTo({ path: "/dashboard", query: { activeViewComponent: "profile" } });
+	navigateTo({ path: "/dashboard", query: { activeViewComponent: "profile" } });
 };
 
 const settingsHandler = () => {
-	return navigateTo({ path: "/dashboard", query: { activeViewComponent: "settings" } });
+	navigateTo({ path: "/dashboard", query: { activeViewComponent: "settings" } });
 };
 
 onMounted(() => {
-	window.scrollTo(0, 0); // Reset scroll state
 	window.addEventListener("scroll", onScroll);
 });
 

@@ -52,6 +52,7 @@ const editIcon = ref("/images/icons/edit.png");
 		position: relative;
 		width: 15rem;
 		height: 15rem;
+		border-radius: 50%;
 
 		&__icon,
 		&__editOverlay,

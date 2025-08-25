@@ -480,6 +480,7 @@ const getMaintenanceModeStatus = async () => {
 		position: relative;
 		width: 15rem;
 		height: 15rem;
+		border-radius: 50%;
 
 		&__img,
 		&__overlay,
@@ -496,6 +497,7 @@ const getMaintenanceModeStatus = async () => {
 			opacity: 0;
 			transition: opacity 0.3s ease;
 			z-index: 1;
+			border-radius: 50%;
 
 			&:hover {
 				opacity: 0.4;

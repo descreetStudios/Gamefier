@@ -1,3 +1,30 @@
+<template>
+	<h2 class="template-select__heading">
+		Choose a template and start creating!
+		<div class="template-select__arrows">
+			<span class="template-select__arrow" />
+			<span class="template-select__arrow" />
+			<span class="template-select__arrow" />
+		</div>
+	</h2>
+
+	<div class="template-select__card-container">
+		<AppCard
+			img-src="/images/DefaultQuizImage.png"
+			@card-click="handleQuizClick"
+		>
+			<p>Quiz</p>
+		</AppCard>
+
+		<AppCard
+			img-src="/images/DefaultQuizImage.png"
+			@card-click="handleGooseClick"
+		>
+			<p>Goose game</p>
+		</AppCard>
+	</div>
+</template>
+
 <script setup>
 function handleQuizClick() {
 	console.log("Quiz card clicked!");
@@ -8,79 +35,54 @@ function handleGooseClick() {
 }
 </script>
 
-<template>
-	<h2 class="heading">
-		Choose a template and start creating!
-		<div class="arrows">
-			<span />
-			<span />
-			<span />
-		</div>
-	</h2>
-
-	<div class="card-container">
-		<AppCard
-			img-src="/images/DefaultQuizImage.png"
-			@card-click="handleQuizClick"
-		>
-			<p>Quiz</p>
-		</AppCard>
-		<AppCard
-			img-src="/images/DefaultQuizImage.png"
-			@card-click="handleGooseClick"
-		>
-			<p>Goose game</p>
-		</AppCard>
-	</div>
-</template>
-
 <style lang="scss" scoped>
-.card-container {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	gap: 16px;
-}
+.template-select {
+	&__card-container {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 16px;
+	}
 
-.heading {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	font-size: 2rem;
-	font-weight: bold;
-	color: var(--primary-text);
-	margin-bottom: 11vh;
-	margin-top: 7vh;
+	&__heading {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		font-size: 2rem;
+		font-weight: bold;
+		color: var(--primary-text);
+		margin: 7vh 0 11vh;
+	}
 
-	.arrows {
+	&__arrows {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		margin-top: 7vh;
+	}
 
-		span {
-			display: block;
-			width: 20px;
-			height: 20px;
-			border-bottom: 1px solid var(--primary-text);
-			border-right: 1px solid var(--primary-text);
-			transform: rotate(45deg);
-			margin: -5px 0;
-			animation: animate_arrows 2s infinite;
+	&__arrow {
+		display: block;
+		width: 20px;
+		height: 20px;
+		border-bottom: 1px solid var(--primary-text);
+		border-right: 1px solid var(--primary-text);
+		transform: rotate(45deg);
+		margin: -5px 0;
+		animation: template-select-arrows 2s infinite;
 
-			&:nth-child(2) {
-				animation-delay: -0.2s;
-			}
+		&:nth-child(2) {
+			animation-delay: -0.2s;
+		}
 
-			&:nth-child(3) {
-				animation-delay: -0.4s;
-			}
+		&:nth-child(3) {
+			animation-delay: -0.4s;
 		}
 	}
 }
 
-@keyframes animate_arrows {
+@keyframes template-select-arrows {
 	0% {
 		opacity: 0;
 		transform: rotate(45deg) translate(-20px, -20px);

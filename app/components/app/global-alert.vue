@@ -1,3 +1,26 @@
+<template>
+	<transition
+		name="global-alert__fade"
+		appear
+	>
+		<div
+			v-if="isVisible"
+			class="global-alert"
+			:class="`global-alert--${type}`"
+		>
+			<img
+				class="global-alert__icon"
+				:src="getIcon(type)"
+				alt="Alert icon"
+				@dragstart.prevent
+			>
+			<div class="global-alert__message">
+				{{ message }}
+			</div>
+		</div>
+	</transition>
+</template>
+
 <script setup>
 const { $eventBus } = useNuxtApp();
 
@@ -25,32 +48,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
 	$eventBus.off("alert", showAlert);
 });
-</script>
 
-<template>
-	<transition
-		name="message-card-fade"
-		appear
-	>
-		<div
-			v-if="isVisible"
-			class="message-card"
-			:class="`message-card--${type}`"
-		>
-			<img
-				class="image"
-				:src="getIcon(type)"
-				alt="I"
-				@dragstart.prevent
-			>
-			<div class="message-card-content">
-				{{ message }}
-			</div>
-		</div>
-	</transition>
-</template>
-
-<script>
 function getIcon(type) {
 	switch (type) {
 		case "error":

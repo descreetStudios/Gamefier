@@ -1,61 +1,72 @@
 <template>
-	<div>
+	<div class="auth auth--login">
 		<app-global-alert />
 
-		<main class="login-page">
-			<section class="login-card">
+		<main class="auth__page">
+			<section class="auth__card">
 				<img
 					src="/images/logo/gamefier-logo-64px.png"
-					alt="L"
-					class="logo"
+					alt="Logo Gamefier"
+					class="auth__logo"
 					@dragstart.prevent
 				>
-				<h1 class="login-title">
+
+				<h1 class="auth__title">
 					Log in
 				</h1>
+
 				<form
-					class="login-form"
+					class="auth__form auth__form--login"
 					@submit.prevent="onSubmit"
 				>
 					<input
 						v-model="email"
 						type="email"
+						class="auth__input auth__input--email"
 						placeholder="Email"
 						required
 						autocomplete="email"
 					>
+
 					<input
 						v-model="password"
 						type="password"
+						class="auth__input auth__input--password"
 						placeholder="Password"
 						minlength="8"
 						required
 						autocomplete="current-password"
 					>
+
 					<button
 						type="submit"
-						class="btn-login"
+						class="auth__btn auth__btn--primary"
 					>
 						Log in
 					</button>
 				</form>
+
 				<button
-					class="btn-google"
+					class="auth__btn auth__btn--google"
 					@click="onGoogleLogin"
 				>
 					<img
 						src="/images/icons/google-icon.svg"
-						alt="G"
-						class="google-icon"
+						alt="Google"
+						class="auth__google-icon"
 						@dragstart.prevent
 					>
 					Log in with Google
 				</button>
-				<footer class="login-footer">
-					Don't have an account? <NuxtLink
+
+				<footer class="auth__footer">
+					Non hai un account?
+					<NuxtLink
 						to="/signup"
-						@dragstart.prevent
-					>Sign up</NuxtLink>
+						class="auth__link"
+					>
+						Sign up
+					</NuxtLink>
 				</footer>
 			</section>
 		</main>

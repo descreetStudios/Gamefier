@@ -1,95 +1,113 @@
 <template>
-	<div>
+	<div class="auth auth--signup">
 		<app-global-alert />
 
-		<main class="login-page">
-			<section class="login-card">
+		<main class="auth__page">
+			<section class="auth__card">
 				<img
 					src="/images/logo/gamefier-logo-64px.png"
-					alt="L"
-					class="logo"
+					alt="Logo Gamefier"
+					class="auth__logo"
 					@dragstart.prevent
 				>
-				<h1 class="login-title">
+
+				<h1 class="auth__title">
 					Sign up
 				</h1>
+
 				<form
-					class="signup-form"
+					class="auth__form auth__form--signup"
 					@submit.prevent="onSubmit"
 				>
 					<input
 						v-model="displayName"
 						type="text"
+						class="auth__input auth__input--display-name"
 						placeholder="Display Name"
 						required
-						autocomplete="displayName"
+						autocomplete="name"
 					>
+
 					<input
 						v-model="email"
 						type="email"
+						class="auth__input auth__input--email"
 						placeholder="Email"
 						required
 						autocomplete="email"
 					>
+
 					<input
 						v-model="confirmEmail"
 						type="email"
+						class="auth__input auth__input--confirm-email"
 						placeholder="Confirm Email"
 						required
 						autocomplete="email"
 					>
+
 					<input
 						v-model="password"
 						type="password"
+						class="auth__input auth__input--password"
 						placeholder="Password"
 						minlength="8"
 						required
 						autocomplete="new-password"
 					>
+
 					<input
 						v-model="confirmPassword"
 						type="password"
+						class="auth__input auth__input--confirm-password"
 						placeholder="Confirm Password"
 						required
 						autocomplete="new-password"
 					>
+
 					<p
 						v-if="showError"
-						class="error"
+						class="auth__error"
 					>
 						<img
 							src="/images/icons/warning.png"
-							alt="!"
-							class="error-icon"
+							alt="Errore"
+							class="auth__error-icon"
 							@dragstart.prevent
 						>
 						{{ errorMessage }}
 					</p>
+
 					<button
 						type="submit"
-						class="btn-login"
+						class="auth__btn auth__btn--primary"
 						:disabled="!formValid"
 					>
 						Sign up
 					</button>
 				</form>
+
 				<button
-					class="btn-google"
+					class="auth__btn auth__btn--google"
 					@click="onGooglesignup"
 				>
 					<img
 						src="/images/icons/google-icon.svg"
-						alt="G"
-						class="google-icon"
+						alt="Google"
+						class="auth__google-icon"
 						@dragstart.prevent
 					>
 					Sign up with Google
 				</button>
-				<footer class="signup-footer">
-					Already have an account? <NuxtLink
+
+				<footer class="auth__footer">
+					Hai già un account?
+					<NuxtLink
 						to="/login"
-						@dragstart.prevent
-					>Log in</NuxtLink>
+						class="auth__link"
+					>
+						Log in
+					</NuxtLink>
 				</footer>
 			</section>
 		</main>

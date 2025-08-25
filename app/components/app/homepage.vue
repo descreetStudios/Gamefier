@@ -9,6 +9,7 @@
 			<img
 				src="/images/Background.png"
 				alt="Background"
+				class="homepage__background-img"
 				@dragstart.prevent
 			>
 		</div>
@@ -21,20 +22,22 @@
 				How does it work?
 			</p>
 			<div class="homepage__hero-arrows">
-				<span /><span /><span />
+				<span class="homepage__hero-arrow" />
+				<span class="homepage__hero-arrow" />
+				<span class="homepage__hero-arrow" />
 			</div>
 		</section>
 
-		<!-- Content Sections -->
 		<section
 			v-for="section in sections"
 			:id="section.id"
 			:key="section.id"
-			:class="`homepage__section ${section.reversed ? 'homepage__section--reversed' : ''}`"
+			:class="['homepage__section', { 'homepage__section--reversed': section.reversed }]"
 		>
 			<img
 				:src="section.image"
 				:alt="section.title"
+				class="homepage__section-img"
 				@dragstart.prevent
 			>
 			<div class="homepage__text-block">
@@ -47,6 +50,7 @@
 							v-for="(text, i) in section.links"
 							:key="i"
 							:to="text.to"
+							class="homepage__link"
 						>
 							<p>{{ text.label }}</p>
 						</NuxtLink>

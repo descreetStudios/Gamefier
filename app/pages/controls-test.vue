@@ -1,80 +1,91 @@
 <template>
-	<div>
-		<p>Quiz Editor</p>
+	<div class="quiz-editor">
+		<h2 class="quiz-editor__title">
+			Quiz Editor
+		</h2>
 
 		<!-- TEXT BOX -->
-		<p>Text Box: {{ textBoxTest }}</p>
-		<input
-			v-model="textBoxTest"
-			class="textBoxTest"
-			type="text"
-			name="text"
-			placeholder="Text"
-			aria-label="Text"
-		>
+		<div class="quiz-editor__field">
+			<label class="quiz-editor__label">Text Box: {{ textBoxTest }}</label>
+			<input
+				v-model="textBoxTest"
+				class="quiz-editor__input quiz-editor__input--text"
+				type="text"
+				name="text"
+				placeholder="Text"
+				aria-label="Text"
+			>
+		</div>
 
 		<!-- NUMBER BOX -->
-		<p>Number Box: {{ numberBoxTest }}</p>
-		<input
-			v-model.number="numberBoxTest"
-			class="numberBoxTest"
-			type="number"
-			name="number"
-			placeholder="Number"
-			aria-label="Number"
-		>
+		<div class="quiz-editor__field">
+			<label class="quiz-editor__label">Number Box: {{ numberBoxTest }}</label>
+			<input
+				v-model.number="numberBoxTest"
+				class="quiz-editor__input quiz-editor__input--number"
+				type="number"
+				name="number"
+				placeholder="Number"
+				aria-label="Number"
+			>
+		</div>
 
 		<!-- COLOR PICKER -->
-		<p>Color Picker: {{ colorPickerTest }}</p>
-		<input
-			v-model="colorPickerTest"
-			class="colorPickerTest"
-			type="color"
-			aria-label="Color picker"
-		>
+		<div class="quiz-editor__field">
+			<label class="quiz-editor__label">Color Picker: {{ colorPickerTest }}</label>
+			<input
+				v-model="colorPickerTest"
+				class="quiz-editor__input quiz-editor__input--color"
+				type="color"
+				aria-label="Color picker"
+			>
+		</div>
 
 		<!-- FILE PICKER -->
-		<p>File Picker: {{ filePickerTest }}</p>
-		<input
-			type="file"
-			class="filePickerTest"
-			aria-label="File picker"
-		>
+		<div class="quiz-editor__field">
+			<label class="quiz-editor__label">File Picker:</label>
+			<input
+				type="file"
+				class="quiz-editor__input quiz-editor__input--file"
+				aria-label="File picker"
+			>
+		</div>
 
 		<!-- CHOICE BOX -->
-		<p>Choice Box: {{ choiceBoxTest }}</p>
-		<select
-			v-model="choiceBoxTest"
-			class="choiceBoxTest"
-			name="favorite-cuisine"
-			aria-label="Select your favorite cuisine..."
-			required
-		>
-			<option
-				selected
-				disabled
-				value=""
+		<div class="quiz-editor__field">
+			<label class="quiz-editor__label">Choice Box: {{ choiceBoxTest }}</label>
+			<select
+				v-model="choiceBoxTest"
+				class="quiz-editor__input quiz-editor__input--select"
+				aria-label="Select your favorite cuisine..."
+				required
 			>
-				Select your favorite cuisine...
-			</option>
-			<option>Italian</option>
-			<option>Japanese</option>
-			<option>Indian</option>
-			<option>Thai</option>
-			<option>French</option>
-		</select>
+				<option
+					selected
+					disabled
+					value=""
+				>
+					Select your favorite cuisine...
+				</option>
+				<option>Italian</option>
+				<option>Japanese</option>
+				<option>Indian</option>
+				<option>Thai</option>
+				<option>French</option>
+			</select>
+		</div>
 
 		<!-- SWITCH -->
-		<p>Switch: {{ switchTest }}</p>
-		<label class="switch">
-			<input
-				v-model="switchTest"
-				name="terms"
-				type="checkbox"
-				role="switch"
-			>
-			Correct answer
-		</label>
+		<div class="quiz-editor__field quiz-editor__field--switch">
+			<label class="switch">
+				<input
+					v-model="switchTest"
+					type="checkbox"
+					role="switch"
+				>
+				Correct answer ({{ switchTest }})
+			</label>
+		</div>
 	</div>
 </template>
 
@@ -88,9 +99,4 @@ const switchTest = ref(false);
 
 <style lang="scss" scoped>
 @use "/assets/scss/controls.scss";
-
-p {
-    margin: 0.25rem 0.25rem 0.125rem;
-    font-size: 0.875rem;
-}
 </style>
