@@ -10,7 +10,7 @@ export default defineNuxtConfig({
 	],
 	plugins: ["~/plugins/store-injector.ts"],
 
-	devtools: { enabled: false },
+	devtools: { enabled: true },
 	css: ["@picocss/pico/css/pico.min.css", "@/assets/css/theme.css"],
 
 	runtimeConfig: {

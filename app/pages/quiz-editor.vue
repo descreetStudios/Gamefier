@@ -9,244 +9,89 @@
 				<h2>Quiz Editor</h2>
 			</div>
 			<div class="separator" />
+
 			<div class="contextual-props">
-				<app-editor-property-card class="card">
+				<!-- Background Properties -->
+				<app-editor-property-card
+					v-if="selectedElement === 'background'"
+					class="card"
+				>
 					<template #title>
-						<h4>Test</h4>
+						<h4>Background</h4>
 					</template>
 					<template #content>
 						<div class="content-content">
-							<h5>Text Box:</h5>
+							<p>File Picker:</p>
 							<input
-								type="text"
-								name="text"
-								placeholder="Text"
-								aria-label="Text"
-							>
-						</div>
-						<div class="content-content">
-							<h5>Number Box:</h5>
-							<input
-								type="number"
-								name="number"
-								placeholder="Number"
-								aria-label="Number"
-							>
-						</div>
-						<div class="content-content">
-							<h5>Color Picker:</h5>
-							<input
-								type="color"
-								name="color"
-								placeholder="Color"
-								aria-label="Color"
+								type="file"
+								class="filePickerTest"
+								aria-label="File picker"
 							>
 						</div>
 					</template>
 				</app-editor-property-card>
-				<app-editor-property-card class="card">
+
+				<!-- Question Properties -->
+				<app-editor-property-card
+					v-if="selectedElement === 'questionTitle'"
+					class="card"
+				>
 					<template #title>
-						<h4>Test</h4>
+						<h4>Question</h4>
 					</template>
 					<template #content>
 						<div class="content-content">
-							<h5>Text Box:</h5>
+							<h5>Question Text:</h5>
 							<input
+								v-model="currentSlide.question"
 								type="text"
-								name="text"
 								placeholder="Text"
 								aria-label="Text"
-							>
-						</div>
-						<div class="content-content">
-							<h5>Number Box:</h5>
-							<input
-								type="number"
-								name="number"
-								placeholder="Number"
-								aria-label="Number"
-							>
-						</div>
-						<div class="content-content">
-							<h5>Color Picker:</h5>
-							<input
-								type="color"
-								name="color"
-								placeholder="Color"
-								aria-label="Color"
+								maxlength="150"
 							>
 						</div>
 					</template>
 				</app-editor-property-card>
-				<app-editor-property-card class="card">
+
+				<!-- Answer Properties -->
+				<app-editor-property-card
+					v-for="i in currentSlide.answerNumber"
+					v-if="selectedElement === 'answer'"
+					:key="i"
+					class="card"
+				>
 					<template #title>
-						<h4>Test</h4>
+						<h4>Answer {{ i }}</h4>
 					</template>
 					<template #content>
 						<div class="content-content">
-							<h5>Text Box:</h5>
+							<h5>Answer:</h5>
 							<input
+								v-model="currentSlide.answers[i - 1]"
 								type="text"
-								name="text"
-								placeholder="Text"
+								placeholder="Answer"
 								aria-label="Text"
-							>
-						</div>
-						<div class="content-content">
-							<h5>Number Box:</h5>
-							<input
-								type="number"
-								name="number"
-								placeholder="Number"
-								aria-label="Number"
-							>
-						</div>
-						<div class="content-content">
-							<h5>Color Picker:</h5>
-							<input
-								type="color"
-								name="color"
-								placeholder="Color"
-								aria-label="Color"
-							>
-						</div>
-					</template>
-				</app-editor-property-card>
-				<app-editor-property-card class="card">
-					<template #title>
-						<h4>Test</h4>
-					</template>
-					<template #content>
-						<div class="content-content">
-							<h5>Text Box:</h5>
-							<input
-								type="text"
-								name="text"
-								placeholder="Text"
-								aria-label="Text"
-							>
-						</div>
-						<div class="content-content">
-							<h5>Number Box:</h5>
-							<input
-								type="number"
-								name="number"
-								placeholder="Number"
-								aria-label="Number"
-							>
-						</div>
-						<div class="content-content">
-							<h5>Color Picker:</h5>
-							<input
-								type="color"
-								name="color"
-								placeholder="Color"
-								aria-label="Color"
-							>
-						</div>
-					</template>
-				</app-editor-property-card>
-				<app-editor-property-card class="card">
-					<template #title>
-						<h4>Test</h4>
-					</template>
-					<template #content>
-						<div class="content-content">
-							<h5>Text Box:</h5>
-							<input
-								type="text"
-								name="text"
-								placeholder="Text"
-								aria-label="Text"
-							>
-						</div>
-						<div class="content-content">
-							<h5>Number Box:</h5>
-							<input
-								type="number"
-								name="number"
-								placeholder="Number"
-								aria-label="Number"
-							>
-						</div>
-						<div class="content-content">
-							<h5>Color Picker:</h5>
-							<input
-								type="color"
-								name="color"
-								placeholder="Color"
-								aria-label="Color"
-							>
-						</div>
-					</template>
-				</app-editor-property-card>
-				<app-editor-property-card class="card">
-					<template #title>
-						<h4>Test</h4>
-					</template>
-					<template #content>
-						<div class="content-content">
-							<h5>Text Box:</h5>
-							<input
-								type="text"
-								name="text"
-								placeholder="Text"
-								aria-label="Text"
-							>
-						</div>
-						<div class="content-content">
-							<h5>Number Box:</h5>
-							<input
-								type="number"
-								name="number"
-								placeholder="Number"
-								aria-label="Number"
-							>
-						</div>
-						<div class="content-content">
-							<h5>Color Picker:</h5>
-							<input
-								type="color"
-								name="color"
-								placeholder="Color"
-								aria-label="Color"
 							>
 						</div>
 					</template>
 				</app-editor-property-card>
 			</div>
+
 			<div class="separator" />
+
+			<!-- Global Properties -->
 			<div class="global-props">
 				<app-editor-property-card class="card">
 					<template #title>
-						<h4>Test</h4>
+						<h4>Number of answers</h4>
 					</template>
 					<template #content>
 						<div class="content-content">
-							<h5>Text Box:</h5>
 							<input
-								type="text"
-								name="text"
-								placeholder="Text"
-								aria-label="Text"
-							>
-						</div>
-						<div class="content-content">
-							<h5>Number Box:</h5>
-							<input
+								v-model.number="currentSlide.answerNumber"
 								type="number"
-								name="number"
-								placeholder="Number"
-								aria-label="Number"
-							>
-						</div>
-						<div class="content-content">
-							<h5>Color Picker:</h5>
-							<input
-								type="color"
-								name="color"
-								placeholder="Color"
-								aria-label="Color"
+								min="2"
+								max="6"
 							>
 						</div>
 					</template>
@@ -256,68 +101,32 @@
 
 		<div class="content">
 			<div class="render">
-				<h2 class="render__question">
-					If a tomato is a fruit, does that make ketchup a smoothie?
+				<h2
+					class="render__question"
+					@click="selectedElement = 'questionTitle'"
+				>
+					{{ currentSlide.question || "Insert your question here" }}
 				</h2>
+
 				<div class="render__middle">
 					<img
 						class="render__middle__image"
-						src="/images/Background.png"
+						:src="currentSlide.background || '/images/BackgroundDark.png'"
 						@dragstart.prevent
+						@click="selectedElement = 'background'"
 					>
-					<div
-						class="render__middle__options"
-					>
-						<div class="render__middle__options__option">
+
+					<div class="render__middle__options">
+						<div
+							v-for="i in currentSlide.answerNumber"
+							:key="i"
+							class="render__middle__options__option"
+							@click="selectedElement = 'answer'"
+						>
 							<div class="render__middle__options__option__cardbg">
 								<div class="render__middle__options__option__cardbg__card">
 									<h4 class="render__middle__options__option__cardbg__card__text">
-										Option1
-									</h4>
-								</div>
-							</div>
-						</div>
-						<div class="render__middle__options__option">
-							<div class="render__middle__options__option__cardbg">
-								<div class="render__middle__options__option__cardbg__card">
-									<h4 class="render__middle__options__option__cardbg__card__text">
-										Option2
-									</h4>
-								</div>
-							</div>
-						</div>
-						<div class="render__middle__options__option">
-							<div class="render__middle__options__option__cardbg">
-								<div class="render__middle__options__option__cardbg__card">
-									<h4 class="render__middle__options__option__cardbg__card__text">
-										Option3
-									</h4>
-								</div>
-							</div>
-						</div>
-						<div class="render__middle__options__option">
-							<div class="render__middle__options__option__cardbg">
-								<div class="render__middle__options__option__cardbg__card">
-									<h4 class="render__middle__options__option__cardbg__card__text">
-										Option4
-									</h4>
-								</div>
-							</div>
-						</div>
-						<div class="render__middle__options__option">
-							<div class="render__middle__options__option__cardbg">
-								<div class="render__middle__options__option__cardbg__card">
-									<h4 class="render__middle__options__option__cardbg__card__text">
-										Option5
-									</h4>
-								</div>
-							</div>
-						</div>
-						<div class="render__middle__options__option">
-							<div class="render__middle__options__option__cardbg">
-								<div class="render__middle__options__option__cardbg__card">
-									<h4 class="render__middle__options__option__cardbg__card__text">
-										Option6
+										{{ currentSlide.answers[i - 1] || `Insert Answer ${i}` }}
 									</h4>
 								</div>
 							</div>
@@ -325,93 +134,99 @@
 					</div>
 				</div>
 			</div>
+
 			<div class="separator" />
+
+			<!-- Slides -->
 			<div class="slides">
-				<app-editor-slide-card>
+				<app-editor-slide-card
+					v-for="(slide, index) in slidesData"
+					:key="index"
+					:class="{ selected: currentSlideIndex === index }"
+					@click="selectSlide(index)"
+				>
 					<template #slide-title>
-						<h4>Test</h4>
-					</template>
-					<template #slide-content>
-						<img
-							src="/images/Background.png"
-							@dragstart.prevent
+						<h4 class="slide-card-title">
+							{{ slide.question || 'Slide ' + (index + 1) }}
+						</h4>
+						<h4
+							class="x"
+							@click.stop="removeSlide(index)"
 						>
-					</template>
-				</app-editor-slide-card>
-				<app-editor-slide-card>
-					<template #slide-title>
-						<h4>Test</h4>
+							X
+						</h4>
 					</template>
 					<template #slide-content>
 						<img
-							src="/images/Background.png"
-							@dragstart.prevent
-						>
-					</template>
-				</app-editor-slide-card>
-				<app-editor-slide-card>
-					<template #slide-title>
-						<h4>Test</h4>
-					</template>
-					<template #slide-content>
-						<img
-							src="/images/Background.png"
-							@dragstart.prevent
-						>
-					</template>
-				</app-editor-slide-card>
-				<app-editor-slide-card>
-					<template #slide-title>
-						<h4>Test</h4>
-					</template>
-					<template #slide-content>
-						<img
-							src="/images/Background.png"
-							@dragstart.prevent
-						>
-					</template>
-				</app-editor-slide-card>
-				<app-editor-slide-card>
-					<template #slide-title>
-						<h4>Test</h4>
-					</template>
-					<template #slide-content>
-						<img
-							src="/images/Background.png"
-							@dragstart.prevent
-						>
-					</template>
-				</app-editor-slide-card>
-				<app-editor-slide-card>
-					<template #slide-title>
-						<h4>Test</h4>
-					</template>
-					<template #slide-content>
-						<img
-							src="/images/Background.png"
-							@dragstart.prevent
-						>
-					</template>
-				</app-editor-slide-card>
-				<app-editor-slide-card>
-					<template #slide-title>
-						<h4>Test</h4>
-					</template>
-					<template #slide-content>
-						<img
-							src="/images/Background.png"
+							:src="slide.background || '/images/BackgroundDark.png'"
 							@dragstart.prevent
 						>
 					</template>
 				</app-editor-slide-card>
 
-				<app-editor-slide-card-plus />
+				<app-editor-slide-card-plus @click="addSlide" />
 			</div>
 		</div>
 	</div>
 </template>
 
+<script setup>
+import { ref, computed, watch } from "vue";
+
+const slidesData = ref([
+	{ question: "", background: "", answerNumber: 2, answers: ["", ""] },
+]);
+
+const currentSlideIndex = ref(0);
+const selectedElement = ref(null);
+
+const currentSlide = computed(() => slidesData.value[currentSlideIndex.value]);
+
+const selectSlide = (index) => {
+	currentSlideIndex.value = index;
+};
+
+const addSlide = () => {
+	slidesData.value.push({
+		question: "",
+		background: "",
+		answerNumber: 2,
+		answers: ["", ""],
+	});
+	currentSlideIndex.value = slidesData.value.length - 1;
+};
+
+const removeSlide = (index) => {
+	slidesData.value.splice(index, 1);
+	if (currentSlideIndex.value >= slidesData.value.length) {
+		currentSlideIndex.value = slidesData.value.length - 1;
+	}
+};
+
+// Keep answers array in sync with answerNumber for current slide
+watch(
+	() => currentSlide.value.answerNumber,
+	(n) => {
+		const answers = currentSlide.value.answers;
+		if (n > answers.length) for (let i = answers.length; i < n; i++) answers.push("");
+		else answers.splice(n);
+	},
+);
+</script>
+
 <style lang="scss">
 @use "/assets/scss/controls.scss";
 @use "/assets/scss/quiz-editor.scss";
+
+.x {
+	justify-self: flex-end;
+	color: rgb(54,193,255);
+	padding-left: 1vh;
+}
+
+.slide-card-title {
+  white-space: nowrap;      /* Keep text on a single line */
+  overflow: hidden;         /* Hide overflow */
+  text-overflow: ellipsis;  /* Show three dots when text is too long */
+}
 </style>

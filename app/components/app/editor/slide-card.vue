@@ -3,9 +3,6 @@
 		<div class="slide-card__header">
 			<div class="slide-card__title-wrapper">
 				<slot name="slide-title" />
-				<h4 class="slide-card__close">
-					X
-				</h4>
 			</div>
 			<div class="slide-card__separator" />
 		</div>
@@ -42,19 +39,24 @@
         text-align: center;
     }
 
-    &__title-wrapper {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin: 0 1rem;
-        padding: 0.5rem 0;
-        font-size: 1.25rem;
-    }
+        .slide-title-wrapper {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            margin: 0;
+            margin-right: 1rem;
+            margin-left: 1rem;
+            font-size: 1.25rem;
 
-    &__close {
-        margin: 0;
-        justify-self: flex-end;
-    }
+            .slide-title {
+                justify-self: center;
+            }
+
+            .x {
+                justify-self: flex-end;
+            }
+        }
 
     &__separator {
         width: 100%;
