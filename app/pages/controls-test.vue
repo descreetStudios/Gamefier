@@ -43,11 +43,13 @@
 
 		<!-- FILE PICKER -->
 		<div class="quiz-editor__field">
-			<label class="quiz-editor__label">File Picker:</label>
+			<label class="quiz-editor__label">File Picker: {{ filePickerTest ? filePickerTest.name : 'No file selected'
+			}}</label>
 			<input
 				type="file"
 				class="quiz-editor__input quiz-editor__input--file"
 				aria-label="File picker"
+				@change="onFileChange"
 			>
 		</div>
 
@@ -90,11 +92,20 @@
 </template>
 
 <script setup>
+import { ref } from "vue";
+
 const textBoxTest = ref("");
 const numberBoxTest = ref(0);
 const colorPickerTest = ref("");
 const choiceBoxTest = ref("");
 const switchTest = ref(false);
+
+const filePickerTest = ref(null);
+
+function onFileChange(event) {
+	const files = event.target.files;
+	filePickerTest.value = files.length > 0 ? files[0] : null;
+}
 </script>
 
 <style lang="scss" scoped>
