@@ -10,7 +10,7 @@
 			}"
 		>
 			<img
-				src="/images/Background.png"
+				src="/images/BackgroundDark.png"
 				alt="Background"
 				@dragstart.prevent
 			>
