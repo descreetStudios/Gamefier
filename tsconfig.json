@@ -5,5 +5,5 @@
     "**/*.ts",
     "**/*.vue",
     "types"
-  ]
+, "functions/index.js"  ]
 }

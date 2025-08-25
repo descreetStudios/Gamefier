@@ -1,86 +1,79 @@
-const functions = require("firebase-functions");
-const admin = require("firebase-admin");
+const { initializeApp } = require("firebase-admin/app");
+const { getAuth } = require("firebase-admin/auth");
+const { getFirestore, Timestamp, FieldValue } = require("firebase-admin/firestore");
 
-admin.initializeApp();
+const { onCall, onRequest } = require("firebase-functions/v2/https");
+const { schedule } = require("firebase-functions/v2/pubsub");
 
-exports.updateUserAuth = functions.https.onCall(async (request) => {
-	// 1. Check authentication
-	if (!request.auth) {
-		throw new functions.https.HttpsError("unauthenticated", "The request must be authenticated.");
+initializeApp();
+
+const auth = getAuth();
+const firestore = getFirestore();
+
+exports.updateUserAuth = onCall(async (context) => {
+	if (!context.auth) {
+		throw new Error("Unauthenticated: The request must be authenticated.");
 	}
 
-	const callerUid = request.auth.uid;
+	const callerUid = context.auth.uid;
 
-	// 2. Check authorization from Firestore
-	const callerDoc = await admin.firestore().collection("users").doc(callerUid).get();
-
-	if (!callerDoc.exists || callerDoc.data().role !== "admin") {
-		throw new functions.https.HttpsError("permission-denied", "Only administrators can update user profiles.");
+	const callerDoc = await firestore.collection("users").doc(callerUid).get();
+	if (!callerDoc.exists || callerDoc.data()?.role !== "admin") {
+		throw new Error("Permission denied: Only administrators can update user profiles.");
 	}
 
-	// 3. Extract data from client
-	const targetUid = request.data.uid;
-	const fieldsToUpdate = request.data.fieldsToUpdate;
+	const targetUid = context.data.uid;
+	const fieldsToUpdate = { ...context.data.fieldsToUpdate };
 
-	if (!fieldsToUpdate.email) {
-		delete fieldsToUpdate.email;
-	}
-	if (!fieldsToUpdate.password) {
-		delete fieldsToUpdate.password;
-	}
-	if (!fieldsToUpdate.displayName) {
-		delete fieldsToUpdate.displayName;
-	}
+	if (!fieldsToUpdate.email) delete fieldsToUpdate.email;
+	if (!fieldsToUpdate.password) delete fieldsToUpdate.password;
+	if (!fieldsToUpdate.displayName) delete fieldsToUpdate.displayName;
 
 	if (!targetUid || !fieldsToUpdate || Object.keys(fieldsToUpdate).length === 0) {
-		throw new functions.https.HttpsError("invalid-argument", "UID and fields to update are required.");
+		throw new Error("Invalid argument: UID and fields to update are required.");
 	}
 
-	// 4. Perform update
 	try {
-		await admin.auth().updateUser(targetUid, fieldsToUpdate);
-
+		await auth.updateUser(targetUid, fieldsToUpdate);
 		return {
 			success: true,
 			message: `User ${targetUid} successfully updated in Firebase Auth.`,
 		};
 	}
 	catch (error) {
-		if (error.code === "auth/user-not-found") {
-			throw new functions.https.HttpsError("not-found", "The specified user was not found in Firebase Auth.");
+		const code = error.code || "";
+		if (code === "auth/user-not-found") {
+			throw new Error("Not found: The specified user was not found in Firebase Auth.");
 		}
-		else if (error.code === "auth/email-already-exists") {
-			throw new functions.https.HttpsError("already-exists", "The provided email is already in use by another user.");
+		else if (code === "auth/email-already-exists") {
+			throw new Error("Already exists: The provided email is already in use by another user.");
 		}
-		else if (error.code === "auth/invalid-email") {
-			throw new functions.https.HttpsError("invalid-argument", "The email address is invalid.");
+		else if (code === "auth/invalid-email") {
+			throw new Error("Invalid argument: The email address is invalid.");
 		}
-		else if (error.code === "auth/invalid-password") {
-			throw new functions.https.HttpsError("invalid-argument", "The password is invalid.");
+		else if (code === "auth/invalid-password") {
+			throw new Error("Invalid argument: The password is invalid.");
 		}
-		else if (error.code === "auth/missing-password") {
-			throw new functions.https.HttpsError("invalid-argument", "Please provide a password.");
+		else if (code === "auth/missing-password") {
+			throw new Error("Invalid argument: Please provide a password.");
 		}
 		else {
 			console.error("Error updating Auth user:", error);
-			throw new functions.https.HttpsError("internal", "An internal error occurred while updating the user.");
+			throw new Error("Internal: An error occurred while updating the user.");
 		}
 	}
 });
 
-exports.checkUsernameAvailability = functions.https.onCall(async (request) => {
-	const displayName = request.data.displayName;
+exports.checkUsernameAvailability = onCall(async (context) => {
+	const displayName = context.data.displayName;
 
 	if (!displayName || typeof displayName !== "string") {
-		throw new functions.https.HttpsError(
-			"invalid-argument",
-			"Il displayName è obbligatorio e deve essere una stringa.",
-		);
+		throw new Error("Invalid argument: displayName is required and must be a string.");
 	}
 
 	const normalizedName = displayName.trim().toLowerCase();
 
-	const snapshot = await admin.firestore()
+	const snapshot = await firestore
 		.collection("users")
 		.where("displayNameLowerCase", "==", normalizedName)
 		.limit(1)
@@ -89,22 +82,63 @@ exports.checkUsernameAvailability = functions.https.onCall(async (request) => {
 	return { available: snapshot.empty };
 });
 
-// exports.unbanExpiredUsers = functions.pubsub.schedule("every 1 minutes").onRun(async () => {
-// 	const now = admin.firestore.Timestamp.now();
+// Test local with it: http://localhost:5001/gamefier-86a8b/us-central1/testUnban
+exports.testUnban = onRequest(async (req, res) => {
+	try {
+		const now = Timestamp.now();
 
-// 	const snapshot = await admin.firestore().collection("users")
-// 		.where("role", "==", "banned")
-// 		.where("banExpiresAt", "<=", now)
-// 		.get();
+		const snapshot = await firestore
+			.collection("users")
+			.where("role", "==", "banned")
+			.where("banExpiresAt", "<=", now)
+			.get();
 
-// 	const batch = admin.firestore().batch();
-// 	snapshot.docs.forEach((doc) => {
-// 		batch.update(doc.ref, {
-// 			role: "user",
-// 			banExpiresAt: admin.firestore.FieldValue.delete(),
-// 		});
-// 	});
+		const batch = firestore.batch();
+		snapshot.docs.forEach((doc) => {
+			batch.update(doc.ref, {
+				role: "user",
+				banReason: FieldValue.delete(),
+				banType: FieldValue.delete(),
+				banExpiresAt: FieldValue.delete(),
+				bannedBy: FieldValue.delete(),
+				banAppealText: FieldValue.delete(),
+				banAppealPending: FieldValue.delete(),
+			});
+		});
 
-// 	await batch.commit();
-// 	console.log(`✅ Unbanned ${snapshot.size} users`);
-// });
+		await batch.commit();
+		res.send(`Successfully unbanned ${snapshot.size} users`);
+	}
+	catch (err) {
+		console.error("Error in testUnban:", err);
+		res.status(500).send("Error during unban process.");
+	}
+});
+
+if (process.env.FUNCTIONS_EMULATOR !== "true") {
+	exports.unbanExpiredUsers = schedule("every 1 minutes").onRun(async () => {
+		try {
+			const now = Timestamp.now();
+
+			const snapshot = await firestore
+				.collection("users")
+				.where("role", "==", "banned")
+				.where("banExpiresAt", "<=", now)
+				.get();
+
+			const batch = firestore.batch();
+			snapshot.docs.forEach((doc) => {
+				batch.update(doc.ref, {
+					role: "user",
+					banExpiresAt: FieldValue.delete(),
+				});
+			});
+
+			await batch.commit();
+			console.log(`Successfully unbanned ${snapshot.size} users`);
+		}
+		catch (err) {
+			console.error("Error in scheduled unbanExpiredUsers:", err);
+		}
+	});
+}
