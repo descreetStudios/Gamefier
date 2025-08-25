@@ -10,11 +10,10 @@
 				<span v-if="isMaintenanceModeEnabled">Enabled</span>
 				<span v-else>Disabled</span>
 			</legend>
-			<form @submit.prevent>
+			<form @submit.prevent="updateMaintenanceMode(isMaintenanceModeEnabled ? 'off' : 'on')">
 				<input
 					type="submit"
 					:value="isMaintenanceModeEnabled ? 'Disable Maintenance Mode' : 'Enable Maintenance Mode'"
-					@click="updateMaintenanceMode(isMaintenanceModeEnabled ? 'off' : 'on')"
 				>
 			</form>
 		</fieldset>
