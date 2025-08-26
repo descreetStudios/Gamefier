@@ -17,6 +17,7 @@
     "@nuxtjs/google-fonts": "^3.2.0",
     "@picocss/pico": "^2.1.1",
     "@pinia/nuxt": "^0.11.1",
+    "@vueuse/core": "^13.7.0",
     "eslint": "^9.34.0",
     "firebase": "^12.1.0",
     "mitt": "^3.0.1",

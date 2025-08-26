@@ -3,153 +3,35 @@
 		<h1 class="admin__title">
 			Admin Page
 		</h1>
-		<h2>Site Administration</h2>
-		<fieldset>
-			<legend>
-				Maintenance mode:
-				<span v-if="isMaintenanceModeEnabled">Enabled</span>
-				<span v-else>Disabled</span>
-			</legend>
-			<form @submit.prevent="updateMaintenanceMode(isMaintenanceModeEnabled ? 'off' : 'on')">
-				<input
-					type="submit"
-					:value="isMaintenanceModeEnabled ? 'Disable Maintenance Mode' : 'Enable Maintenance Mode'"
-				>
-			</form>
-		</fieldset>
-		<h2>User Moderation</h2>
-		<fieldset class="admin__search">
-			<legend>Search users by name</legend>
-			<form
-				class="admin__searchForm"
-				@submit.prevent="searchUsersByDisplayNameStartsWith"
-			>
-				<input
-					v-model="userSearchName"
-					class="admin__searchForm_name"
-					type="text"
-					maxlength="30"
-				>
-				<input
-					class="admin__searchForm_button"
-					type="submit"
-					value="Search"
-				>
-			</form>
-		</fieldset>
-
-		<fieldset
-			v-for="user in users"
-			:key="user.id"
-			class="admin__userCard"
-		>
-			<legend>{{ user.displayName }} - #{{ user.id }}</legend>
-
-			<div class="userPreview">
-				<div class="userPreview__avatar">
-					<NuxtImg
-						class="userPreview__avatar__img"
-						:src="userIcon"
-						alt="user icon"
-						loading="lazy"
-						format="webp"
-						@dragstart.prevent
-					/>
-					<div class="userPreview__avatar__overlay" />
-					<NuxtImg
-						class="userPreview__avatar__edit"
-						:src="editIcon"
-						alt="edit icon overlay"
-						loading="lazy"
-						format="webp"
-						@dragstart.prevent
-					/>
-				</div>
-			</div>
-
-			<form
-				class="userForm"
-				@submit.prevent="updateProfile(user)"
-			>
-				<input
-					v-model="user.displayName"
-					type="text"
-				>
-				<input
-					v-model="user.email"
-					type="email"
-				>
-
-				<select
-					v-model="user.role"
-					name="role"
-				>
-					<option value="user">
-						User
-					</option>
-					<option value="banned">
-						Banned
-					</option>
-					<option value="admin">
-						Administrator
-					</option>
-				</select>
-
-				<input
-					v-if="user.role === 'banned'"
-					v-model="user.banReason"
-					type="text"
-					placeholder="Ban reason"
-					required
-				>
-
-				<select
-					v-if="user.role === 'banned'"
-					v-model="user.banType"
-					name="banType"
-					required
-				>
-					<option
-						value=""
-						disabled
-						hidden
-					>
-						Select an option
-					</option>
-
-					<option value="temporary">
-						Temporary
-					</option>
-					<option value="permanent">
-						Permanent
-					</option>
-				</select>
-
-				<input
-					v-if="user.role === 'banned' && user.banType === 'temporary'"
-					v-model="user.banExpiresAt"
-					type="date"
-					required
-				>
-
-				<input
-					v-model="user.password"
-					type="password"
-					placeholder="New password"
-					minlength="8"
-				>
-
-				<input
-					type="submit"
-					value="Update Profile"
-				>
-			</form>
-		</fieldset>
+		<app-dashboard-admin-site-administration
+			:is-maintenance-mode-enabled="isMaintenanceModeEnabled"
+			@toggle-maintenance="updateMaintenanceMode"
+		/>
+		<app-dashboard-admin-user-moderation
+			:user-search-name="userSearchName"
+			:users="users"
+			:has-more-users="hasMoreUsers"
+			:is-loading-more="isLoadingMore"
+			@search="searchUsersByDisplayNameStartsWith"
+			@update-profile="updateProfile"
+		/>
 	</div>
 </template>
 
 <script setup>
-import { collection, query, where, doc, getDocs, getDoc, setDoc, updateDoc, deleteField } from "firebase/firestore";
+import {
+	collection,
+	query,
+	where,
+	doc,
+	getDocs,
+	getDoc,
+	setDoc,
+	updateDoc,
+	deleteField,
+	limit,
+	startAfter,
+} from "firebase/firestore";
 import { ref, onMounted } from "vue";
 import { httpsCallable } from "firebase/functions";
 
@@ -159,75 +41,107 @@ const { $eventBus } = useNuxtApp();
 const { $userStore } = useNuxtApp();
 
 const userSearchName = ref("");
+const pageSize = 10;
+const lastVisibleDoc = ref(null);
+const hasMoreUsers = ref(false);
+const isLoadingMore = ref(false);
 const users = ref([]);
 const oldUsers = ref([]);
 const called = ref(false);
 const isMaintenanceModeEnabled = ref(null);
-
-const userIcon = ref("/images/icons/user.png");
-const editIcon = ref("/images/icons/edit.png");
 
 onMounted(async () => {
 	getMaintenanceModeStatus();
 });
 
 // Search users whose displayName starts with the input
-const searchUsersByDisplayNameStartsWith = async () => {
-	const usersRef = collection($db, "users");
-	const lowerCaseSearchQuery = userSearchName.value.toLowerCase();
-	if (!lowerCaseSearchQuery) {
+const searchUsersByDisplayNameStartsWith = async (isNewSearch = true, userSearchName) => {
+	isLoadingMore.value = true;
+
+	if (isNewSearch) {
 		users.value = [];
 		oldUsers.value = [];
-		$eventBus.emit("alert", {
-			message: "Please enter a name to search.",
-			type: "error",
-			duration: 3000,
-		});
+		lastVisibleDoc.value = null;
+		hasMoreUsers.value = false;
+	}
+
+	const usersRef = collection($db, "users");
+	const lowerCaseSearchQuery = userSearchName.toLowerCase();
+
+	if (!lowerCaseSearchQuery) {
+		isLoadingMore.value = false;
+		if (isNewSearch) {
+			$eventBus.emit("alert", {
+				message: "Please enter a name to search.",
+				type: "error",
+				duration: 3000,
+			});
+		}
 		return;
 	}
 
 	const endText = lowerCaseSearchQuery + "\uf8ff";
 
-	const q = query(usersRef,
+	let q = query(
+		usersRef,
 		where("displayNameLowerCase", ">=", lowerCaseSearchQuery),
 		where("displayNameLowerCase", "<=", endText),
+		limit(pageSize),
 	);
+
+	if (!isNewSearch && lastVisibleDoc.value) {
+		q = query(q, startAfter(lastVisibleDoc.value));
+	}
 
 	try {
 		const querySnapshot = await getDocs(q);
-		users.value = [];
-		oldUsers.value = [];
-		querySnapshot.forEach((doc) => {
-			const data = doc.data();
+		const newUsers = [];
+
+		querySnapshot.forEach((docSnap) => {
+			const data = docSnap.data();
+
 			if (data.role !== "banned" && !data.banType) {
 				data.banType = "";
 			}
 			if (data.banExpiresAt) {
-				const date = data.banExpiresAt.toDate ? data.banExpiresAt.toDate() : new Date(data.banExpiresAt);
+				const date = data.banExpiresAt.toDate
+					? data.banExpiresAt.toDate()
+					: new Date(data.banExpiresAt);
 				data.banExpiresAt = date.toISOString().split("T")[0];
 			}
-			users.value.push({ id: doc.id, ...data });
-			oldUsers.value = users.value.map(user => ({ ...user }));
+
+			newUsers.push({ id: docSnap.id, ...data });
 		});
-		if (!called.value) {
-			const count = users.value.length;
-			const message = `Found ${count} user${count !== 1 ? "s" : ""} matching your search.`;
+
+		if (isNewSearch && newUsers.length === 0) {
 			$eventBus.emit("alert", {
-				message: message,
-				type: "success",
+				message: "No users found.",
+				type: "info",
 				duration: 3000,
 			});
 		}
-		// console.log(users.value);
+
+		users.value = [...users.value, ...newUsers];
+		oldUsers.value = users.value.map(user => ({ ...user }));
+
+		if (querySnapshot.docs.length < pageSize) {
+			hasMoreUsers.value = false;
+		}
+		else {
+			lastVisibleDoc.value = querySnapshot.docs[querySnapshot.docs.length - 1];
+			hasMoreUsers.value = true;
+		}
 	}
 	catch (err) {
 		$eventBus.emit("alert", {
-			message: `Failed to search for users. ${err?.message || "Please try again later."}`,
+			message: `Failed to fetch users: ${err.message || "Unknown error"}`,
 			type: "error",
 			duration: 3000,
 		});
 	}
-	called.value = false;
+	finally {
+		isLoadingMore.value = false;
+	}
 };
 
 // Update user profile (both Firestore and Auth)
@@ -334,7 +248,7 @@ const updateProfile = async (user) => {
 				duration: 3000,
 			});
 			called.value = true;
-			searchUsersByDisplayNameStartsWith();
+			searchUsersByDisplayNameStartsWith(true, user.displayName);
 		}
 		catch (err) {
 			$eventBus.emit("alert", {
@@ -425,115 +339,6 @@ const getMaintenanceModeStatus = async () => {
 		font-size: 2.5rem;
 		font-weight: bold;
 		margin-bottom: 2rem;
-	}
-
-	&__search {
-		margin-bottom: 2rem;
-		padding: 1rem;
-		border: 2px solid var(--inv-secondary-text);
-		border-radius: var(--border-radius);
-
-		legend {
-			padding: 0 1rem;
-			font-weight: bold;
-		}
-
-		&Form {
-			position: relative;
-			display: flex;
-			gap: 1rem;
-
-			&_button {
-				background-color: var(--primary);
-				position: absolute;
-				right: 0;
-				width: 15%;
-
-				&:hover {
-					background-color: var(--primary-hover);
-				}
-			}
-
-			&_name {
-				flex: 1;
-			}
-		}
-	}
-
-	&__userCard {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 2rem;
-		padding: 1.5rem;
-		margin-bottom: 2rem;
-		border: 2px solid var(--inv-secondary-text);
-		border-radius: var(--border-radius);
-
-		legend {
-			padding: 0 1rem;
-			font-weight: bold;
-		}
-	}
-}
-
-.userPreview {
-	display: flex;
-	align-items: center;
-
-	&__avatar {
-		position: relative;
-		width: 15rem;
-		height: 15rem;
-		border-radius: 50%;
-
-		&__img,
-		&__overlay,
-		&__edit {
-			position: absolute;
-			width: 100%;
-			height: 100%;
-			border-radius: 50%;
-			border: 1px solid var(--inv-bg);
-		}
-
-		&__overlay {
-			background-color: black;
-			opacity: 0;
-			transition: opacity 0.3s ease;
-			z-index: 1;
-			border-radius: 50%;
-
-			&:hover {
-				opacity: 0.4;
-				cursor: pointer;
-			}
-		}
-
-		&__edit {
-			opacity: 0;
-			padding: 6rem;
-			transition: opacity 0.3s ease;
-		}
-
-		&:hover &__edit {
-			opacity: 1;
-		}
-	}
-}
-
-.userForm {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-	gap: 1rem;
-
-	input,
-	select {
-		padding: 0.5rem;
-		font-size: 1rem;
-		border-radius: var(--border-radius);
-		border: 1px solid var(--inv-secondary-text);
-		margin-bottom: 0;
 	}
 }
 </style>

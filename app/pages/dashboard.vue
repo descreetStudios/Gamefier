@@ -25,6 +25,7 @@ import {
 	AppDashboardBanAppeals,
 } from "#components";
 import { useNuxtApp } from "nuxt/app";
+import { useRoute, useRouter } from "vue-router";
 
 const activeView = ref("dashboard");
 const route = useRoute();
