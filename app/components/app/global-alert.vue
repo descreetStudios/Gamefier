@@ -12,6 +12,7 @@
 				class="global-alert__icon"
 				:src="getIcon(type)"
 				alt="Alert icon"
+				loading="lazy"
 				format="webp"
 				@dragstart.prevent
 			/>

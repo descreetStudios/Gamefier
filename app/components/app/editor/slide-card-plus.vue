@@ -1,11 +1,13 @@
 <template>
 	<div class="card-plus">
-		<img
+		<NuxtImg
 			class="card-plus__image"
 			src="/images/CardPlus.png"
 			alt="Add new card"
+			loading="lazy"
+			format="webp"
 			@dragstart.prevent
-		>
+		/>
 	</div>
 </template>
 

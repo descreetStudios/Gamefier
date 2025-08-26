@@ -51,6 +51,7 @@
 						class="userPreview__avatar__img"
 						:src="userIcon"
 						alt="user icon"
+						loading="lazy"
 						format="webp"
 						@dragstart.prevent
 					/>
@@ -59,6 +60,7 @@
 						class="userPreview__avatar__edit"
 						:src="editIcon"
 						alt="edit icon overlay"
+						loading="lazy"
 						format="webp"
 						@dragstart.prevent
 					/>

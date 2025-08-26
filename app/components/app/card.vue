@@ -7,6 +7,7 @@
 			:src="imgSrc"
 			alt="Quiz image"
 			class="quiz-card__image"
+			loading="lazy"
 			format="webp"
 			@dragstart.prevent
 		/>

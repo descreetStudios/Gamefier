@@ -10,7 +10,6 @@
 				src="/images/BackgroundDark.png"
 				alt="Background"
 				class="homepage__background-img"
-				loading="lazy"
 				format="webp"
 				@dragstart.prevent
 			/>
