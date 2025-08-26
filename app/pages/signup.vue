@@ -13,7 +13,7 @@
 				/>
 
 				<h1 class="auth__title">
-					Sign up
+					Sign Up
 				</h1>
 
 				<form
@@ -85,7 +85,7 @@
 						class="auth__btn auth__btn--primary"
 						:disabled="!formValid"
 					>
-						Sign up
+						Sign Up
 					</button>
 				</form>
 
@@ -100,16 +100,16 @@
 						format="webp"
 						@dragstart.prevent
 					/>
-					Sign up with Google
+					Sign Up with Google
 				</button>
 
 				<footer class="auth__footer">
-					Hai già un account?
+					Already have an account?
 					<NuxtLink
 						to="/login"
 						class="auth__link"
 					>
-						Log in
+						Log In
 					</NuxtLink>
 				</footer>
 			</section>
@@ -172,7 +172,7 @@ async function onSubmit() {
 		await signup(email.value, password.value, displayName.value);
 
 		$eventBus.emit("alert", {
-			message: "Sign up success! Redirecting...",
+			message: "Sign-up successful! Redirecting...",
 			type: "success",
 			duration: duration,
 		});
@@ -203,7 +203,7 @@ const onGooglesignup = async () => {
 		}
 
 		$eventBus.emit("alert", {
-			message: "Log in success! Redirecting...",
+			message: "Login successful! Redirecting...",
 			type: "success",
 			duration: 3000,
 		});

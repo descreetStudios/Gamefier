@@ -11,7 +11,7 @@
         background-color: var(--surface);
         border-radius: var(--border-radius);
         box-shadow: 0 6px 15px var(--shadow);
-        padding: 3rem;
+        padding: 2.5rem;
         width: 100%;
         max-width: 500px;
         display: flex;
@@ -22,8 +22,8 @@
     }
 
     &__logo {
-        width: 64px;
-        height: 64px;
+        width: 4rem;
+        height: 4rem;
         align-self: center;
     }
 
@@ -46,14 +46,19 @@
         padding: 0.75rem 1rem;
         border-radius: var(--border-radius);
         border: 1px solid var(--border);
-        background-color: var(--secondary-surface);
+        background-color: var(--surface);
         color: var(--primary-text);
         font-size: 1rem;
+        transition: all 0.2s ease-in-out;
+
+        &::placeholder {
+            color: var(--tertiary-text);
+        }
 
         &:focus {
-            outline: 2px solid var(--primary);
-            outline-offset: 1px;
-            background-color: var(--surface);
+            background-color: var(--secondary-surface);
+            border-color: var(--primary);
+            color: var(--primary-text);
         }
     }
 
@@ -67,6 +72,7 @@
             filter 0.3s ease;
 
         &--primary {
+            margin-bottom: 0;
             color: var(--primary-text);
             background-image: linear-gradient(90deg, var(--primary), var(--secondary));
 
@@ -78,21 +84,22 @@
         }
 
         &--google {
+            margin-bottom: 0.5rem;
             background: var(--surface);
             font-weight: 500;
             color: var(--primary-text);
+            border: 1px solid var(--border);
+            transition:
+                background-color 0.3s ease,
+                color 0.3s ease,
+                text-shadow 0.3s ease;
 
             &:hover,
             &:focus {
-                color: var(--glowing);
-                text-shadow:
-                    0 0 1px var(--glowing),
-                    0 0 3px var(--glowing),
-                    0 0 5px var(--glowing);
+                background-color: var(--border);
             }
         }
     }
-
     &__google-icon {
         width: 24px;
         height: 24px;

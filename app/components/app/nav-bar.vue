@@ -70,7 +70,7 @@
 							Settings
 						</p>
 						<p @click="logoutHandler">
-							Logout
+							Log Out
 						</p>
 					</div>
 				</div>

@@ -104,7 +104,7 @@
 						class="sidebar__nav-link sidebar__nav-link--logout"
 						@click.stop="logoutHandler"
 					>
-						Logout
+						Log Out
 					</button>
 				</div>
 			</div>

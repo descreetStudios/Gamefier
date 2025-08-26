@@ -88,7 +88,7 @@
 					class="ban-card__logout"
 					@click="logoutHandler"
 				>
-					Log out
+					Log Out
 				</p>
 			</div>
 		</section>
