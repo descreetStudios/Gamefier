@@ -27,17 +27,19 @@
 						</template>
 						<template #content>
 							<div class="content-content">
-								<p>File Picker:</p>
-								<input
-									type="file"
-									aria-label="File picker"
-									@change="onBackgroundSelected"
-								>
-								<img
-									v-if="currentSlide.background"
-									:src="currentSlide.background"
-									style="max-width:100%; margin-top:5px;"
-								>
+								<div class="file-picker-wrapper">
+									<input
+										type="file"
+										aria-label="File picker"
+										class="quiz-editor__input--file"
+										@change="onBackgroundSelected"
+									>
+									<img
+										v-if="currentSlide.background"
+										:src="currentSlide.background"
+										class="quiz-editor__background-preview"
+									>
+								</div>
 							</div>
 						</template>
 					</app-editor-property-card>

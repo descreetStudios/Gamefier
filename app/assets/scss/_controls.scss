@@ -78,3 +78,20 @@
 		background: var(--primary-hover);
 	}
 }
+
+.quiz-editor__background-preview {
+  display: block;
+  max-width: 100%;
+  max-height: 5rem; // small preview
+  margin-top: 0.5rem;
+  border-radius: 0.25rem;
+  object-fit: cover;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.file-picker-wrapper {
+  display: flex;
+  flex-direction: column; // stack vertically
+  align-items: flex-start; // optional: left-align
+  gap: 0.5rem; // spacing between input and preview
+}
