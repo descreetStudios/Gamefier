@@ -1,66 +1,67 @@
 # CONTRIBUTING.md
 
-Di seguito sono riportate le pratiche per GIT e per il codice.
+Below are the practices for GIT and code standards.
 
 ---
 
-## Sommario
+## Table of Contents
 
-1. [Prerequisiti](#prerequisiti)
-2. [Formato dei commit](#formato-dei-commit)
-3. [Qualità del codice & ESLint](#qualità-del-codice--eslint)
+1. [Prerequisites](#prerequisites)
+2. [Commit Format](#commit-format)
+3. [Code Quality & ESLint](#code-quality--eslint)
 
 ---
 
-## Prerequisiti
+## Prerequisites
 
-- **Node.js ≥ 20** e **npm ≥ 10** installati.
-- Accesso in scrittura al repo `git@github.com:org/Gamefier.git`.
+- **Node.js ≥ 20** and **npm ≥ 10** must be installed.
+- **Firebase CLI** must be installed globally using the following command: `npm install -g firebase-tools`.
+- Write access to the repo `git@github.com:org/Gamefier.git` is required.
 
 ```bash
-# Clona il repo interno
+# Clone the internal repo
 $ git clone git@github.com:org/Gamefier.git
 $ cd Gamefier
 
-# Installa le dipendenze
+# Install dependencies
 $ npm ci
 ```
 
 ---
 
-## Formato dei commit
-I commit vengono fatti in lignua Inglese
+## Commit Format
+Commits must be written in English.
 
-| Tipo      | Pattern                              | Esempio                         |
+| Type      | Pattern                              | Example                         |
 |-----------|--------------------------------------|---------------------------------|
-| Feature   | `feat: descrizione`                  | `feat: login-oauth`             |
-| Bugfix    | `fix: descrizione`                   | `fix: avatar-null`              |
-| Refactor  | `refactor: descrizione`              | `refactor: user-service`        |
-| Hotfix    | `hotfix: descrizione`                | `hotfix: prod-crash`            |
-| Docs      | `docs: descrizione`                  | `docs: readme`                  |
+| Feature   | `feat: description`                  | `feat: login-oauth`             |
+| Bugfix    | `fix: description`                   | `fix: avatar-null`              |
+| Refactor  | `refactor: description`              | `refactor: user-service`        |
+| Hotfix    | `hotfix: description`                | `hotfix: prod-crash`            |
+| Docs      | `docs: description`                  | `docs: readme`                  |
 
-In breve:
+In short:
 ```
-<tipo>: descrizione sintetica
+<type>: short description
 ```
 
-Esempio:
+Example:
 ```
 feat: implement login OAuth2
 ```
 
-Se serve un corpo commit, mantienilo < 72 caratteri per riga.
+If a commit body is needed, keep each line < 72 characters.
 
 ---
 
-## Qualità del codice & ESLint
+## Code Quality & ESLint
 
-- Usare **ESLint** per la formattazione.
+- Use **ESLint** for formatting and code quality checks.
 
-Comandi rapidi:
+Quick commands:
 ```bash
-npm run lint         # analizza tutto
-npm run lint:fix     # fix automatici
+npm run lint         # analyze everything
+npm run lint:fix     # apply automatic fixes
 ```
 
 ---
