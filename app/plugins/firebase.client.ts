@@ -4,6 +4,7 @@ import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, connectAuthEmulator } from "firebase/auth";
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
+import { getStorage, connectStorageEmulator } from "firebase/storage";
 import type { FirebaseApp } from "firebase/app";
 
 export default defineNuxtPlugin(() => {
@@ -26,12 +27,14 @@ export default defineNuxtPlugin(() => {
 	const db = getFirestore(app);
 	const auth = getAuth(app);
 	const functions = getFunctions(app);
+	const storage = getStorage(app);
 
 	// Connessione emulatori solo in sviluppo
 	if (process.env.NODE_ENV === "development") {
 		connectFirestoreEmulator(db, "localhost", 8080);
 		connectAuthEmulator(auth, "http://localhost:9099");
 		connectFunctionsEmulator(functions, "localhost", 5001);
+		connectStorageEmulator(storage, "localhost", 9199); // default port for storage emulator
 	}
 
 	// Analytics può fallire in SSR o emulatori, gestiamo con try/catch
@@ -43,13 +46,5 @@ export default defineNuxtPlugin(() => {
 		analytics = null;
 	}
 
-	return {
-		provide: {
-			firebase: app,
-			db,
-			auth,
-			analytics,
-			functions,
-		},
-	};
+	return { provide: { firebase: app, db, auth, analytics, functions, storage } };
 });

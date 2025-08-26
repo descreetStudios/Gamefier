@@ -1,27 +1,81 @@
 <template>
-	<h2 class="create__heading">
-		Start creating by choosing a template!
-		<div class="create__arrows">
-			<span class="create__arrow" />
-			<span class="create__arrow" />
-			<span class="create__arrow" />
-		</div>
-	</h2>
-
-	<div class="create__card-container">
-		<AppCard
-			img-src="/images/CardPlus.png"
-			@card-click="handleAddClick"
+	<div>
+		<h2
+			v-if="quizzes.length === 0"
+			class="create__heading"
 		>
-			<p>Create new game</p>
-		</AppCard>
+			Start creating by choosing a template!
+			<div class="create__arrows">
+				<span class="create__arrow" />
+				<span class="create__arrow" />
+				<span class="create__arrow" />
+			</div>
+		</h2>
+
+		<div class="create__card-container">
+			<!-- Always show the "create new game" card -->
+			<app-card
+				img-src="/images/CardPlus.png"
+				@card-click="handleAddClick"
+			>
+				<p>Create new game</p>
+			</app-card>
+
+			<!-- Show user’s saved quizzes -->
+			<app-card
+				v-for="quiz in quizzes"
+				:key="quiz.id"
+				:img-src="quiz.background || '/images/BackgroundDark.png'"
+				@card-click="() => openQuizEditor(quiz.id)"
+			>
+				<p>{{ quiz.question || "Untitled Quiz" }}</p>
+			</app-card>
+		</div>
 	</div>
 </template>
 
 <script setup>
-function handleAddClick() {
-	console.log("Create new clicked!");
+import { ref, onMounted, onUnmounted } from "vue";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getFirestore, collection, query, where, onSnapshot } from "firebase/firestore";
+
+const quizzes = ref([]);
+let unsubscribe = null;
+
+const handleAddClick = () => {
+	return navigateTo({ path: "/quiz-editor" });
+};
+
+function openQuizEditor(quizId) {
+	return navigateTo({ path: "/quiz-editor", query: { quizId: quizId } });
 }
+
+onMounted(() => {
+	const auth = getAuth();
+	const db = getFirestore();
+
+	onAuthStateChanged(auth, (user) => {
+		// detach previous listener if any
+		if (unsubscribe) unsubscribe();
+
+		if (user) {
+			const q = query(collection(db, "quizzes"), where("uid", "==", user.uid));
+
+			// Live updates
+			unsubscribe = onSnapshot(q, (snapshot) => {
+				quizzes.value = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+			});
+		}
+		else {
+			quizzes.value = [];
+		}
+	});
+});
+
+// cleanup listener on unmount
+onUnmounted(() => {
+	if (unsubscribe) unsubscribe();
+});
 </script>
 
 <style lang="scss" scoped>

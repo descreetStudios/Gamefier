@@ -1,4 +1,5 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
 
@@ -21,6 +22,11 @@ service cloud.firestore {
           ])
         )
       );
+    }
+    
+    match /quizzes/{quizId} {
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.uid;
+      allow read, update, delete: if request.auth != null && request.auth.uid == resource.data.uid;
     }
 
     match /site_settings/{docId} {
