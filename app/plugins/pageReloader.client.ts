@@ -13,10 +13,16 @@ export default defineNuxtPlugin(() => {
 	const maintenanceMode = computed(() => siteSettingsStore.maintenanceMode);
 
 	watch([role, maintenanceMode], ([newRole, newMaintenance], [oldRole, oldMaintenance]) => {
-		if (oldRole == null || oldMaintenance == null)
+		if (!userStore.loaded || !siteSettingsStore.loaded) {
 			return;
-		if (newRole !== oldRole || ((newMaintenance !== oldMaintenance) && newRole !== "admin")) {
-			window.location.reload();
+		}
+		else {
+			if (newRole !== oldRole && oldRole === null) {
+				return;
+			}
+			if (newRole !== oldRole || ((newMaintenance !== oldMaintenance) && newRole !== "admin")) {
+				window.location.reload();
+			}
 		}
 	});
 });

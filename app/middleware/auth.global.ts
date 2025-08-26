@@ -8,17 +8,17 @@ export default defineNuxtRouteMiddleware(async (to) => {
 	const userStore = $userStore as ReturnType<typeof useUserStore>;
 	const siteSettingsStore = $siteSettingsStore as ReturnType<typeof useSiteSettingsStore>;
 
-	const excludedPaths = ["/", "/signup", "/login", "/loading"];
+	const excludedPaths = ["/", "/signup", "/login", "/loading", "/maintenance"];
 
 	if ((userStore.startup || !siteSettingsStore.loaded) && (!"/loading".includes(to.path) || "/".includes(to.path))) {
 		return navigateTo({ path: "/loading", query: { ...to.query, pathTo: to.path } });
 	}
 
-	if (siteSettingsStore.maintenanceMode === true && userStore.role !== "admin" && to.path !== "/maintenance") {
+	if (siteSettingsStore.maintenanceMode && userStore.role !== "admin" && to.path !== "/maintenance") {
 		return navigateTo("/maintenance");
 	}
 
-	if (siteSettingsStore.maintenanceMode === false && ["/maintenance"].includes(to.path)) {
+	if (!siteSettingsStore.maintenanceMode && ["/maintenance"].includes(to.path)) {
 		return navigateTo("/");
 	}
 
