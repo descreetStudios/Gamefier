@@ -4,12 +4,13 @@
 
 		<main class="auth__page">
 			<section class="auth__card">
-				<img
+				<NuxtImg
 					src="/images/logo/gamefier-logo-64px.png"
 					alt="Logo Gamefier"
 					class="auth__logo"
+					format="webp"
 					@dragstart.prevent
-				>
+				/>
 
 				<h1 class="auth__title">
 					Sign up
@@ -69,12 +70,13 @@
 						v-if="showError"
 						class="auth__error"
 					>
-						<img
+						<NuxtImg
 							src="/images/icons/warning.png"
 							alt="Errore"
 							class="auth__error-icon"
+							format="webp"
 							@dragstart.prevent
-						>
+						/>
 						{{ errorMessage }}
 					</p>
 
@@ -91,12 +93,13 @@
 					class="auth__btn auth__btn--google"
 					@click="onGooglesignup"
 				>
-					<img
+					<NuxtImg
 						src="/images/icons/google-icon.svg"
 						alt="Google"
 						class="auth__google-icon"
+						format="webp"
 						@dragstart.prevent
-					>
+					/>
 					Sign up with Google
 				</button>
 

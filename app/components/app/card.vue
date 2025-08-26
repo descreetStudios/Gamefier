@@ -3,12 +3,13 @@
 		class="quiz-card"
 		@click="$emit('card-click')"
 	>
-		<img
+		<NuxtImg
 			:src="imgSrc"
 			alt="Quiz image"
 			class="quiz-card__image"
+			format="webp"
 			@dragstart.prevent
-		>
+		/>
 
 		<div class="quiz-card__label">
 			<slot>Quiz</slot>

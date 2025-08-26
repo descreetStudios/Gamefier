@@ -2,10 +2,11 @@
 	<div class="editor">
 		<div class="sidebar">
 			<div class="title">
-				<img
+				<NuxtImg
 					src="/images/logo/gamefier-logo-64px.png"
 					alt="GF"
-				>
+					format="webp"
+				/>
 				<h2>Quiz Editor</h2>
 			</div>
 			<div class="separator" />
@@ -109,12 +110,13 @@
 				</h2>
 
 				<div class="render__middle">
-					<img
+					<NuxtImg
 						class="render__middle__image"
 						:src="currentSlide.background || '/images/BackgroundDark.png'"
+						format="webp"
 						@dragstart.prevent
 						@click="selectedElement = 'background'"
-					>
+					/>
 
 					<div class="render__middle__options">
 						<div
@@ -157,10 +159,11 @@
 						</h4>
 					</template>
 					<template #slide-content>
-						<img
+						<NuxtImg
 							:src="slide.background || '/images/BackgroundDark.png'"
+							format="webp"
 							@dragstart.prevent
-						>
+						/>
 					</template>
 				</app-editor-slide-card>
 

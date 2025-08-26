@@ -5,19 +5,21 @@
 		</h2>
 		<div class="profile__content">
 			<div class="profile__iconContainer">
-				<img
+				<NuxtImg
 					class="profile__iconContainer__icon"
 					:src="userIcon"
 					alt="User icon"
+					format="webp"
 					@dragstart.prevent
-				>
+				/>
 				<div class="profile__iconContainer__editOverlay" />
-				<img
+				<NuxtImg
 					class="profile__iconContainer__editIcon"
 					:src="editIcon"
 					alt="Edit icon"
+					format="webp"
 					@dragstart.prevent
-				>
+				/>
 			</div>
 			<h4 class="profile__displayName">
 				{{ $userStore.displayName }}

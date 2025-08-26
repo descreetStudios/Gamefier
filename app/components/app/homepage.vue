@@ -6,12 +6,14 @@
 				transform: `translateY(${bgOffset - 100}px) translateX(${mouseX * 10}px) translateY(${mouseY * 10}px)`,
 			}"
 		>
-			<img
+			<NuxtImg
 				src="/images/BackgroundDark.png"
 				alt="Background"
 				class="homepage__background-img"
+				loading="lazy"
+				format="webp"
 				@dragstart.prevent
-			>
+			/>
 		</div>
 
 		<section class="homepage__hero">
@@ -34,12 +36,14 @@
 			:key="section.id"
 			:class="['homepage__section', { 'homepage__section--reversed': section.reversed }]"
 		>
-			<img
+			<NuxtImg
 				:src="section.image"
 				:alt="section.title"
 				class="homepage__section-img"
+				loading="lazy"
+				format="webp"
 				@dragstart.prevent
-			>
+			/>
 			<div class="homepage__text-block">
 				<h2 class="homepage__section-title">
 					{{ section.title }}

@@ -4,12 +4,13 @@
 
 		<main class="auth__page">
 			<section class="auth__card">
-				<img
+				<NuxtImg
 					src="/images/logo/gamefier-logo-64px.png"
 					alt="Logo Gamefier"
 					class="auth__logo"
+					format="webp"
 					@dragstart.prevent
-				>
+				/>
 
 				<h1 class="auth__title">
 					Log in
@@ -50,12 +51,13 @@
 					class="auth__btn auth__btn--google"
 					@click="onGoogleLogin"
 				>
-					<img
+					<NuxtImg
 						src="/images/icons/google-icon.svg"
 						alt="Google"
 						class="auth__google-icon"
+						format="webp"
 						@dragstart.prevent
-					>
+					/>
 					Log in with Google
 				</button>
 

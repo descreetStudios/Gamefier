@@ -1,18 +1,19 @@
 <!-- eslint-disable vue/require-explicit-emits -->
 <template>
 	<aside class="sidebar">
-		<nuxt-link
+		<NuxtLink
 			to="/"
 			class="sidebar__logo"
 		>
-			<img
+			<NuxtImg
 				src="/images/logo/gamefier-logo-64px.png"
 				alt="GF"
 				class="sidebar__logo-img"
+				format="webp"
 				@dragstart.prevent
-			>
+			/>
 			<span class="sidebar__logo-text">Gamefier</span>
-		</nuxt-link>
+		</NuxtLink>
 
 		<hr class="sidebar__divider">
 
@@ -65,11 +66,13 @@
 				@click="toggleUserLinks"
 			>
 				<div class="sidebar__user-header">
-					<img
+					<NuxtImg
 						class="sidebar__user-icon"
 						:src="userIcon"
 						alt="User Icon"
-					>
+						format="webp"
+						@dragstart.prevent
+					/>
 					<h4 class="sidebar__user-name">
 						{{ $userStore.displayName }}
 					</h4>

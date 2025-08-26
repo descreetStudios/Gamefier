@@ -47,19 +47,21 @@
 
 			<div class="userPreview">
 				<div class="userPreview__avatar">
-					<img
+					<NuxtImg
 						class="userPreview__avatar__img"
 						:src="userIcon"
 						alt="user icon"
+						format="webp"
 						@dragstart.prevent
-					>
+					/>
 					<div class="userPreview__avatar__overlay" />
-					<img
+					<NuxtImg
 						class="userPreview__avatar__edit"
 						:src="editIcon"
 						alt="edit icon overlay"
+						format="webp"
 						@dragstart.prevent
-					>
+					/>
 				</div>
 			</div>
 
@@ -412,7 +414,7 @@ const getMaintenanceModeStatus = async () => {
 	const siteSettings = await getDoc(docRef);
 	isMaintenanceModeEnabled.value = siteSettings.data()?.maintenanceMode;
 }
-;
+	;
 </script>
 
 <style lang="scss" scoped>

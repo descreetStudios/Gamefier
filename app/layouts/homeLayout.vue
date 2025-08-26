@@ -4,10 +4,10 @@
 <template>
 	<div>
 		<!-- Components -->
-		<AppGlobalAlert />
-		<AppNavBar />
-		<AppBackground />
-		<AppHomepage />
+		<app-global-alert />
+		<app-nav-bar />
+		<app-background />
+		<app-homepage />
 
 		<main class="container">
 			<slot />

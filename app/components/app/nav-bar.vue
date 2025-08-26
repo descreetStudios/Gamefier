@@ -8,12 +8,13 @@
 					class="navbar__logo"
 					@dragstart.prevent
 				>
-					<img
+					<NuxtImg
 						src="/images/logo/gamefier-logo-64px.png"
 						alt="Gamefier logo"
 						class="navbar__logo-img"
+						format="webp"
 						@dragstart.prevent
-					>
+					/>
 					<strong class="navbar__logo-text">Gamefier</strong>
 				</NuxtLink>
 			</div>
@@ -50,11 +51,12 @@
 						class="navbar__user-img"
 						@click="toggleUserMenu"
 					>
-						<img
+						<NuxtImg
 							:src="userIcon"
 							alt="User icon"
+							format="webp"
 							@dragstart.prevent
-						>
+						/>
 						<h4>{{ $userStore.displayName }}</h4>
 					</div>
 					<div

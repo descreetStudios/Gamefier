@@ -1,7 +1,7 @@
 <template>
 	<div class="maintenance-page">
-		<AppBackground />
-		<AppGlobalAlert />
+		<app-background />
+		<app-global-alert />
 
 		<div
 			class="maintenance-page__background"
@@ -9,22 +9,24 @@
 				transform: `translateX(${mouseX * 10}px) translateY(${mouseY * 10}px)`,
 			}"
 		>
-			<img
+			<NuxtImg
 				src="/images/BackgroundDark.png"
 				alt="Background"
+				format="webp"
 				@dragstart.prevent
-			>
+			/>
 		</div>
 
 		<section class="maintenance-page__card">
 			<div class="maintenance-card">
 				<div class="maintenance-card__brand">
-					<img
+					<NuxtImg
 						src="/images/logo/gamefier-logo-64px.png"
 						alt="Gamefier Logo"
 						class="maintenance-card__logo"
+						format="webp"
 						@dragstart.prevent
-					>
+					/>
 					<p class="maintenance-card__site-name">
 						Gamefier
 					</p>
@@ -64,9 +66,9 @@ onUnmounted(() => {
 
 <style lang="scss" scoped>
 .maintenance-page {
-	position: fixed;
-	inset: 0;
-	overflow: hidden;
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
     width: 100%;
     min-height: 100vh;
 

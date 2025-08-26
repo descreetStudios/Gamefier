@@ -1,7 +1,7 @@
 <template>
 	<div class="ban-page">
-		<AppBackground />
-		<AppGlobalAlert />
+		<app-background />
+		<app-global-alert />
 
 		<div
 			class="ban-page__background"
@@ -9,22 +9,24 @@
 				transform: `translateX(${mouseX * 10}px) translateY(${mouseY * 10}px)`,
 			}"
 		>
-			<img
+			<NuxtImg
 				src="/images/BackgroundDark.png"
 				alt="Background"
+				format="webp"
 				@dragstart.prevent
-			>
+			/>
 		</div>
 
 		<section class="ban-page__card">
 			<div class="ban-card">
 				<div class="ban-card__brand">
-					<img
+					<NuxtImg
 						src="/images/logo/gamefier-logo-64px.png"
 						alt="Gamefier Logo"
 						class="ban-card__logo"
+						format="webp"
 						@dragstart.prevent
-					>
+					/>
 					<p class="ban-card__site-name">
 						Gamefier
 					</p>
@@ -33,7 +35,7 @@
 				<hr>
 
 				<h1 class="ban-card__title">
-					You are currently banned
+					You are currently bannedss
 				</h1>
 
 				<div class="ban-card__details">

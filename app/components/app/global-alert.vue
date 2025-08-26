@@ -8,12 +8,13 @@
 			class="global-alert"
 			:class="`global-alert--${type}`"
 		>
-			<img
+			<NuxtImg
 				class="global-alert__icon"
 				:src="getIcon(type)"
 				alt="Alert icon"
+				format="webp"
 				@dragstart.prevent
-			>
+			/>
 			<div class="global-alert__message">
 				{{ message }}
 			</div>
