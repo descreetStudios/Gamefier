@@ -35,7 +35,7 @@
 				<hr>
 
 				<h1 class="ban-card__title">
-					You are currently bannedss
+					You are currently banned
 				</h1>
 
 				<div class="ban-card__details">

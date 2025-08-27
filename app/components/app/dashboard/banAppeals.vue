@@ -73,6 +73,17 @@
 				</div>
 			</form>
 		</fieldset>
+		<app-infinite-scroll
+			:has-more="hasMoreUsers"
+			@load="searchPendingBanAppeals"
+		>
+			<div
+				v-if="isLoadingMore"
+				class="loader"
+			>
+				Caricamento...
+			</div>
+		</app-infinite-scroll>
 	</div>
 </template>
 
@@ -85,6 +96,9 @@ import {
 	doc,
 	updateDoc,
 	deleteField,
+	limit,
+	startAfter,
+	orderBy,
 } from "firebase/firestore";
 import { onMounted, ref } from "vue";
 
@@ -92,6 +106,10 @@ const { $db, $eventBus } = useNuxtApp();
 
 const users = ref([]);
 const oldUsers = ref([]);
+const pageSize = 2;
+const lastVisibleDoc = ref(null);
+const hasMoreUsers = ref(false);
+const isLoadingMore = ref(false);
 const called = ref(false);
 
 const formatDate = (input) => {
@@ -99,36 +117,70 @@ const formatDate = (input) => {
 	return date.toISOString().split("T")[0];
 };
 
-const searchPendingBanAppeals = async () => {
+const searchPendingBanAppeals = async (isNewSearch = false) => {
+	isLoadingMore.value = true;
+
+	if (isNewSearch) {
+		users.value = [];
+		oldUsers.value = [];
+		lastVisibleDoc.value = null;
+		hasMoreUsers.value = false;
+	}
+
 	try {
-		const q = query(
+		let q = query(
 			collection($db, "users"),
 			where("banAppealText", "!=", null),
 			where("banAppealPending", "==", true),
+			limit(pageSize),
 		);
-		const snapshot = await getDocs(q);
 
-		users.value = [];
+		if (!isNewSearch && lastVisibleDoc.value) {
+			q = query(q, startAfter(lastVisibleDoc.value));
+		}
+
+		const snapshot = await getDocs(q);
+		const results = [];
+
 		snapshot.forEach((docSnap) => {
 			const data = docSnap.data();
-			if (data.banExpiresAt) data.banExpiresAt = formatDate(data.banExpiresAt);
-			users.value.push({ id: docSnap.id, ...data });
+			if (data.banExpiresAt) {
+				data.banExpiresAt = formatDate(data.banExpiresAt);
+			}
+			results.push({ id: docSnap.id, ...data });
 		});
-		oldUsers.value = users.value.map(u => ({ ...u }));
 
-		if (!called.value) {
-			const count = users.value.length;
+		if (isNewSearch && results.length === 0) {
 			$eventBus.emit("alert", {
-				message: `Found ${count} banned user${count !== 1 ? "s" : ""} with pending appeals.`,
-				type: "success",
+				message: `Found 0 banned users with pending appeals.`,
+				type: "info",
 				duration: 3000,
 			});
 		}
+
+		users.value = [...users.value, ...results];
+		oldUsers.value = users.value.map(u => ({ ...u }));
+
+		if (snapshot.docs.length < pageSize) {
+			hasMoreUsers.value = false;
+		}
+		else {
+			lastVisibleDoc.value = snapshot.docs[snapshot.docs.length - 1];
+			hasMoreUsers.value = true;
+		}
+
+		called.value = true;
 	}
 	catch (err) {
-		console.error(err);
+		$eventBus.emit("alert", {
+			message: `Error loading ban appeals: ${err.message || "Unknown error"}`,
+			type: "error",
+			duration: 3000,
+		});
 	}
-	called.value = false;
+	finally {
+		isLoadingMore.value = false;
+	}
 };
 
 const updateBan = async (user) => {
@@ -235,7 +287,9 @@ const eventHandler = async (user) => {
 		else if (action === 3) await refuse(user);
 
 		called.value = true;
-		await searchPendingBanAppeals();
+		lastVisibleDoc.value = null;
+		hasMoreUsers.value = true;
+		await searchPendingBanAppeals(true);
 	}
 	catch (err) {
 		$eventBus.emit("alert", {
@@ -246,7 +300,10 @@ const eventHandler = async (user) => {
 	}
 };
 
-onMounted(searchPendingBanAppeals);
+onMounted(() => {
+	searchPendingBanAppeals(true);
+},
+);
 </script>
 
 <style scoped lang="scss">

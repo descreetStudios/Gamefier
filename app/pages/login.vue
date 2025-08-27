@@ -76,10 +76,12 @@
 </template>
 
 <script setup>
-import { navigateTo } from "#app";
+import { useAuth } from "#imports";
+import { navigateTo, useNuxtApp } from "#app";
 
 const { $eventBus } = useNuxtApp();
 const { login } = useAuth();
+const { loginWithGoogle, user } = useAuth();
 
 const email = ref("");
 const password = ref("");
@@ -108,8 +110,6 @@ async function onSubmit() {
 		});
 	}
 }
-
-const { loginWithGoogle, user } = useAuth();
 
 const onGoogleLogin = async () => {
 	try {
