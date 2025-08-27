@@ -13,6 +13,17 @@
 						format="webp"
 					/>
 					<h2>Quiz Editor</h2>
+					<div class="title-buttons">
+						<button @click="saveQuiz">
+							Save
+						</button>
+						<button
+							class="danger"
+							@click="deleteQuiz"
+						>
+							Delete
+						</button>
+					</div>
 				</div>
 				<div class="separator" />
 
@@ -114,16 +125,6 @@
 
 			<div class="content">
 				<div class="render">
-					<button @click="saveQuiz">
-						Save Quiz
-					</button>
-					<button
-						class="danger"
-						@click="deleteQuiz"
-					>
-						Delete Quiz
-					</button>
-
 					<h2
 						class="render__question"
 						@click="selectedElement = 'questionTitle'"

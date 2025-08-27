@@ -32,6 +32,52 @@ html {
   }
 }
 
+// Editor popup style
+.editor-popup-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+.editor-popup {
+  background: var(--surface);
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+
+  h2 { margin-bottom: 1rem; }
+  p { margin-bottom: 1.5rem; }
+
+  .editor-popup-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+
+    button {
+      padding: 0.5rem 1.2rem;
+      border-radius: 0.5rem;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      &:hover { transform: scale(1.05); }
+      &:active { transform: scale(0.95); }
+
+      &:first-child { background: var(--inv-secondary-text); color: white; }
+      &:last-child { background: var(--accent); color: white; }
+    }
+  }
+}
+
+
+
 .editor {
     display: flex;
     flex-direction: row;
@@ -49,25 +95,47 @@ html {
         box-shadow: 0 6px 15px var(--shadow);
 
         .title {
-            margin: 0px;
-            margin-top: 0.5rem;
-            margin-bottom: 0.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+
+        .title-buttons {
+            display: flex;
             gap: 0.5rem;
 
-            display: flex;
-            flex-wrap: nowrap;
-            justify-content: center;
-            align-items: center;
+            button {
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s ease;
 
-            height: auto;
-
-            img {
+            &:hover {
+                transform: scale(1.05);
             }
 
-            h2 {
-                margin: 0;
+            &:active {
+                transform: scale(0.95);
+            }
+            }
+
+            .danger {
+            background-color: #c42e1d;
+            color: white;
+
+            &:hover {
+                background-color: #ff4935;
+            }
+            }
+
+            &:not(.danger) {
+            color: white;
             }
         }
+        }
+
 
         .contextual-props {
             flex: 1 1 auto;
