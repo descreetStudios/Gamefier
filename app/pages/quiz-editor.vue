@@ -18,16 +18,25 @@
 					/>
 					<h2>Quiz Editor</h2>
 					<div class="title-buttons">
-						<button @click="saveQuiz">
-							Save
-						</button>
-						<button
-							v-if="currentQuizId"
-							class="danger"
-							@click="deleteQuiz"
-						>
-							Delete
-						</button>
+						<div class="title-buttons">
+							<button @click="saveQuiz">
+								Save
+							</button>
+							<button
+								v-if="currentQuizId"
+								class="danger"
+								@click="deleteQuiz"
+							>
+								Delete
+							</button>
+							<!-- Go back to dashboard -->
+							<button
+								:class="{ danger: hasUnsavedChanges }"
+								@click="confirmExit"
+							>
+								Exit
+							</button>
+						</div>
 					</div>
 				</div>
 				<div class="separator" />
@@ -54,6 +63,14 @@
 										:src="currentSlide.background"
 										class="quiz-editor__background-preview"
 									>
+									<!-- Remove button only shows if there is an uploaded image -->
+									<button
+										v-if="currentSlide._backgroundFile || currentSlide._backgroundPath"
+										class="remove-background-btn"
+										@click="removeBackground"
+									>
+										Remove Background
+									</button>
 								</div>
 							</div>
 						</template>
@@ -356,14 +373,28 @@ const closePopup = () => {
 };
 
 // Load quiz
+const originalQuizData = ref(null);
+
 const loadQuiz = async (quizId) => {
 	loading.value = true;
 	const docRef = doc(db, "quizzes", quizId);
 	const docSnap = await getDoc(docRef);
-	if (docSnap.exists()) slidesData.value = docSnap.data().slides || [];
-	currentQuizId.value = quizId;
+	if (docSnap.exists()) {
+		slidesData.value = docSnap.data().slides || [];
+		quizTitle.value = docSnap.data().title || "";
+		originalQuizData.value = JSON.stringify({ title: quizTitle.value, slides: slidesData.value });
+		currentQuizId.value = quizId;
+	}
 	loading.value = false;
+	// update saved data on load
+	originalQuizData.value = JSON.stringify({ title: quizTitle.value, slides: slidesData.value });
 };
+
+// Detect unsaved changes
+const hasUnsavedChanges = computed(() => {
+	const current = JSON.stringify({ title: quizTitle.value, slides: slidesData.value });
+	return current !== originalQuizData.value;
+});
 
 // Save quiz
 const saveQuiz = async () => {
@@ -422,6 +453,8 @@ const saveQuiz = async () => {
 		}
 
 		showPopup({ title: "Saved!", message: "Quiz saved successfully.", type: "success", onConfirm: closePopup });
+		// Update saved data
+		originalQuizData.value = JSON.stringify({ title: quizTitle.value, slides: slidesData.value });
 	}
 	catch (err) {
 		console.error(err);
@@ -462,6 +495,28 @@ const deleteQuiz = async () => {
 		},
 		onCancel: closePopup,
 	});
+};
+
+const removeBackground = () => {
+	currentSlide.value.background = null;
+	delete currentSlide.value._backgroundFile;
+	delete currentSlide.value._backgroundPath;
+};
+
+// Go back to dashboard
+const confirmExit = () => {
+	if (hasUnsavedChanges.value) {
+		showPopup({
+			title: "Unsaved Changes",
+			message: "You have unsaved changes. Are you sure you want to exit?",
+			type: "confirm",
+			onConfirm: () => navigateTo("/dashboard?activeViewComponent=games"),
+			onCancel: closePopup,
+		});
+	}
+	else {
+		navigateTo("/dashboard?activeViewComponent=games");
+	}
 };
 
 // On mount
