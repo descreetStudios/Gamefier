@@ -117,6 +117,12 @@
 					<button @click="saveQuiz">
 						Save Quiz
 					</button>
+					<button
+						class="danger"
+						@click="deleteQuiz"
+					>
+						Delete Quiz
+					</button>
 
 					<h2
 						class="render__question"
@@ -193,7 +199,7 @@
 <script setup>
 import { ref, onMounted, computed, watch } from "vue";
 import { useRoute } from "vue-router";
-import { getFirestore, doc, collection, setDoc, updateDoc, getDoc } from "firebase/firestore";
+import { getFirestore, doc, collection, setDoc, updateDoc, getDoc, deleteDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 
@@ -272,6 +278,7 @@ const loadQuiz = async (quizId) => {
 
 // Save or update quiz with Storage upload
 const saveQuiz = async () => {
+	loading.value = true; // show loading overlay
 	const user = auth.currentUser;
 	if (!user) {
 		alert("You must be logged in to save a quiz.");
@@ -339,6 +346,50 @@ const saveQuiz = async () => {
 	catch (error) {
 		console.error("Failed to save quiz:", error);
 		alert("Failed to save quiz. Check console for details.");
+		loading.value = false; // hide loading overlay
+	}
+	finally {
+		loading.value = false; // hide loading overlay
+	}
+};
+
+const deleteQuiz = async () => {
+	if (!currentQuizId.value) {
+		alert("This quiz hasn't been saved yet. if you exit the editor now, the quiz is automatically discarded.");
+		return;
+	}
+
+	const confirmDelete = confirm("Are you sure you want to delete this quiz? This cannot be undone.");
+	if (!confirmDelete) return;
+
+	loading.value = true; // show loading overlay
+
+	try {
+		// Delete all slide images
+		for (const slide of slidesData.value) {
+			if (slide._backgroundPath) {
+				try {
+					const imageRef = storageRef(storage, slide._backgroundPath);
+					await deleteObject(imageRef);
+					console.log("Deleted slide image:", slide._backgroundPath);
+				}
+				catch (err) {
+					console.error("Failed to delete slide image:", err);
+				}
+			}
+		}
+
+		// Delete the quiz document
+		await deleteDoc(doc(db, "quizzes", currentQuizId.value));
+		alert("Quiz deleted!");
+
+		// Redirect back to My Games
+		navigateTo("/dashboard?activeViewComponent=games");
+	}
+	catch (error) {
+		console.error("Failed to delete quiz:", error);
+		alert("Failed to delete quiz. Check console for details.");
+		loading.value = false; // hide loading overlay
 	}
 };
 

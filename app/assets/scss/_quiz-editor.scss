@@ -10,6 +10,28 @@ html {
     height: 2px;
 }
 
+// for delete quiz button
+.danger {
+  background-color: #ff3b25; // red
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s ease, transform 0.1s ease;
+  margin-left: 0.5rem;
+
+  &:hover {
+    background-color: #c0392b;
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
 .editor {
     display: flex;
     flex-direction: row;
