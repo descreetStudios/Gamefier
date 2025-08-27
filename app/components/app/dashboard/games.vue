@@ -14,15 +14,15 @@
 
 		<div class="create__card-container">
 			<!-- Always show the "create new game" card -->
-			<app-card
+			<app-dashboard-card
 				img-src="/images/CardPlus.png"
 				@card-click="handleAddClick"
 			>
 				<p>Create new game</p>
-			</app-card>
+			</app-dashboard-card>
 
 			<!-- Show user’s saved quizzes -->
-			<app-card
+			<app-dashboard-card
 				v-for="quiz in quizzes"
 				:key="quiz.id"
 				:img-src="quiz.background || '/images/BackgroundDark.png'"
@@ -31,7 +31,7 @@
 				<p class="quiz-title">
 					{{ quiz.title || "Untitled Quiz" }}
 				</p>
-			</app-card>
+			</app-dashboard-card>
 		</div>
 	</div>
 </template>
@@ -143,10 +143,10 @@ onUnmounted(() => {
 }
 
 .quiz-title {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-  display: block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 100%;
+	display: block;
 }
 </style>

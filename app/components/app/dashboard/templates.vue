@@ -9,19 +9,19 @@
 	</h2>
 
 	<div class="template-select__card-container">
-		<app-card
+		<app-dashboard-card
 			img-src="/images/DefaultQuizImage.png"
 			@card-click="handleQuizClick"
 		>
 			<p>Quiz</p>
-		</app-card>
+		</app-dashboard-card>
 
-		<app-card
+		<app-dashboard-card
 			img-src="/images/DefaultQuizImage.png"
 			@card-click="handleGooseClick"
 		>
 			<p>Goose game</p>
-		</app-card>
+		</app-dashboard-card>
 	</div>
 </template>
 

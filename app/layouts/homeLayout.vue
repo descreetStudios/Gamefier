@@ -5,9 +5,9 @@
 	<div>
 		<!-- Components -->
 		<app-global-alert />
-		<app-nav-bar />
 		<app-background />
 		<app-homepage />
+		<app-homepage-nav-bar />
 
 		<main class="container">
 			<slot />
