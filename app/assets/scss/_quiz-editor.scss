@@ -76,7 +76,16 @@ html {
   }
 }
 
-
+.correct-switch {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  input[type="checkbox"] {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+}
 
 .editor {
     display: flex;

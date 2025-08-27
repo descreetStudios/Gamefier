@@ -82,22 +82,30 @@
 
 					<!-- Answer Properties -->
 					<app-editor-property-card
-						v-for="i in currentSlide.answerNumber"
+						v-for="(answer, i) in currentSlide.answers"
 						v-if="selectedElement === 'answer'"
 						:key="i"
 						class="card"
 					>
 						<template #title>
-							<h4>Answer {{ i }}</h4>
+							<h4>Answer {{ i + 1 }}</h4>
 						</template>
 						<template #content>
 							<div class="content-content">
 								<h5>Answer:</h5>
 								<input
-									v-model="currentSlide.answers[i - 1]"
+									v-model="answer.text"
 									type="text"
 									placeholder="Answer"
+									aria-label="Text"
 								>
+								<label class="correct-switch">
+									Correct:
+									<input
+										v-model="answer.correct"
+										type="checkbox"
+									>
+								</label>
 							</div>
 						</template>
 					</app-editor-property-card>
@@ -153,7 +161,7 @@
 								<div class="render__middle__options__option__cardbg">
 									<div class="render__middle__options__option__cardbg__card">
 										<h4 class="render__middle__options__option__cardbg__card__text">
-											{{ currentSlide.answers[i - 1] || `Insert Answer ${i}` }}
+											{{ currentSlide.answers[i - 1]?.text || `Insert Answer ${i}` }}
 										</h4>
 									</div>
 								</div>
@@ -248,7 +256,15 @@ const storage = getStorage();
 const route = useRoute();
 
 const loading = ref(false);
-const slidesData = ref([{ question: "", background: "", answerNumber: 2, answers: ["", ""] }]);
+const slidesData = ref([{
+	question: "",
+	background: "",
+	answerNumber: 2,
+	answers: [
+		{ text: "", correct: false },
+		{ text: "", correct: false },
+	],
+}]);
 const currentSlideIndex = ref(0);
 const selectedElement = ref(null);
 const currentQuizId = ref(null);
@@ -279,8 +295,12 @@ const removeSlide = async (index) => {
 // Sync answers array
 watch(() => currentSlide.value.answerNumber, (n) => {
 	const answers = currentSlide.value.answers;
-	if (n > answers.length) for (let i = answers.length; i < n; i++) answers.push("");
-	else answers.splice(n);
+	if (n > answers.length) {
+		for (let i = answers.length; i < n; i++) answers.push({ text: "", correct: false });
+	}
+	else {
+		answers.splice(n);
+	}
 });
 
 // Handle background
