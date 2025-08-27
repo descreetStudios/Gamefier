@@ -98,7 +98,6 @@ import {
 	deleteField,
 	limit,
 	startAfter,
-	orderBy,
 } from "firebase/firestore";
 import { onMounted, ref } from "vue";
 
@@ -106,7 +105,7 @@ const { $db, $eventBus } = useNuxtApp();
 
 const users = ref([]);
 const oldUsers = ref([]);
-const pageSize = 2;
+const pageSize = 10;
 const lastVisibleDoc = ref(null);
 const hasMoreUsers = ref(false);
 const isLoadingMore = ref(false);
