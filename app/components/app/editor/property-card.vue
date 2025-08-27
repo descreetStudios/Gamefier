@@ -77,9 +77,8 @@
 
             .content-content {
                 display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 0.5rem;
+                flex-direction: column; // ensure vertical stacking
+                gap: 0.25rem; // spacing between elements
 
                 h5 {
                     margin: 0;
@@ -91,7 +90,16 @@
                     flex: 1;
                     min-width: 0;
                 }
+
+                // New: correct checkbox block
+                .answer-correct {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.25rem;
+                    margin-top: 0.25rem;
+                }
             }
+
         }
     }
 }

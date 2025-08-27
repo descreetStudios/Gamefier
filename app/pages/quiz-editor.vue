@@ -82,30 +82,32 @@
 
 					<!-- Answer Properties -->
 					<app-editor-property-card
-						v-for="(answer, i) in currentSlide.answers"
+						v-for="i in currentSlide.answerNumber"
 						v-if="selectedElement === 'answer'"
 						:key="i"
 						class="card"
 					>
 						<template #title>
-							<h4>Answer {{ i + 1 }}</h4>
+							<h4>Answer {{ i }}</h4>
 						</template>
 						<template #content>
 							<div class="content-content">
 								<h5>Answer:</h5>
 								<input
-									v-model="answer.text"
+									v-model="currentSlide.answers[i - 1].text"
 									type="text"
 									placeholder="Answer"
 									aria-label="Text"
 								>
-								<label class="correct-switch">
-									Correct:
-									<input
-										v-model="answer.correct"
-										type="checkbox"
-									>
-								</label>
+								<div class="answer-correct">
+									<label>
+										Correct:
+										<input
+											v-model="currentSlide.answers[i - 1].correct"
+											type="checkbox"
+										>
+									</label>
+								</div>
 							</div>
 						</template>
 					</app-editor-property-card>
