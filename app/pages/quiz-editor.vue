@@ -280,18 +280,33 @@ const addSlide = () => {
 	slidesData.value.push({ question: "", background: "", answerNumber: 2, answers: ["", ""] });
 	currentSlideIndex.value = slidesData.value.length - 1;
 };
+
 const removeSlide = async (index) => {
 	const slide = slidesData.value[index];
+
+	// Delete background image from storage if a path exists
 	if (slide._backgroundPath) {
 		try {
-			await deleteObject(storageRef(storage, slide._backgroundPath));
+			const imageRef = storageRef(storage, slide._backgroundPath);
+			await deleteObject(imageRef);
+			console.log("Deleted slide image from storage:", slide._backgroundPath);
 		}
-		catch {
-			return;
+		catch (error) {
+			console.error("Failed to delete slide image:", error);
 		}
 	}
+
+	// Remove the slide from local state
 	slidesData.value.splice(index, 1);
-	if (currentSlideIndex.value >= slidesData.value.length) currentSlideIndex.value = slidesData.value.length - 1;
+
+	// Adjust currentSlideIndex safely
+	if (slidesData.value.length === 0) {
+		slidesData.value.push({ question: "", background: "", answerNumber: 2, answers: [{ text: "", correct: false }, { text: "", correct: false }] });
+		currentSlideIndex.value = 0;
+	}
+	else if (currentSlideIndex.value >= slidesData.value.length) {
+		currentSlideIndex.value = slidesData.value.length - 1;
+	}
 };
 
 // Sync answers array
