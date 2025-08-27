@@ -208,6 +208,7 @@ const slidesData = ref([{ question: "", background: "", answerNumber: 2, answers
 const currentSlideIndex = ref(0);
 const selectedElement = ref(null);
 const currentQuizId = ref(null);
+const quizTitle = ref("");
 
 const currentSlide = computed(() => slidesData.value[currentSlideIndex.value]);
 
@@ -277,25 +278,45 @@ const saveQuiz = async () => {
 		return;
 	}
 
+	let title = quizTitle.value || "";
+	if (!currentQuizId.value && !title) {
+		title = prompt("Enter a name for this quiz:");
+		if (!title) {
+			alert("Quiz not saved. A name is required.");
+			return;
+		}
+	}
+
 	try {
 		// Upload images in parallel
 		const uploadPromises = slidesData.value.map(async (slide) => {
 			if (slide._backgroundFile) {
+				// Delete previous image if it exists
+				if (slide._backgroundPath) {
+					const oldRef = storageRef(storage, slide._backgroundPath);
+					try {
+						await deleteObject(oldRef);
+						console.log("Deleted previous slide image:", slide._backgroundPath);
+					}
+					catch (err) {
+						console.warn("Failed to delete previous image:", err);
+					}
+				}
+
+				// Upload new image
 				const file = slide._backgroundFile;
-
 				const filePath = `quiz-backgrounds/${user.uid}/${Date.now()}-${file.name}`;
-
 				const ref = storageRef(storage, filePath);
 				await uploadBytes(ref, file);
 				slide.background = await getDownloadURL(ref);
-				slide._backgroundPath = filePath; // store path for deletion later
+				slide._backgroundPath = filePath;
 				delete slide._backgroundFile;
 			}
 		});
-
 		await Promise.all(uploadPromises);
 
 		const quizData = {
+			title,
 			slides: slidesData.value,
 			uid: user.uid,
 			updatedAt: new Date(),
@@ -312,6 +333,8 @@ const saveQuiz = async () => {
 			currentQuizId.value = quizRef.id;
 			alert("Quiz saved!");
 		}
+
+		quizTitle.value = title;
 	}
 	catch (error) {
 		console.error("Failed to save quiz:", error);

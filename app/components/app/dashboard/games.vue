@@ -28,7 +28,9 @@
 				:img-src="quiz.background || '/images/BackgroundDark.png'"
 				@card-click="() => openQuizEditor(quiz.id)"
 			>
-				<p>{{ quiz.question || "Untitled Quiz" }}</p>
+				<p class="quiz-title">
+					{{ quiz.title || "Untitled Quiz" }}
+				</p>
 			</app-card>
 		</div>
 	</div>
@@ -138,5 +140,13 @@ onUnmounted(() => {
 		opacity: 0;
 		transform: rotate(45deg) translate(20px, 20px);
 	}
+}
+
+.quiz-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: block;
 }
 </style>
