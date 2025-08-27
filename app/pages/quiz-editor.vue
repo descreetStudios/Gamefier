@@ -277,7 +277,15 @@ const currentSlide = computed(() => slidesData.value[currentSlideIndex.value]);
 // Slide management
 const selectSlide = index => currentSlideIndex.value = index;
 const addSlide = () => {
-	slidesData.value.push({ question: "", background: "", answerNumber: 2, answers: ["", ""] });
+	slidesData.value.push({
+		question: "",
+		background: "",
+		answerNumber: 2,
+		answers: [
+			{ text: "", correct: false },
+			{ text: "", correct: false },
+		],
+	});
 	currentSlideIndex.value = slidesData.value.length - 1;
 };
 
