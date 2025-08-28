@@ -1,8 +1,5 @@
 <template>
 	<div class="admin">
-		<h1 class="admin__title">
-			Admin Page
-		</h1>
 		<app-dashboard-admin-site-administration
 			:is-maintenance-mode-enabled="isMaintenanceModeEnabled"
 			@toggle-maintenance="updateMaintenanceMode"
@@ -334,11 +331,4 @@ const getMaintenanceModeStatus = async () => {
 </script>
 
 <style lang="scss" scoped>
-.admin {
-	&__title {
-		font-size: 2.5rem;
-		font-weight: bold;
-		margin-bottom: 2rem;
-	}
-}
 </style>

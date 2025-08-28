@@ -66,6 +66,7 @@
         display: inline-block;
 
         &-img {
+            min-width: 7rem;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;

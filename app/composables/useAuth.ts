@@ -6,6 +6,10 @@ import {
 	GoogleAuthProvider,
 	signInWithPopup,
 	updateProfile,
+	updateEmail,
+	updatePassword,
+	reauthenticateWithCredential,
+	EmailAuthProvider,
 } from "firebase/auth";
 import { httpsCallable } from "firebase/functions";
 import { doc, setDoc, getDoc, onSnapshot } from "firebase/firestore";
@@ -14,7 +18,7 @@ import { ref, watch } from "vue";
 import { createError } from "h3";
 import type { useUserStore } from "@/../stores/userStore";
 import type { useSiteSettingsStore } from "@/../stores/siteSettingsStore";
-import type { Auth } from "firebase/auth";
+import type { Auth, User } from "firebase/auth";
 import type { Firestore } from "firebase/firestore";
 import type { Functions } from "firebase/functions";
 
@@ -56,7 +60,7 @@ export const useAuth = () => {
 
 	const initAuth = async () => {
 		onAuthStateChanged(auth, async (u) => {
-			// console.log("Utente rilevato da FireAuth:", u);
+			// console.log("User detected from FireAuth:", u);
 			user.value = u
 				? {
 						uid: u.uid,
@@ -83,7 +87,7 @@ export const useAuth = () => {
 				docRef,
 				async (snapshot) => {
 					if (snapshot.exists()) {
-						// console.log("Documento modificato:", snapshot.data());
+						// console.log("Document modified:", snapshot.data());
 						await userStore.syncUserData(snapshot.data());
 					}
 					else {
@@ -121,7 +125,7 @@ export const useAuth = () => {
 			return result.data.available;
 		}
 		catch (err) {
-			console.error("Errore durante la verifica:", err);
+			console.error("Error checking username availability:", err);
 			return false;
 		}
 	};
@@ -142,7 +146,7 @@ export const useAuth = () => {
 			if (!userSnapshot.exists()) {
 				await setDoc(userRef, {
 					uid: user.uid,
-					email: user.email,
+					googleEmail: user.email,
 					displayName: user.displayName,
 					displayNameLowerCase: user.displayName?.toLowerCase(),
 					createdAt: new Date(),
@@ -151,7 +155,7 @@ export const useAuth = () => {
 			}
 		}
 		catch (err) {
-			console.error("Errore durante il login con Google:", err);
+			console.error("Error during Google login:", err);
 		}
 	};
 
@@ -169,10 +173,40 @@ export const useAuth = () => {
 				createdAt: new Date(),
 				role: "user",
 			});
-			console.log("Dati utente salvati in Firestore!");
+			console.log("User data saved in Firestore!");
 		}
 		catch (err) {
-			console.error("Errore nel salvataggio dei dati:", err);
+			console.error("Error saving user data:", err);
+		}
+	};
+
+	const updateUserData = async (
+		uid: string,
+		email?: string,
+		displayName?: string,
+	): Promise<void> => {
+		try {
+			const updateData: Record<string, unknown> = {};
+
+			if (email) {
+				updateData.email = email;
+			}
+
+			if (displayName) {
+				updateData.displayName = displayName;
+				updateData.displayNameLowerCase = displayName.toLowerCase();
+			}
+
+			if (Object.keys(updateData).length === 0) {
+				console.warn("No data provided to update.");
+				return;
+			}
+
+			await setDoc(doc(db, "users", uid), updateData, { merge: true });
+			console.log("User data updated in Firestore!");
+		}
+		catch (err) {
+			console.error("Error updating user data:", err);
 		}
 	};
 
@@ -198,6 +232,72 @@ export const useAuth = () => {
 		user.value = null;
 	};
 
+	const changeEmail = async (
+		currentUser: User,
+		oldPassword: string,
+		newEmail: string,
+	): Promise<void> => {
+		try {
+			const credential = EmailAuthProvider.credential(currentUser.email!, oldPassword);
+			await reauthenticateWithCredential(currentUser, credential);
+
+			await updateEmail(currentUser, newEmail);
+			await updateUserData(currentUser.uid, newEmail);
+			console.log("Email updated successfully!");
+		}
+		catch (err) {
+			console.error("Error updating email:", err);
+			throw err;
+		}
+	};
+
+	const changePassword = async (
+		currentUser: User,
+		oldPassword: string,
+		newPassword: string,
+	): Promise<void> => {
+		try {
+			const credential = EmailAuthProvider.credential(currentUser.email!, oldPassword);
+			await reauthenticateWithCredential(currentUser, credential);
+
+			await updatePassword(currentUser, newPassword);
+			console.log("Password updated successfully!");
+		}
+		catch (err) {
+			console.error("Error updating password:", err);
+			throw err;
+		}
+	};
+
+	const changeDisplayName = async (
+		currentUser: User,
+		oldPassword: string,
+		newDisplayName: string,
+	): Promise<void> => {
+		try {
+			const available = await isUsernameAvailable(newDisplayName);
+			if (!available) {
+				throw createError({
+					statusCode: 409,
+					message: "Username not available",
+					data: { code: "displayName-not-available" },
+				});
+			}
+
+			const credential = EmailAuthProvider.credential(currentUser.email!, oldPassword);
+			await reauthenticateWithCredential(currentUser, credential);
+			await updateProfile(currentUser, {
+				displayName: newDisplayName,
+			});
+			await updateUserData(currentUser.uid, undefined, newDisplayName);
+			console.log("Display name updated successfully!");
+		}
+		catch (err) {
+			console.error("Error updating display name:", err);
+			throw err;
+		};
+	};
+
 	return {
 		user,
 		initAuth,
@@ -206,5 +306,8 @@ export const useAuth = () => {
 		signup,
 		logout,
 		loginWithGoogle,
+		changeEmail,
+		changePassword,
+		changeDisplayName,
 	};
 };

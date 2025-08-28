@@ -110,7 +110,6 @@
             display: flex;
             align-items: center;
             gap: 5px;
-            padding-bottom: 0.5rem;
             width: 100%;
             border-radius: 0.5rem;
             background-color: var(--surface);
@@ -154,7 +153,6 @@
         }
 
         &-links {
-            overflow: hidden;
             max-height: 0;
             opacity: 0;
             transform: translateY(20px);

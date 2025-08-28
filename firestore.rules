@@ -23,10 +23,19 @@ service cloud.firestore {
         (
           request.auth.uid == userId &&
           request.resource.data.diff(resource.data).changedKeys().hasOnly([
-            'email', 'displayName', 'photoURL', 'banAppealText'
+            'email',
+            'displayName',
+            'displayNameLowerCase',
+            'photoURL',
+            'banAppealText'
           ]) &&
           request.resource.data.keys().hasOnly([
-            'uid', 'email', 'displayName', 'photoURL', 'banAppealText'
+            'uid',
+            'email',
+            'displayName',
+            'displayNameLowerCase',
+            'photoURL',
+            'banAppealText'
           ])
         )
       );

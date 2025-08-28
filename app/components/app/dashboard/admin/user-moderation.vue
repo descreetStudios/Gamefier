@@ -59,8 +59,15 @@
 					type="text"
 				>
 				<input
+					v-if="user.googleEmail"
+					v-model="user.googleEmail"
+					type="email"
+					disabled
+				>
+				<input
 					v-model="user.email"
 					type="email"
+					placeholder="Insert an email"
 				>
 
 				<select
