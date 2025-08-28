@@ -17,25 +17,22 @@
 					/>
 					<h2>Quiz Editor</h2>
 					<div class="title-buttons">
-						<div class="title-buttons">
-							<button @click="saveQuiz">
-								Save
-							</button>
-							<button
-								v-if="currentQuizId"
-								class="danger"
-								@click="deleteQuiz"
-							>
-								Delete
-							</button>
-							<!-- Go back to dashboard -->
-							<button
-								:class="{ danger: hasUnsavedChanges }"
-								@click="confirmExit"
-							>
-								Exit
-							</button>
-						</div>
+						<button @click="saveQuiz">
+							Save
+						</button>
+						<button
+							v-if="currentQuizId"
+							class="danger"
+							@click="deleteQuiz"
+						>
+							Delete
+						</button>
+						<button
+							:class="{ danger: hasUnsavedChanges }"
+							@click="confirmExit"
+						>
+							Exit
+						</button>
 					</div>
 				</div>
 				<div class="separator" />
@@ -62,7 +59,6 @@
 										:src="currentSlide.background"
 										class="quiz-editor__background-preview"
 									>
-									<!-- Remove button only shows if there is an uploaded image -->
 									<button
 										v-if="currentSlide._backgroundFile || currentSlide._backgroundPath"
 										class="remove-background-btn"
@@ -234,21 +230,37 @@
 				<p>{{ popup.message }}</p>
 
 				<div
-					v-if="popup.type === 'input'"
+					v-if="popup.type === 'input' || popup.type === 'select'"
 					style="margin-bottom: 1rem;"
 				>
-					<input
-						v-model="popup.inputValue"
-						type="text"
-						placeholder="Enter value"
-						style="width: 100%; padding: 0.5rem;"
-						@keyup.enter="popup.onConfirm ? popup.onConfirm() : closePopup()"
-					>
+					<template v-if="popup.type === 'input'">
+						<input
+							v-model="popup.inputValue"
+							type="text"
+							placeholder="Enter value"
+							style="width: 100%; padding: 0.5rem;"
+							@keyup.enter="popup.onConfirm ? popup.onConfirm() : closePopup()"
+						>
+					</template>
+					<template v-else>
+						<select
+							v-model="popup.inputValue"
+							style="width:100%; padding:0.5rem;"
+						>
+							<option
+								v-for="opt in scoringOptions"
+								:key="opt.value"
+								:value="opt.value"
+							>
+								{{ opt.label }}
+							</option>
+						</select>
+					</template>
 				</div>
 
 				<div class="editor-popup-buttons">
 					<button
-						v-if="popup.type === 'confirm' || popup.type === 'input'"
+						v-if="popup.type === 'confirm' || popup.type === 'input' || popup.type === 'select'"
 						@click="popup.onCancel ? popup.onCancel() : closePopup()"
 					>
 						Cancel
@@ -268,9 +280,7 @@ import { useRoute } from "vue-router";
 import { doc, collection, setDoc, updateDoc, getDoc, deleteDoc } from "firebase/firestore";
 import { ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 
-const { $db } = useNuxtApp();
-const { $auth } = useNuxtApp();
-const { $storage } = useNuxtApp();
+const { $db, $auth, $storage } = useNuxtApp();
 const route = useRoute();
 
 const loading = ref(false);
@@ -287,6 +297,13 @@ const currentSlideIndex = ref(0);
 const selectedElement = ref(null);
 const currentQuizId = ref(null);
 const quizTitle = ref("");
+const scoringSystem = ref("allOrNothing"); // default
+const scoringOptions = [
+	{ value: "allOrNothing", label: "All-or-Nothing" },
+	{ value: "partialCredit", label: "Partial Credit" },
+	{ value: "correctOnly", label: "Correct Only (no penalty)" },
+	{ value: "threshold", label: "Threshold / Weighted" },
+];
 
 const currentSlide = computed(() => slidesData.value[currentSlideIndex.value]);
 
@@ -307,41 +324,27 @@ const addSlide = () => {
 
 const removeSlide = async (index) => {
 	const slide = slidesData.value[index];
-
-	// Delete background image from storage if a path exists
 	if (slide._backgroundPath) {
 		try {
-			const imageRef = storageRef($storage, slide._backgroundPath);
-			await deleteObject(imageRef);
-			console.log("Deleted slide image from storage:", slide._backgroundPath);
+			await deleteObject(storageRef($storage, slide._backgroundPath));
 		}
-		catch (error) {
-			console.error("Failed to delete slide image:", error);
+		catch {
+			return;
 		}
 	}
-
-	// Remove the slide from local state
 	slidesData.value.splice(index, 1);
-
-	// Adjust currentSlideIndex safely
 	if (slidesData.value.length === 0) {
 		slidesData.value.push({ question: "", background: "", answerNumber: 2, answers: [{ text: "", correct: false }, { text: "", correct: false }] });
 		currentSlideIndex.value = 0;
 	}
-	else if (currentSlideIndex.value >= slidesData.value.length) {
-		currentSlideIndex.value = slidesData.value.length - 1;
-	}
+	else if (currentSlideIndex.value >= slidesData.value.length) currentSlideIndex.value = slidesData.value.length - 1;
 };
 
 // Sync answers array
 watch(() => currentSlide.value.answerNumber, (n) => {
 	const answers = currentSlide.value.answers;
-	if (n > answers.length) {
-		for (let i = answers.length; i < n; i++) answers.push({ text: "", correct: false });
-	}
-	else {
-		answers.splice(n);
-	}
+	if (n > answers.length) for (let i = answers.length; i < n; i++) answers.push({ text: "", correct: false });
+	else answers.splice(n);
 });
 
 // Handle background
@@ -352,18 +355,9 @@ const onBackgroundSelected = async (event) => {
 	currentSlide.value._backgroundFile = file;
 };
 
-// Popup state
-const popup = ref({
-	show: false,
-	title: "",
-	message: "",
-	type: "info", // info, success, error, confirm, input
-	inputValue: "",
-	onConfirm: null,
-	onCancel: null,
-});
+const popup = ref({ show: false, title: "", message: "", type: "info", inputValue: "", onConfirm: null, onCancel: null });
 const showPopup = ({ title = "", message = "", type = "info", onConfirm = null, onCancel = null }) => {
-	popup.value = { show: true, title, message, type, inputValue: "", onConfirm, onCancel };
+	popup.value = { show: true, title, message, type, inputValue: type === "select" ? scoringOptions[0].value : "", onConfirm, onCancel };
 };
 const closePopup = () => {
 	popup.value.show = false;
@@ -371,9 +365,7 @@ const closePopup = () => {
 	popup.value.onCancel = null;
 };
 
-// Load quiz
 const originalQuizData = ref(null);
-
 const loadQuiz = async (quizId) => {
 	loading.value = true;
 	const docRef = doc($db, "quizzes", quizId);
@@ -381,17 +373,17 @@ const loadQuiz = async (quizId) => {
 	if (docSnap.exists()) {
 		slidesData.value = docSnap.data().slides || [];
 		quizTitle.value = docSnap.data().title || "";
-		originalQuizData.value = JSON.stringify({ title: quizTitle.value, slides: slidesData.value });
+		scoringSystem.value = docSnap.data().scoringSystem || "allOrNothing";
+		originalQuizData.value = JSON.stringify({ title: quizTitle.value, slides: slidesData.value, scoringSystem: scoringSystem.value });
 		currentQuizId.value = quizId;
 	}
 	loading.value = false;
-	// update saved data on load
-	originalQuizData.value = JSON.stringify({ title: quizTitle.value, slides: slidesData.value });
+	originalQuizData.value = JSON.stringify({ title: quizTitle.value, slides: slidesData.value, scoringSystem: scoringSystem.value });
 };
 
 // Detect unsaved changes
 const hasUnsavedChanges = computed(() => {
-	const current = JSON.stringify({ title: quizTitle.value, slides: slidesData.value });
+	const current = JSON.stringify({ title: quizTitle.value, slides: slidesData.value, scoringSystem: scoringSystem.value });
 	return current !== originalQuizData.value;
 });
 
@@ -403,20 +395,32 @@ const saveQuiz = async () => {
 		return;
 	}
 
-	const title = quizTitle.value || "";
-	if (!currentQuizId.value && !title) {
+	if (!currentQuizId.value && !quizTitle.value) {
+		// Select scoring system first
 		showPopup({
-			title: "Enter Quiz Title",
-			message: "Please enter a name for this quiz",
-			type: "input",
+			title: "Select Scoring System",
+			message: "Choose how points will be calculated for this quiz.",
+			type: "select",
 			onConfirm: async () => {
-				if (!popup.value.inputValue) {
-					showPopup({ title: "Cancelled", message: "Quiz not saved.", type: "error" });
-					return;
-				}
-				quizTitle.value = popup.value.inputValue;
+				scoringSystem.value = popup.value.inputValue;
 				closePopup();
-				await saveQuiz();
+
+				// Then prompt for quiz title
+				showPopup({
+					title: "Enter Quiz Title",
+					message: "Please enter a name for this quiz",
+					type: "input",
+					onConfirm: async () => {
+						if (!popup.value.inputValue) {
+							showPopup({ title: "Cancelled", message: "Quiz not saved.", type: "error" });
+							return;
+						}
+						quizTitle.value = popup.value.inputValue;
+						closePopup();
+						await saveQuiz();
+					},
+					onCancel: () => closePopup(),
+				});
 			},
 			onCancel: () => closePopup(),
 		});
@@ -443,17 +447,21 @@ const saveQuiz = async () => {
 		});
 		await Promise.all(uploadPromises);
 
-		const quizData = { title: quizTitle.value, slides: slidesData.value, uid: user.uid, updatedAt: new Date() };
+		const quizData = {
+			title: quizTitle.value,
+			slides: slidesData.value,
+			scoringSystem: scoringSystem.value,
+			uid: user.uid,
+			updatedAt: new Date(),
+		};
 		if (currentQuizId.value) await updateDoc(doc($db, "quizzes", currentQuizId.value), quizData);
 		else {
 			const quizRef = doc(collection($db, "quizzes"));
 			await setDoc(quizRef, quizData);
 			currentQuizId.value = quizRef.id;
 		}
-
 		showPopup({ title: "Saved!", message: "Quiz saved successfully.", type: "success", onConfirm: closePopup });
-		// Update saved data
-		originalQuizData.value = JSON.stringify({ title: quizTitle.value, slides: slidesData.value });
+		originalQuizData.value = JSON.stringify({ title: quizTitle.value, slides: slidesData.value, scoringSystem: scoringSystem.value });
 	}
 	catch (err) {
 		console.error(err);
@@ -468,7 +476,6 @@ const deleteQuiz = async () => {
 		alert("Quiz not saved yet");
 		return;
 	}
-
 	showPopup({
 		title: "Confirm Delete",
 		message: "Are you sure you want to delete this quiz?",
@@ -513,9 +520,7 @@ const confirmExit = () => {
 			onCancel: closePopup,
 		});
 	}
-	else {
-		navigateTo("/dashboard?activeViewComponent=games");
-	}
+	else navigateTo("/dashboard?activeViewComponent=games");
 };
 
 // On mount
