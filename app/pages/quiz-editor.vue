@@ -98,36 +98,37 @@
 					</app-editor-property-card>
 
 					<!-- Answer Properties -->
-					<app-editor-property-card
-						v-for="i in currentSlide.answerNumber"
-						v-if="selectedElement === 'answer'"
-						:key="i"
-						class="card"
-					>
-						<template #title>
-							<h4>Answer {{ i }}</h4>
-						</template>
-						<template #content>
-							<div class="content-content">
-								<h5>Answer:</h5>
-								<input
-									v-model="currentSlide.answers[i - 1].text"
-									type="text"
-									placeholder="Answer"
-									aria-label="Text"
-								>
-								<div class="answer-correct">
-									<label>
-										Correct:
-										<input
-											v-model="currentSlide.answers[i - 1].correct"
-											type="checkbox"
-										>
-									</label>
+					<div v-if="selectedElement === 'answer'">
+						<app-editor-property-card
+							v-for="i in currentSlide.answerNumber"
+							:key="i"
+							class="card"
+						>
+							<template #title>
+								<h4>Answer {{ i }}</h4>
+							</template>
+							<template #content>
+								<div class="content-content">
+									<h5>Answer:</h5>
+									<input
+										v-model="currentSlide.answers[i - 1].text"
+										type="text"
+										placeholder="Answer"
+										aria-label="Text"
+									>
+									<div class="answer-correct">
+										<label>
+											Correct:
+											<input
+												v-model="currentSlide.answers[i - 1].correct"
+												type="checkbox"
+											>
+										</label>
+									</div>
 								</div>
-							</div>
-						</template>
-					</app-editor-property-card>
+							</template>
+						</app-editor-property-card>
+					</div>
 				</div>
 
 				<div class="separator" />
@@ -530,6 +531,15 @@ onMounted(() => {
 @use "/assets/scss/controls.scss";
 @use "/assets/scss/quiz-editor.scss";
 
-.x { justify-self: flex-end; color: rgb(54,193,255); padding-left: 1vh; }
-.slide-card-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.x {
+	justify-self: flex-end;
+	color: rgb(54, 193, 255);
+	padding-left: 1vh;
+}
+
+.slide-card-title {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
 </style>
