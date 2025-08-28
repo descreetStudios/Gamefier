@@ -266,13 +266,12 @@
 <script setup>
 import { ref, onMounted, computed, watch } from "vue";
 import { useRoute } from "vue-router";
-import { getFirestore, doc, collection, setDoc, updateDoc, getDoc, deleteDoc } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import { doc, collection, setDoc, updateDoc, getDoc, deleteDoc } from "firebase/firestore";
+import { ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 
-const db = getFirestore();
-const auth = getAuth();
-const storage = getStorage();
+const { $db } = useNuxtApp();
+const { $auth } = useNuxtApp();
+const { $storage } = useNuxtApp();
 const route = useRoute();
 
 const loading = ref(false);
@@ -313,7 +312,7 @@ const removeSlide = async (index) => {
 	// Delete background image from storage if a path exists
 	if (slide._backgroundPath) {
 		try {
-			const imageRef = storageRef(storage, slide._backgroundPath);
+			const imageRef = storageRef($storage, slide._backgroundPath);
 			await deleteObject(imageRef);
 			console.log("Deleted slide image from storage:", slide._backgroundPath);
 		}
@@ -378,7 +377,7 @@ const originalQuizData = ref(null);
 
 const loadQuiz = async (quizId) => {
 	loading.value = true;
-	const docRef = doc(db, "quizzes", quizId);
+	const docRef = doc($db, "quizzes", quizId);
 	const docSnap = await getDoc(docRef);
 	if (docSnap.exists()) {
 		slidesData.value = docSnap.data().slides || [];
@@ -399,7 +398,7 @@ const hasUnsavedChanges = computed(() => {
 
 // Save quiz
 const saveQuiz = async () => {
-	const user = auth.currentUser;
+	const user = $auth.currentUser;
 	if (!user) {
 		alert("You must be logged in");
 		return;
@@ -430,13 +429,13 @@ const saveQuiz = async () => {
 		const uploadPromises = slidesData.value.map(async (slide) => {
 			if (slide._backgroundFile) {
 				if (slide._backgroundPath) try {
-					await deleteObject(storageRef(storage, slide._backgroundPath));
+					await deleteObject(storageRef($storage, slide._backgroundPath));
 				}
 				catch {
 					return;
 				}
 				const filePath = `quiz-backgrounds/${user.uid}/${Date.now()}-${slide._backgroundFile.name}`;
-				const ref = storageRef(storage, filePath);
+				const ref = storageRef($storage, filePath);
 				await uploadBytes(ref, slide._backgroundFile);
 				slide.background = await getDownloadURL(ref);
 				slide._backgroundPath = filePath;
@@ -446,9 +445,9 @@ const saveQuiz = async () => {
 		await Promise.all(uploadPromises);
 
 		const quizData = { title: quizTitle.value, slides: slidesData.value, uid: user.uid, updatedAt: new Date() };
-		if (currentQuizId.value) await updateDoc(doc(db, "quizzes", currentQuizId.value), quizData);
+		if (currentQuizId.value) await updateDoc(doc($db, "quizzes", currentQuizId.value), quizData);
 		else {
-			const quizRef = doc(collection(db, "quizzes"));
+			const quizRef = doc(collection($db, "quizzes"));
 			await setDoc(quizRef, quizData);
 			currentQuizId.value = quizRef.id;
 		}
@@ -480,12 +479,12 @@ const deleteQuiz = async () => {
 			loading.value = true;
 			try {
 				for (const slide of slidesData.value) if (slide._backgroundPath) try {
-					await deleteObject(storageRef(storage, slide._backgroundPath));
+					await deleteObject(storageRef($storage, slide._backgroundPath));
 				}
 				catch {
 					return;
 				}
-				await deleteDoc(doc(db, "quizzes", currentQuizId.value));
+				await deleteDoc(doc($db, "quizzes", currentQuizId.value));
 				showPopup({ title: "Deleted", message: "Quiz deleted successfully.", type: "success", onConfirm: () => navigateTo("/dashboard?activeViewComponent=games") });
 			}
 			catch (err) {

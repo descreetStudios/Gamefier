@@ -3,34 +3,48 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // Function that checks if the user is an admin
     function isAdmin() {
       return request.auth != null &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
     }
 
+    // USERS
     match /users/{userId} {
       allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
 
-      allow create: if request.auth != null;
+      // Creation only if the document ID matches the authenticated UID
+      allow create: if request.auth != null && request.auth.uid == userId;
 
+      // Update
       allow update: if request.auth != null && (
         isAdmin() ||
+
         (
           request.auth.uid == userId &&
           request.resource.data.diff(resource.data).changedKeys().hasOnly([
             'email', 'displayName', 'photoURL', 'banAppealText'
+          ]) &&
+          request.resource.data.keys().hasOnly([
+            'uid', 'email', 'displayName', 'photoURL', 'banAppealText'
           ])
         )
       );
+
+      allow delete: if false;
     }
-    
+
+    // QUIZZES
     match /quizzes/{quizId} {
       allow create: if request.auth != null && request.auth.uid == request.resource.data.uid;
+
       allow read, update, delete: if request.auth != null && request.auth.uid == resource.data.uid;
     }
 
+    // SITE SETTINGS
     match /site_settings/{docId} {
       allow read: if true;
+
       allow write: if isAdmin();
     }
   }
