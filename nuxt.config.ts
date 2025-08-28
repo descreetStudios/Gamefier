@@ -7,6 +7,7 @@ export default defineNuxtConfig({
 		"@nuxtjs/google-fonts",
 		"@pinia/nuxt",
 		"@nuxt/image",
+		"@nuxt/icon",
 	],
 	plugins: ["~/plugins/store-injector.ts"],
 
@@ -50,6 +51,12 @@ export default defineNuxtConfig({
 			},
 		},
 		display: "swap",
+	},
+
+	icon: {
+		server: {
+			bundle: process.env.NODE_ENV === "production" ? "local" : "cdn",
+		},
 	},
 
 	image: {

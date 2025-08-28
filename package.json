@@ -29,6 +29,7 @@
     "vuefire": "^3.2.1"
   },
   "devDependencies": {
+    "@nuxt/icon": "^2.0.0",
     "sass": "^1.91.0",
     "sass-loader": "^16.0.5",
     "typescript": "^5.9.2",

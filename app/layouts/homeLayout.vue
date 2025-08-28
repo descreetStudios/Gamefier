@@ -6,8 +6,9 @@
 		<!-- Components -->
 		<app-global-alert />
 		<app-background />
-		<app-homepage />
 		<app-homepage-nav-bar />
+		<app-homepage />
+		<app-homepage-footer />
 
 		<main class="container">
 			<slot />
