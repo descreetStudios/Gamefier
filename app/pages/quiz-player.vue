@@ -6,7 +6,6 @@
 			v-else
 			class="quiz-container"
 		>
-			<!-- Quiz title -->
 			<h2 class="quiz-title">
 				{{ quizData.title }}
 			</h2>
@@ -16,16 +15,13 @@
 				v-if="currentSlideIndex < quizData.slides.length"
 				class="quiz-slide"
 			>
-				<!-- Question card at top -->
 				<div class="slide-question-card">
 					<h3 class="slide-question">
 						{{ currentSlide.question }}
 					</h3>
 				</div>
 
-				<!-- Slide content -->
 				<div class="slide-content">
-					<!-- Left: Image -->
 					<div class="slide-left">
 						<NuxtImg
 							v-if="currentSlide.background"
@@ -35,7 +31,6 @@
 						/>
 					</div>
 
-					<!-- Right: Answers -->
 					<div class="slide-right">
 						<div class="answers">
 							<button
@@ -64,7 +59,7 @@
 				class="quiz-results"
 			>
 				<h3>Quiz Finished!</h3>
-				<p>You got {{ correctCount }} / {{ quizData.slides.length }} correct.</p>
+				<p>Your score: {{ finalScore }} / {{ quizData.slides.length }}</p>
 
 				<div
 					v-for="(slide, index) in quizData.slides"
@@ -95,19 +90,17 @@
 import { ref, computed, onMounted } from "vue";
 import { useRoute, navigateTo } from "#imports";
 import { doc, getDoc } from "firebase/firestore";
-// <- missing
-const { $db } = useNuxtApp(); // <- missing
+
+const { $db } = useNuxtApp();
 
 const route = useRoute();
 const loading = ref(false);
-const quizData = ref({ title: "", slides: [] });
+const quizData = ref({ title: "", slides: [], scoringSystem: "allOrNothing" });
 const currentSlideIndex = ref(0);
 const selectedAnswerIndexes = ref([]);
 const userAnswers = ref([]);
 
-const currentSlide = computed(
-	() => quizData.value.slides[currentSlideIndex.value] || { question: "", answers: [] },
-);
+const currentSlide = computed(() => quizData.value.slides[currentSlideIndex.value] || { question: "", answers: [] });
 
 const toggleAnswer = (index) => {
 	const i = selectedAnswerIndexes.value.indexOf(index);
@@ -116,7 +109,7 @@ const toggleAnswer = (index) => {
 };
 
 const nextSlide = () => {
-	userAnswers.value[currentSlideIndex.value] = [...selectedAnswerIndexes.value];
+	userAnswers.value[currentSlideIndex.value] = [...selectedAnswerIndexes.value.map(Number)];
 	selectedAnswerIndexes.value = [];
 	currentSlideIndex.value++;
 };
@@ -127,16 +120,25 @@ const restartQuiz = () => {
 	userAnswers.value = [];
 };
 
-const arraysEqual = (a, b) => a.length === b.length && a.every(v => b.includes(v));
+// Helper for comparing arrays unordered
+const arraysEqualUnordered = (a, b) => {
+	if (!a || !b) return false;
+	if (a.length !== b.length) return false;
+	const sortedA = [...a].sort((x, y) => x - y);
+	const sortedB = [...b].sort((x, y) => x - y);
+	return sortedA.every((v, i) => v === sortedB[i]);
+};
 
+// Load quiz from Firestore
 const loadQuiz = async (quizId) => {
 	loading.value = true;
 	try {
 		const docRef = doc($db, "quizzes", quizId);
 		const docSnap = await getDoc(docRef);
 		if (docSnap.exists()) {
-			quizData.value = docSnap.data(); // <-- now slides should be set
+			quizData.value = docSnap.data();
 			if (!quizData.value.slides) quizData.value.slides = [];
+			if (!quizData.value.scoringSystem) quizData.value.scoringSystem = "allOrNothing";
 		}
 		else {
 			alert("Quiz not found");
@@ -153,26 +155,45 @@ const loadQuiz = async (quizId) => {
 	}
 };
 
-const correctCount = computed(() =>
-	userAnswers.value.reduce((count, ansIndexes, slideIndex) => {
-		const slide = quizData.value.slides[slideIndex];
-		if (!slide) return count;
+// Compute final score based on scoring system
+const finalScore = computed(() => {
+	return quizData.value.slides.reduce((score, slide, slideIndex) => {
+		const selected = (userAnswers.value[slideIndex] || []).map(Number);
+		const correctIndexes = slide.answers.map((a, i) => (a.correct ? i : null)).filter(i => i !== null);
 
-		const correctIndexes = slide.answers
-			.map((a, i) => (a.correct ? i : null))
-			.filter(i => i !== null);
+		switch (quizData.value.scoringSystem) {
+			case "allOrNothing":
+				if (arraysEqualUnordered(selected, correctIndexes)) score += 1;
+				break;
 
-		// Use arraysEqual to compare arrays
-		if (arraysEqual(ansIndexes || [], correctIndexes)) count++;
-		return count;
-	}, 0),
-);
+			case "partialCredit": {
+				const correctSelected = selected.filter(i => correctIndexes.includes(i)).length;
+				const wrongSelected = selected.filter(i => !correctIndexes.includes(i)).length;
+				const slideScore = Math.max(correctSelected - wrongSelected, 0) / correctIndexes.length;
+				score += slideScore;
+				break;
+			}
 
-onMounted(async () => {
+			case "correctOnly":
+				if (selected.some(i => correctIndexes.includes(i))) score += 1;
+				break;
+
+			case "threshold": {
+				const correctCount = selected.filter(i => correctIndexes.includes(i)).length;
+				if ((correctCount / correctIndexes.length) >= 0.5) score += 1;
+				break;
+			}
+		}
+
+		return score;
+	}, 0);
+});
+
+onMounted(() => {
 	let quizId = route.query.quizId;
 	if (Array.isArray(quizId)) quizId = quizId[0];
 	if (!quizId) return navigateTo("/dashboard?activeViewComponent=games");
-	await loadQuiz(quizId);
+	loadQuiz(quizId);
 });
 </script>
 
