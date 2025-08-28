@@ -3,51 +3,65 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Function that checks if the user is an admin using custom claim
+    // Function to check if the user is admin
     function isAdmin() {
       return request.auth != null &&
         request.auth.token.role == "admin";
     }
 
+    // Function to check if the user is banned
+    function isBanned() {
+      return request.auth != null &&
+        request.auth.token.role == "banned";
+    }
+
     // USERS
     match /users/{userId} {
-      allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      // Banned users can only read their own data
+      allow read: if request.auth != null &&
+        request.auth.uid == userId;
 
-      // Creation only if the document ID matches the authenticated UID
-      allow create: if request.auth != null && request.auth.uid == userId;
+      // Create only allowed if document ID matches UID (same rule for all users)
+      allow create: if request.auth != null &&
+        request.auth.uid == userId;
 
-      // Update
       allow update: if request.auth != null &&
-      !request.resource.data.diff(resource.data).changedKeys().hasAny(['role']) &&
+      request.auth.uid == userId &&
       (
-        isAdmin() ||
-        (
-          request.auth.uid == userId &&
-          request.resource.data.diff(resource.data).changedKeys().hasOnly([
-            'email',
-            'displayName',
-            'displayNameLowerCase',
-            'photoURL',
-            'banAppealText'
-          ])
-        )
+        isBanned()
+          ? request.resource.data.diff(resource.data).changedKeys().hasOnly([
+              'banAppealText',
+              'banAppealPending'
+            ])
+          : (
+            isAdmin() ||
+            (
+              request.resource.data.diff(resource.data).changedKeys().hasOnly([
+                'email',
+                'displayName',
+                'displayNameLowerCase',
+                'photoURL',
+                'banAppealText'
+              ]) &&
+              !request.resource.data.diff(resource.data).changedKeys().hasAny(['role'])
+            )
+          )
       );
-
 
       allow delete: if false;
     }
 
     // QUIZZES
     match /quizzes/{quizId} {
-      allow create: if request.auth != null && request.auth.uid == request.resource.data.uid;
-
-      allow read, update, delete: if request.auth != null && request.auth.uid == resource.data.uid;
+      // Banned users cannot access quizzes at all
+      allow create, read, update, delete: if request.auth != null &&
+        !isBanned() &&
+        request.auth.uid == (request.method == "create" ? request.resource.data.uid : resource.data.uid);
     }
 
     // SITE SETTINGS
     match /site_settings/{docId} {
       allow read: if true;
-
       allow write: if isAdmin();
     }
   }
