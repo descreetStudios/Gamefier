@@ -526,7 +526,7 @@ onMounted(() => {
 });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @use "/assets/scss/controls.scss";
 @use "/assets/scss/quiz-editor.scss";
 

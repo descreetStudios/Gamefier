@@ -1,0 +1,151 @@
+.quiz-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.quiz-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  text-align: left;
+
+  @media (max-width: 900px) {
+    text-align: center;
+  }
+}
+
+/* Question card at top */
+.slide-question-card {
+  background-color: var(--surface-light);
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+
+  .slide-question {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0;
+  }
+}
+
+.quiz-slide {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.slide-content {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+
+  @media (max-width: 900px) {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.slide-left {
+  flex: 1 1 50%;
+  display: flex;
+  justify-content: center;
+}
+
+.slide-image {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.slide-right {
+  flex: 1 1 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  @media (max-width: 900px) {
+    width: 100%;
+    align-items: center;
+  }
+}
+
+.answers {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.answers button {
+  font-size: 1.6rem;
+  padding: 1.2rem 2rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  background-color: #111111;
+  color: #ffffff;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.answers button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+
+.answers button.selected {
+  background-color: #00a1ff;
+  color: #ffffff;
+  box-shadow: 0 6px 12px rgba(0,161,255,0.4);
+}
+
+.next-button {
+  font-size: 1.4rem;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  background-color: #00a1ff;
+  color: #ffffff;
+  align-self: flex-end;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,161,255,0.4);
+  }
+
+  @media (max-width: 900px) {
+    align-self: center;
+  }
+}
+
+.quiz-results {
+  text-align: center;
+  margin-top: 2rem;
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+  }
+
+  li {
+    margin: 0.5rem 0;
+    font-size: 1.2rem;
+  }
+
+  li.correct {
+    color: #4caf50;
+    font-weight: bold;
+  }
+
+  li.selected {
+    text-decoration: underline;
+  }
+}
