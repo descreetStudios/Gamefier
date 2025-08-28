@@ -45,7 +45,7 @@ exports.updateUserAuth = onCall(async (context) => {
 		}
 
 		// Update custom claim role if present and valid
-		if (role !== undefined) {
+		if (role !== undefined && role !== null) {
 			const validRoles = ["admin", "user", "banned"];
 			if (!validRoles.includes(role)) {
 				throw new Error(`Invalid argument: Role '${role}' is not allowed.`);
