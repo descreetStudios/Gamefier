@@ -1,43 +1,65 @@
 const { initializeApp } = require("firebase-admin/app");
-const { getAuth } = require("firebase-admin/auth");
-const { getFirestore, Timestamp, FieldValue } = require("firebase-admin/firestore");
+const { Timestamp, FieldValue } = require("firebase-admin/firestore");
 
 const { onCall, onRequest } = require("firebase-functions/v2/https");
 const { schedule } = require("firebase-functions/v2/pubsub");
 
+const functions = require("firebase-functions/v1");
+const admin = require("firebase-admin");
+
 initializeApp();
 
-const auth = getAuth();
-const firestore = getFirestore();
+const auth = admin.auth();
+const firestore = admin.firestore();
 
 exports.updateUserAuth = onCall(async (context) => {
 	if (!context.auth) {
 		throw new Error("Unauthenticated: The request must be authenticated.");
 	}
 
-	const callerUid = context.auth.uid;
-
-	const callerDoc = await firestore.collection("users").doc(callerUid).get();
-	if (!callerDoc.exists || callerDoc.data()?.role !== "admin") {
+	// Check admin role via custom claims
+	const callerRole = context.auth.token.role;
+	if (callerRole !== "admin") {
 		throw new Error("Permission denied: Only administrators can update user profiles.");
 	}
 
 	const targetUid = context.data.uid;
 	const fieldsToUpdate = { ...context.data.fieldsToUpdate };
 
-	if (!fieldsToUpdate.email) delete fieldsToUpdate.email;
-	if (!fieldsToUpdate.password) delete fieldsToUpdate.password;
-	if (!fieldsToUpdate.displayName) delete fieldsToUpdate.displayName;
-
 	if (!targetUid || !fieldsToUpdate || Object.keys(fieldsToUpdate).length === 0) {
 		throw new Error("Invalid argument: UID and fields to update are required.");
 	}
 
+	// Extract role from fieldsToUpdate, if present
+	const { role, ...authFields } = fieldsToUpdate;
+
+	// Clean authFields
+	if (!authFields.email) delete authFields.email;
+	if (!authFields.password) delete authFields.password;
+	if (!authFields.displayName) delete authFields.displayName;
+
 	try {
-		await auth.updateUser(targetUid, fieldsToUpdate);
+		// Update Firebase Auth user fields
+		if (Object.keys(authFields).length > 0) {
+			await auth.updateUser(targetUid, authFields);
+		}
+
+		// Update custom claim role if present and valid
+		if (role !== undefined) {
+			const validRoles = ["admin", "user", "banned"];
+			if (!validRoles.includes(role)) {
+				throw new Error(`Invalid argument: Role '${role}' is not allowed.`);
+			}
+
+			await admin.auth().setCustomUserClaims(targetUid, { role });
+
+			// Update Firestore user doc role field to keep in sync
+			await firestore.collection("users").doc(targetUid).update({ role });
+		}
+
 		return {
 			success: true,
-			message: `User ${targetUid} successfully updated in Firebase Auth.`,
+			message: `User ${targetUid} successfully updated.`,
 		};
 	}
 	catch (error) {
@@ -80,6 +102,24 @@ exports.checkUsernameAvailability = onCall(async (context) => {
 		.get();
 
 	return { available: snapshot.empty };
+});
+
+exports.setInitialUserRole = functions.auth.user().onCreate(async (user) => {
+	const { uid } = user;
+
+	try {
+		await admin.auth().setCustomUserClaims(uid, { role: "user" });
+
+		await admin.firestore().collection("users").doc(uid).set(
+			{ role: "user" },
+			{ merge: true },
+		);
+
+		// console.log(`Set role '${role}' for new account: ${email} (${uid})`);
+	}
+	catch (error) {
+		console.error("Error setting custom claim and Firestore role for new user:", error);
+	}
 });
 
 // Test locally with: http://localhost:5001/gamefier-86a8b/us-central1/testUnban
@@ -130,7 +170,12 @@ if (process.env.FUNCTIONS_EMULATOR !== "true") {
 			snapshot.docs.forEach((doc) => {
 				batch.update(doc.ref, {
 					role: "user",
+					banReason: FieldValue.delete(),
+					banType: FieldValue.delete(),
 					banExpiresAt: FieldValue.delete(),
+					bannedBy: FieldValue.delete(),
+					banAppealText: FieldValue.delete(),
+					banAppealPending: FieldValue.delete(),
 				});
 			});
 

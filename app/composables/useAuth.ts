@@ -61,17 +61,24 @@ export const useAuth = () => {
 	const initAuth = async () => {
 		onAuthStateChanged(auth, async (u) => {
 			// console.log("User detected from FireAuth:", u);
-			user.value = u
-				? {
-						uid: u.uid,
-						email: u.email,
-						displayName: u.displayName,
-						photoURL: u.photoURL,
-						emailVerified: u.emailVerified,
-						providerId: u.providerId,
-					}
-				: null;
-			uid.value = u?.uid || "";
+
+			if (u) {
+				await u.getIdToken(true);
+
+				user.value = {
+					uid: u.uid,
+					email: u.email,
+					displayName: u.displayName,
+					photoURL: u.photoURL,
+					emailVerified: u.emailVerified,
+					providerId: u.providerId,
+				};
+				uid.value = u.uid;
+			}
+			else {
+				user.value = null;
+				uid.value = "";
+			}
 
 			userStore.storeUserData("loaded", true);
 		});
@@ -171,7 +178,6 @@ export const useAuth = () => {
 				displayNameLowerCase: displayName.toLowerCase(),
 				email: email,
 				createdAt: new Date(),
-				role: "user",
 			});
 			console.log("User data saved in Firestore!");
 		}

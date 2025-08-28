@@ -3,10 +3,10 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Function that checks if the user is an admin
+    // Function that checks if the user is an admin using custom claim
     function isAdmin() {
       return request.auth != null &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+        request.auth.token.role == "admin";
     }
 
     // USERS
@@ -17,9 +17,10 @@ service cloud.firestore {
       allow create: if request.auth != null && request.auth.uid == userId;
 
       // Update
-      allow update: if request.auth != null && (
+      allow update: if request.auth != null &&
+      !request.resource.data.diff(resource.data).changedKeys().hasAny(['role']) &&
+      (
         isAdmin() ||
-
         (
           request.auth.uid == userId &&
           request.resource.data.diff(resource.data).changedKeys().hasOnly([
@@ -28,17 +29,10 @@ service cloud.firestore {
             'displayNameLowerCase',
             'photoURL',
             'banAppealText'
-          ]) &&
-          request.resource.data.keys().hasOnly([
-            'uid',
-            'email',
-            'displayName',
-            'displayNameLowerCase',
-            'photoURL',
-            'banAppealText'
           ])
         )
       );
+
 
       allow delete: if false;
     }

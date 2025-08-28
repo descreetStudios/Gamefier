@@ -176,7 +176,7 @@ const updateProfile = async (user) => {
 		updatedAuthFields.email = user.email;
 	}
 	if (user.role !== oldUser.role) {
-		updatedStoreFields.role = user.role;
+		updatedAuthFields.role = user.role;
 	}
 	if (user.password) {
 		updatedAuthFields.password = user.password;
@@ -232,6 +232,7 @@ const updateProfile = async (user) => {
 					uid: user.id,
 					fieldsToUpdate: {
 						displayName: updatedAuthFields.displayName,
+						role: updatedAuthFields.role,
 						email: updatedAuthFields.email,
 						password: updatedAuthFields.password,
 					},
