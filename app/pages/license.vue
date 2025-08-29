@@ -1,64 +1,65 @@
 <template>
-	<div class="license">
-		<header class="license__header">
-			<a
-				href="/"
-				class="license__brand-link"
+	<div class="document">
+		<header class="document__header">
+			<NuxtLink
+				to="/"
+				class="document__brand-link"
 				@dragstart.prevent
 			>
 				<NuxtImg
 					src="/images/logo/LogoBank/gamefier-logo-light-128px.png"
 					alt="Gamefier Logo"
-					class="license__logo"
+					class="document__logo"
 					format="webp"
 					@dragstart.prevent
 				/>
-				<h1 class="license__name">Gamefier</h1>
-			</a>
+				<h1 class="document__title">Gamefier</h1>
+			</NuxtLink>
 		</header>
 
-		<h2 class="license__title">
+		<h2 class="document__main-title">
 			<i class="fa-solid fa-scale-balanced" />
 			<span>GNU Affero General Public License v3.0 (AGPLv3)</span>
 		</h2>
 
-		<p class="license__intro">
+		<p class="document__intro">
 			This application is distributed under the terms of the
 			<strong>GNU Affero General Public License v3.0</strong>.
 			You are free to redistribute and/or modify it in accordance with these terms.
 		</p>
 
-		<section class="license__section">
-			<h3 class="license__section-title">
+		<section class="document__section">
+			<h3 class="document__section-title">
 				<i class="fa-solid fa-book" />
 				<span>Key Terms</span>
 			</h3>
-			<ul class="license__list">
+			<ul class="document__list">
 				<li>Freedom to use, study, modify, and share the software.</li>
 				<li>Requirement to make the source code available, including for network use.</li>
 				<li>Modified versions must remain free and open.</li>
 			</ul>
 		</section>
 
-		<section class="license__section">
-			<h3 class="license__section-title">
+		<section class="document__section">
+			<h3 class="document__section-title">
 				<i class="fa-solid fa-file-contract" />
 				<span>Full License Text</span>
 			</h3>
-			<div class="license__content">
-				<pre class="license__text">{{ agplText }}</pre>
+			<div class="document__content">
+				<pre class="document__text">{{ agplText }}</pre>
 			</div>
 		</section>
 
-		<footer class="license__footer">
+		<footer class="document__footer">
 			<p>
 				For more information, please visit the official GNU website:
-				<a
-					href="https://www.gnu.org/licenses/agpl-3.0.html"
+				<NuxtLink
+					to="https://www.gnu.org/licenses/agpl-3.0.html"
 					target="_blank"
+					@dragstart.prevent
 				>
 					https://www.gnu.org/licenses/agpl-3.0.html
-				</a>
+				</NuxtLink>
 			</p>
 		</footer>
 	</div>
@@ -280,173 +281,5 @@ You should also get your employer (if you work as a programmer) or school, if an
 </script>
 
 <style lang="scss" scoped>
-.license {
-    max-width: 52rem;
-    margin: 3rem auto;
-    padding: 2.5rem;
-    background: var(--surface);
-    color: var(--primary-text);
-    border-radius: var(--border-radius-lg);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    font-family: system-ui, sans-serif;
-
-    &__header {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 1.5rem;
-
-        .license__brand-link {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 1rem;
-            width: fit-content;
-            height: fit-content;
-            background: var(--surface);
-            text-decoration: none;
-            cursor: pointer;
-            user-select: none;
-
-            & .license__logo {
-                width: 4rem;
-                margin-bottom: 0.5rem;
-                pointer-events: none;
-                flex-shrink: 0;
-                user-select: none;
-            }
-
-            & .license__name {
-                font-size: 2rem;
-                font-weight: 700;
-                color: var(--primary);
-                margin: 0;
-                text-transform: uppercase;
-                pointer-events: none;
-                user-select: none;
-                text-align: center;
-                white-space: nowrap;
-                flex-shrink: 0;
-            }
-        }
-    }
-
-    &__logo {
-        width: 90px;
-        margin-bottom: 0.75rem;
-    }
-
-    &__name {
-        font-size: 2.2rem;
-        font-weight: 700;
-        color: var(--primary);
-        margin: 0;
-        text-transform: uppercase;
-    }
-
-    &__title {
-        font-size: 1.8rem;
-        font-weight: 600;
-        display: flex;
-        justify-content: center;
-        color: var(--secondary);
-        border-bottom: 2px solid var(--border);
-        padding-bottom: 0.5rem;
-        margin: 0;
-    }
-
-    &__intro {
-        font-size: 1.10rem;
-        line-height: 1.7;
-        color: var(--secondary-text);
-        text-align: center;
-        margin: 0;
-    }
-
-    &__section {
-        background: var(--bg);
-        border: 1px solid var(--border);
-        border-radius: var(--border-radius);
-        padding: 2rem;
-        box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.04);
-        margin-bottom: 0;
-
-        &-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
-    }
-
-    &__list {
-        list-style: disc inside;
-        padding-left: 1rem;
-        font-size: 1.05rem;
-        line-height: 1.8;
-        color: var(--primary-text);
-    }
-
-    &__content {
-        position: relative;
-        border-radius: var(--border-radius);
-        overflow: hidden;
-        border: 1px solid var(--border);
-        box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.04);
-        max-height: 450px;
-    }
-
-    &__text {
-        background: var(--surface);
-        color: var(--primary-text);
-        padding: 1.25rem;
-        margin: 0;
-        font-family: 'Courier New', monospace;
-        font-size: 0.95rem;
-        white-space: pre-wrap;
-        overflow-y: auto;
-        max-height: 450px;
-        box-sizing: border-box;
-
-        scrollbar-width: thin;
-        scrollbar-color: var(--border) var(--surface);
-
-        &::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        &::-webkit-scrollbar-track {
-            background: var(--surface);
-        }
-
-        &::-webkit-scrollbar-thumb {
-            background-color: var(--border);
-            border-radius: 8px;
-            border: 2px solid var(--surface);
-        }
-    }
-
-    &__footer {
-        text-align: center;
-        font-size: 0.95rem;
-        color: var(--tertiary-text);
-        margin-top: 1rem;
-
-        a {
-            color: var(--info);
-            text-decoration: none;
-            transition: text-decoration 0.2s ease-in-out;
-
-            &:hover {
-                text-decoration: underline;
-            }
-        }
-    }
-}
+@use "@/assets/scss/docs.scss"
 </style>

@@ -54,6 +54,7 @@
 							:key="i"
 							:to="text.to"
 							class="homepage__link"
+							@dragstart.prevent
 						>
 							<p>{{ text.label }}</p>
 						</NuxtLink>

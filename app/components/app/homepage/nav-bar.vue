@@ -26,7 +26,10 @@
 					:key="link.label"
 					class="navbar__item"
 				>
-					<NuxtLink :to="link.to">{{ link.label }}</NuxtLink>
+					<NuxtLink
+						:to="link.to"
+						@dragstart.prevent
+					>{{ link.label }}</NuxtLink>
 				</li>
 			</ul>
 
@@ -36,10 +39,12 @@
 					<NuxtLink
 						to="/login"
 						class="btn btn--login"
+						@dragstart.prevent
 					>Login</NuxtLink>
 					<NuxtLink
 						to="/signup"
 						class="btn btn--signup"
+						@dragstart.prevent
 					>Sign Up</NuxtLink>
 				</template>
 

@@ -4,6 +4,7 @@
 		<NuxtLink
 			to="/"
 			class="sidebar__logo"
+			@dragstart.prevent
 		>
 			<NuxtImg
 				src="/images/logo/gamefier-logo-64px.png"

@@ -108,6 +108,7 @@
 					<NuxtLink
 						to="/login"
 						class="auth__link"
+						@dragstart.prevent
 					>
 						Log In
 					</NuxtLink>

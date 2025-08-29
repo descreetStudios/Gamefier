@@ -66,6 +66,7 @@
 					<NuxtLink
 						to="/signup"
 						class="auth__link"
+						@dragstart.prevent
 					>
 						Sign Up
 					</NuxtLink>

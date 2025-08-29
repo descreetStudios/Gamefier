@@ -9,7 +9,24 @@
 					<NuxtLink
 						to="/license"
 						class="footer__link"
+						@dragstart.prevent
 					>AGPL-3.0 License</NuxtLink>.
+				</p>
+				<p>
+					By using this site, you agree to the
+					<NuxtLink
+						to="/terms-and-conditions"
+						class="footer__link"
+						@dragstart.prevent
+					>Terms and Conditions</NuxtLink>.
+				</p>
+				<p>
+					Read our
+					<NuxtLink
+						to="/privacy-policy"
+						class="footer__link"
+						@dragstart.prevent
+					>Privacy Policy</NuxtLink>.
 				</p>
 			</div>
 
@@ -19,11 +36,12 @@
 					Built with
 				</h4>
 				<div class="footer__tech-cards">
-					<a
+					<NuxtLink
 						href="https://nuxt.com"
 						target="_blank"
 						rel="noopener noreferrer"
 						class="footer__tech-card nuxt"
+						@dragstart.prevent
 					>
 						<Icon
 							name="logos:nuxt-icon"
@@ -31,12 +49,13 @@
 							@dragstart.prevent
 						/>
 						<span class="footer__tech-card-label">Nuxt 4</span>
-					</a>
-					<a
+					</NuxtLink>
+					<NuxtLink
 						href="https://vuejs.org/"
 						target="_blank"
 						rel="noopener noreferrer"
 						class="footer__tech-card vue"
+						@dragstart.prevent
 					>
 						<Icon
 							name="logos:vue"
@@ -44,12 +63,13 @@
 							@dragstart.prevent
 						/>
 						<span class="footer__tech-card-label">Vue.js</span>
-					</a>
-					<a
+					</NuxtLink>
+					<NuxtLink
 						href="https://github.com/descreetStudios/Gamefier"
 						target="_blank"
 						rel="noopener noreferrer"
 						class="footer__tech-card github"
+						@dragstart.prevent
 					>
 						<Icon
 							name="mdi:github"
@@ -57,7 +77,7 @@
 							@dragstart.prevent
 						/>
 						<span class="footer__tech-card-label">GitHub</span>
-					</a>
+					</NuxtLink>
 				</div>
 			</div>
 		</div>
