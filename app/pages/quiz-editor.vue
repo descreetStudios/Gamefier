@@ -33,10 +33,19 @@
 						>
 							Exit
 						</button>
+
+						<!-- Play button only shows after quiz has been saved -->
+						<button
+							v-if="hasBeenSaved"
+							@click="playPopup = true"
+						>
+							Play
+						</button>
 					</div>
 				</div>
 				<div class="separator" />
 
+				<!-- Contextual props -->
 				<div class="contextual-props">
 					<!-- Background Properties -->
 					<app-editor-property-card
@@ -156,7 +165,6 @@
 					>
 						{{ currentSlide.question || "Insert your question here" }}
 					</h2>
-
 					<div class="render__middle">
 						<NuxtImg
 							class="render__middle__image"
@@ -165,7 +173,6 @@
 							@dragstart.prevent
 							@click="selectedElement = 'background'"
 						/>
-
 						<div class="render__middle__options">
 							<div
 								v-for="i in currentSlide.answerNumber"
@@ -214,7 +221,6 @@
 							/>
 						</template>
 					</app-editor-slide-card>
-
 					<app-editor-slide-card-plus @click="addSlide" />
 				</div>
 			</div>
@@ -271,6 +277,28 @@
 				</div>
 			</div>
 		</div>
+
+		<!-- Play popup -->
+		<div
+			v-if="playPopup"
+			class="editor-popup-overlay"
+		>
+			<div class="editor-popup">
+				<h2>Play Quiz</h2>
+				<p>You can copy the link or open the quiz in a new tab.</p>
+				<div class="editor-popup-buttons">
+					<button @click="copyPlayLink">
+						Copy Link
+					</button>
+					<button @click="openPlayQuiz">
+						Open Quiz
+					</button>
+					<button @click="playPopup = false">
+						Close
+					</button>
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -284,20 +312,17 @@ const { $db, $auth, $storage } = useNuxtApp();
 const route = useRoute();
 
 const loading = ref(false);
-const slidesData = ref([{
-	question: "",
-	background: "",
-	answerNumber: 2,
-	answers: [
-		{ text: "", correct: false },
-		{ text: "", correct: false },
-	],
-}]);
+const slidesData = ref([
+	{ question: "", background: "", answerNumber: 2, answers: [{ text: "", correct: false }, { text: "", correct: false }] },
+]);
 const currentSlideIndex = ref(0);
 const selectedElement = ref(null);
 const currentQuizId = ref(null);
 const quizTitle = ref("");
 const scoringSystem = ref("allOrNothing"); // default
+const hasBeenSaved = ref(false); // <-- new flag
+const playPopup = ref(false); // <-- controls play popup
+
 const scoringOptions = [
 	{ value: "allOrNothing", label: "All-or-Nothing" },
 	{ value: "partialCredit", label: "Partial Credit" },
@@ -314,23 +339,17 @@ const addSlide = () => {
 		question: "",
 		background: "",
 		answerNumber: 2,
-		answers: [
-			{ text: "", correct: false },
-			{ text: "", correct: false },
-		],
+		answers: [{ text: "", correct: false }, { text: "", correct: false }],
 	});
 	currentSlideIndex.value = slidesData.value.length - 1;
 };
-
 const removeSlide = async (index) => {
 	const slide = slidesData.value[index];
 	if (slide._backgroundPath) {
 		try {
 			await deleteObject(storageRef($storage, slide._backgroundPath));
 		}
-		catch {
-			return;
-		}
+		catch { return; }
 	}
 	slidesData.value.splice(index, 1);
 	if (slidesData.value.length === 0) {
@@ -355,6 +374,7 @@ const onBackgroundSelected = async (event) => {
 	currentSlide.value._backgroundFile = file;
 };
 
+// Generic popup
 const popup = ref({ show: false, title: "", message: "", type: "info", inputValue: "", onConfirm: null, onCancel: null });
 const showPopup = ({ title = "", message = "", type = "info", onConfirm = null, onCancel = null }) => {
 	popup.value = { show: true, title, message, type, inputValue: type === "select" ? scoringOptions[0].value : "", onConfirm, onCancel };
@@ -376,6 +396,7 @@ const loadQuiz = async (quizId) => {
 		scoringSystem.value = docSnap.data().scoringSystem || "allOrNothing";
 		originalQuizData.value = JSON.stringify({ title: quizTitle.value, slides: slidesData.value, scoringSystem: scoringSystem.value });
 		currentQuizId.value = quizId;
+		hasBeenSaved.value = true; // quiz already exists
 	}
 	loading.value = false;
 	originalQuizData.value = JSON.stringify({ title: quizTitle.value, slides: slidesData.value, scoringSystem: scoringSystem.value });
@@ -394,9 +415,8 @@ const saveQuiz = async () => {
 		alert("You must be logged in");
 		return;
 	}
-
 	if (!currentQuizId.value && !quizTitle.value) {
-		// Select scoring system first
+		// First save: choose scoring + title
 		showPopup({
 			title: "Select Scoring System",
 			message: "Choose how points will be calculated for this quiz.",
@@ -404,8 +424,6 @@ const saveQuiz = async () => {
 			onConfirm: async () => {
 				scoringSystem.value = popup.value.inputValue;
 				closePopup();
-
-				// Then prompt for quiz title
 				showPopup({
 					title: "Enter Quiz Title",
 					message: "Please enter a name for this quiz",
@@ -426,7 +444,6 @@ const saveQuiz = async () => {
 		});
 		return;
 	}
-
 	loading.value = true;
 	try {
 		const uploadPromises = slidesData.value.map(async (slide) => {
@@ -434,9 +451,7 @@ const saveQuiz = async () => {
 				if (slide._backgroundPath) try {
 					await deleteObject(storageRef($storage, slide._backgroundPath));
 				}
-				catch {
-					return;
-				}
+				catch { return; }
 				const filePath = `quiz-backgrounds/${user.uid}/${Date.now()}-${slide._backgroundFile.name}`;
 				const ref = storageRef($storage, filePath);
 				await uploadBytes(ref, slide._backgroundFile);
@@ -446,20 +461,14 @@ const saveQuiz = async () => {
 			}
 		});
 		await Promise.all(uploadPromises);
-
-		const quizData = {
-			title: quizTitle.value,
-			slides: slidesData.value,
-			scoringSystem: scoringSystem.value,
-			uid: user.uid,
-			updatedAt: new Date(),
-		};
+		const quizData = { title: quizTitle.value, slides: slidesData.value, scoringSystem: scoringSystem.value, uid: user.uid, updatedAt: new Date() };
 		if (currentQuizId.value) await updateDoc(doc($db, "quizzes", currentQuizId.value), quizData);
 		else {
 			const quizRef = doc(collection($db, "quizzes"));
 			await setDoc(quizRef, quizData);
 			currentQuizId.value = quizRef.id;
 		}
+		hasBeenSaved.value = true; // enable Play button
 		showPopup({ title: "Saved!", message: "Quiz saved successfully.", type: "success", onConfirm: closePopup });
 		originalQuizData.value = JSON.stringify({ title: quizTitle.value, slides: slidesData.value, scoringSystem: scoringSystem.value });
 	}
@@ -467,7 +476,9 @@ const saveQuiz = async () => {
 		console.error(err);
 		showPopup({ title: "Error", message: "Failed to save quiz.", type: "error", onConfirm: closePopup });
 	}
-	finally { loading.value = false; }
+	finally {
+		loading.value = false;
+	}
 };
 
 // Delete quiz
@@ -487,9 +498,7 @@ const deleteQuiz = async () => {
 				for (const slide of slidesData.value) if (slide._backgroundPath) try {
 					await deleteObject(storageRef($storage, slide._backgroundPath));
 				}
-				catch {
-					return;
-				}
+				catch { return; }
 				await deleteDoc(doc($db, "quizzes", currentQuizId.value));
 				showPopup({ title: "Deleted", message: "Quiz deleted successfully.", type: "success", onConfirm: () => navigateTo("/dashboard?activeViewComponent=games") });
 			}
@@ -497,7 +506,9 @@ const deleteQuiz = async () => {
 				console.error(err);
 				showPopup({ title: "Error", message: "Failed to delete quiz.", type: "error", onConfirm: closePopup });
 			}
-			finally { loading.value = false; }
+			finally {
+				loading.value = false;
+			}
 		},
 		onCancel: closePopup,
 	});
@@ -523,6 +534,18 @@ const confirmExit = () => {
 	else navigateTo("/dashboard?activeViewComponent=games");
 };
 
+// Play button actions
+const copyPlayLink = async () => {
+	if (!currentQuizId.value) return;
+	const link = `${window.location.origin}/quiz-player?quizId=${currentQuizId.value}`;
+	await navigator.clipboard.writeText(link);
+	alert("Link copied to clipboard!");
+};
+const openPlayQuiz = () => {
+	if (!currentQuizId.value) return;
+	window.open(`/quiz-player?quizId=${currentQuizId.value}`, "_blank");
+};
+
 // On mount
 onMounted(() => {
 	const quizId = route.query.quizId;
@@ -535,14 +558,13 @@ onMounted(() => {
 @use "/assets/scss/quiz-editor.scss";
 
 .x {
-	justify-self: flex-end;
-	color: rgb(54, 193, 255);
-	padding-left: 1vh;
+  justify-self: flex-end;
+  color: rgb(54, 193, 255);
+  padding-left: 1vh;
 }
-
 .slide-card-title {
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>
