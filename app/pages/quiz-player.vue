@@ -6,6 +6,14 @@
 			v-else
 			class="quiz-container"
 		>
+			<!-- Exit button -->
+			<button
+				:class="{ danger: currentSlideIndex < quizData.slides.length }"
+				@click="exitQuiz"
+			>
+				Exit
+			</button>
+
 			<h2 class="quiz-title">
 				{{ quizData.title }}
 			</h2>
@@ -83,6 +91,25 @@
 				</button>
 			</div>
 		</div>
+
+		<!-- Exit Popup -->
+		<div
+			v-if="exitPopup.show"
+			class="editor-popup-overlay"
+		>
+			<div class="editor-popup">
+				<h2>{{ exitPopup.title }}</h2>
+				<p>{{ exitPopup.message }}</p>
+				<div class="editor-popup-buttons">
+					<button @click="exitPopup.onCancel">
+						Cancel
+					</button>
+					<button @click="exitPopup.onConfirm">
+						OK
+					</button>
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -120,7 +147,6 @@ const restartQuiz = () => {
 	userAnswers.value = [];
 };
 
-// Helper for comparing arrays unordered
 const arraysEqualUnordered = (a, b) => {
 	if (!a || !b) return false;
 	if (a.length !== b.length) return false;
@@ -129,7 +155,6 @@ const arraysEqualUnordered = (a, b) => {
 	return sortedA.every((v, i) => v === sortedB[i]);
 };
 
-// Load quiz from Firestore
 const loadQuiz = async (quizId) => {
 	loading.value = true;
 	try {
@@ -155,7 +180,6 @@ const loadQuiz = async (quizId) => {
 	}
 };
 
-// Compute final score based on scoring system
 const finalScore = computed(() => {
 	return quizData.value.slides.reduce((score, slide, slideIndex) => {
 		const selected = (userAnswers.value[slideIndex] || []).map(Number);
@@ -189,6 +213,27 @@ const finalScore = computed(() => {
 	}, 0);
 });
 
+// Exit popup state
+const exitPopup = ref({ show: false, title: "", message: "", onConfirm: null, onCancel: null });
+const showExitPopup = ({ title, message, onConfirm }) => {
+	exitPopup.value = { show: true, title, message, onConfirm, onCancel: () => (exitPopup.value.show = false) };
+};
+
+// Exit quiz function
+const exitQuiz = () => {
+	const quizFinished = currentSlideIndex.value >= quizData.value.slides.length;
+	if (!quizFinished) {
+		showExitPopup({
+			title: "Exit Quiz?",
+			message: "You haven't finished the quiz yet. Are you sure you want to exit?",
+			onConfirm: () => navigateTo("/dashboard?activeViewComponent=games"),
+		});
+	}
+	else {
+		navigateTo("/dashboard?activeViewComponent=games");
+	}
+};
+
 onMounted(() => {
 	let quizId = route.query.quizId;
 	if (Array.isArray(quizId)) quizId = quizId[0];
@@ -199,4 +244,18 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @use "/assets/scss/quiz-player.scss";
+
+.exit-button {
+  padding: 0.5rem 1rem;
+  margin: 1rem;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  color: white;
+
+  background-color: var(--button-bg, #36c1ff); // normal button color
+  &.danger {
+    background-color: red;
+  }
+}
 </style>
