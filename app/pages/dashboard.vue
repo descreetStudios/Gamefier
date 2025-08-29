@@ -18,6 +18,7 @@
 import {
 	AppDashboardAdmin,
 	AppDashboardGames,
+	AppDashboardSavedGames,
 	AppDashboardProfile,
 	AppDashboardSettings,
 	AppDashboardTemplates,
@@ -65,6 +66,7 @@ else {
 const activeViewComponent = computed(() => {
 	switch (activeView.value) {
 		case "games": return AppDashboardGames;
+		case "savedGames": return AppDashboardSavedGames;
 		case "templates": return AppDashboardTemplates;
 		case "admin": return AppDashboardAdmin;
 		case "banAppeals": return AppDashboardBanAppeals;

@@ -36,6 +36,14 @@
 
 			<button
 				class="sidebar__nav-link"
+				:class="{ 'sidebar__nav-link--active': active === 'savedGames' }"
+				@click="emit('navigate', 'savedGames')"
+			>
+				Saved Games
+			</button>
+
+			<button
+				class="sidebar__nav-link"
 				:class="{ 'sidebar__nav-link--active': active === 'templates' }"
 				@click="emit('navigate', 'templates')"
 			>
