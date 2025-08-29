@@ -319,6 +319,7 @@ const currentSlideIndex = ref(0);
 const selectedElement = ref(null);
 const currentQuizId = ref(null);
 const quizTitle = ref("");
+const quizTitleLowerCase = computed(() => quizTitle.value.toLowerCase());
 const scoringSystem = ref("allOrNothing");
 const hasBeenSaved = ref(false);
 
@@ -409,18 +410,19 @@ const loadQuiz = async (quizId) => {
 	if (docSnap.exists()) {
 		slidesData.value = docSnap.data().slides || [];
 		quizTitle.value = docSnap.data().title || "";
+		quizTitleLowerCase.value = docSnap.data().titleLowerCase || "";
 		scoringSystem.value = docSnap.data().scoringSystem || "allOrNothing";
-		originalQuizData.value = JSON.stringify({ title: quizTitle.value, slides: slidesData.value, scoringSystem: scoringSystem.value });
+		originalQuizData.value = JSON.stringify({ title: quizTitle.value, titleLowerCase: quizTitleLowerCase.value, slides: slidesData.value, scoringSystem: scoringSystem.value });
 		currentQuizId.value = quizId;
 		hasBeenSaved.value = true; // quiz already exists
 	}
 	loading.value = false;
-	originalQuizData.value = JSON.stringify({ title: quizTitle.value, slides: slidesData.value, scoringSystem: scoringSystem.value });
+	originalQuizData.value = JSON.stringify({ title: quizTitle.value, titleLowerCase: quizTitleLowerCase.value, slides: slidesData.value, scoringSystem: scoringSystem.value });
 };
 
 // Detect unsaved changes
 const hasUnsavedChanges = computed(() => {
-	const current = JSON.stringify({ title: quizTitle.value, slides: slidesData.value, scoringSystem: scoringSystem.value });
+	const current = JSON.stringify({ title: quizTitle.value, titleLowerCase: quizTitleLowerCase.value, slides: slidesData.value, scoringSystem: scoringSystem.value });
 	return current !== originalQuizData.value;
 });
 
@@ -477,7 +479,14 @@ const saveQuiz = async () => {
 			}
 		});
 		await Promise.all(uploadPromises);
-		const quizData = { title: quizTitle.value, slides: slidesData.value, scoringSystem: scoringSystem.value, uid: user.uid, updatedAt: new Date() };
+		const quizData = {
+			title: quizTitle.value,
+			titleLowerCase: quizTitleLowerCase.value,
+			slides: slidesData.value,
+			scoringSystem: scoringSystem.value,
+			uid: user.uid,
+			updatedAt: new Date(),
+		};
 		if (currentQuizId.value) await updateDoc(doc($db, "quizzes", currentQuizId.value), quizData);
 		else {
 			const quizRef = doc(collection($db, "quizzes"));
@@ -486,7 +495,7 @@ const saveQuiz = async () => {
 		}
 		hasBeenSaved.value = true; // enable Play button
 		showPopup({ title: "Saved!", message: "Quiz saved successfully.", type: "success", onConfirm: closePopup });
-		originalQuizData.value = JSON.stringify({ title: quizTitle.value, slides: slidesData.value, scoringSystem: scoringSystem.value });
+		originalQuizData.value = JSON.stringify({ title: quizTitle.value, titleLowerCase: quizTitleLowerCase.value, slides: slidesData.value, scoringSystem: scoringSystem.value });
 	}
 	catch (err) {
 		console.error(err);

@@ -2,11 +2,14 @@ import type { useUserStore } from "@/../stores/userStore";
 import type { useSiteSettingsStore } from "@/../stores/siteSettingsStore";
 import { useNuxtApp, defineNuxtRouteMiddleware, navigateTo } from "nuxt/app";
 
-export default defineNuxtRouteMiddleware(async (to) => {
+export default defineNuxtRouteMiddleware(async (to, from) => {
 	const { $userStore } = useNuxtApp();
 	const { $siteSettingsStore } = useNuxtApp();
 	const userStore = $userStore as ReturnType<typeof useUserStore>;
 	const siteSettingsStore = $siteSettingsStore as ReturnType<typeof useSiteSettingsStore>;
+
+	const nuxtApp = useNuxtApp();
+	nuxtApp.payload.previousPath = from.fullPath;
 
 	const excludedPaths = ["/", "/signup", "/login", "/loading", "/maintenance"];
 

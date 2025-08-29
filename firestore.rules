@@ -53,10 +53,18 @@ service cloud.firestore {
 
     // QUIZZES
     match /quizzes/{quizId} {
-      // Banned users cannot access quizzes at all
-      allow create, read, update, delete: if request.auth != null &&
+      // Any authenticated and non-banned user can read all quizzes
+      allow read: if request.auth != null && !isBanned();
+
+      // Only the authenticated and non-banned author can create a quiz (with matching uid)
+      allow create: if request.auth != null &&
         !isBanned() &&
-        request.auth.uid == (request.method == "create" ? request.resource.data.uid : resource.data.uid);
+        request.resource.data.uid == request.auth.uid;
+
+      // Only the authenticated and non-banned author can update or delete
+      allow update, delete: if request.auth != null &&
+        !isBanned() &&
+        resource.data.uid == request.auth.uid;
     }
 
     // SITE SETTINGS

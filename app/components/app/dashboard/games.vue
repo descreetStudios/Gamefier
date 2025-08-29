@@ -25,7 +25,7 @@
 			<app-dashboard-card
 				v-for="quiz in quizzes"
 				:key="quiz.id"
-				:img-src="quiz.background || '/images/BackgroundDark.png'"
+				:img-src="quiz.firstSlideImageUrl"
 				@card-click="() => openQuizEditor(quiz.id)"
 			>
 				<p class="quiz-title">
@@ -38,9 +38,10 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { getFirestore, collection, query, where, onSnapshot } from "firebase/firestore";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { ref as storageRef, getDownloadURL } from "firebase/storage";
 
+const { $db, $auth, $storage } = useNuxtApp();
 const quizzes = ref([]);
 let unsubscribe = null;
 
@@ -52,29 +53,50 @@ function openQuizEditor(quizId) {
 	return navigateTo({ path: "/quiz-editor", query: { quizId: quizId } });
 }
 
+async function getSlideImageURL(path) {
+	if (!path) return "/images/BackgroundDark.png"; // fallback
+	try {
+		const imgRef = storageRef($storage, path);
+		const url = await getDownloadURL(imgRef);
+		return url;
+	}
+	catch (e) {
+		console.warn("Errore nel caricamento immagine:", path, e.message);
+		return "/images/BackgroundDark.png"; // fallback in caso di errore
+	}
+}
+
 onMounted(() => {
-	const auth = getAuth();
-	const db = getFirestore();
+	const user = $auth.currentUser;
+	if (user) {
+		const q = query(collection($db, "quizzes"), where("uid", "==", user.uid));
 
-	onAuthStateChanged(auth, (user) => {
-		// detach previous listener if any
-		if (unsubscribe) unsubscribe();
+		unsubscribe = onSnapshot(q, async (snapshot) => {
+			const quizData = await Promise.all(
+				snapshot.docs.map(async (doc) => {
+					const data = doc.data();
+					let imageUrl = "/images/BackgroundDark.png";
 
-		if (user) {
-			const q = query(collection(db, "quizzes"), where("uid", "==", user.uid));
+					if (data.slides && data.slides.length > 0) {
+						imageUrl = await getSlideImageURL(data.slides[0]._backgroundPath);
+					}
 
-			// Live updates
-			unsubscribe = onSnapshot(q, (snapshot) => {
-				quizzes.value = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-			});
-		}
-		else {
-			quizzes.value = [];
-		}
-	});
+					return {
+						id: doc.id,
+						...data,
+						firstSlideImageUrl: imageUrl,
+					};
+				}),
+			);
+
+			quizzes.value = quizData;
+		});
+	}
+	else {
+		quizzes.value = [];
+	}
 });
 
-// cleanup listener on unmount
 onUnmounted(() => {
 	if (unsubscribe) unsubscribe();
 });

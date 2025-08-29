@@ -115,10 +115,11 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { useRoute, navigateTo } from "#imports";
+import { useRoute, navigateTo, useNuxtApp } from "#imports";
 import { doc, getDoc } from "firebase/firestore";
 
-const { $db } = useNuxtApp();
+const nuxtApp = useNuxtApp();
+const { $db } = nuxtApp;
 
 const route = useRoute();
 const loading = ref(false);
@@ -222,15 +223,19 @@ const showExitPopup = ({ title, message, onConfirm }) => {
 // Exit quiz function
 const exitQuiz = () => {
 	const quizFinished = currentSlideIndex.value >= quizData.value.slides.length;
+	let previousPath = nuxtApp.payload.previousPath;
+	if (previousPath.includes("/loading")) {
+		previousPath = "/dashboard";
+	}
 	if (!quizFinished) {
 		showExitPopup({
 			title: "Exit Quiz?",
 			message: "You haven't finished the quiz yet. Are you sure you want to exit?",
-			onConfirm: () => navigateTo("/dashboard?activeViewComponent=games"),
+			onConfirm: () => navigateTo(previousPath),
 		});
 	}
 	else {
-		navigateTo("/dashboard?activeViewComponent=games");
+		navigateTo(previousPath);
 	}
 };
 
