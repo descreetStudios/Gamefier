@@ -37,7 +37,7 @@
 						<!-- Play button only shows after quiz has been saved -->
 						<button
 							v-if="hasBeenSaved"
-							@click="playPopup = true"
+							@click="showPopup({ title: 'Play Quiz', message: 'You can now play your quiz.', type: 'play' })"
 						>
 							Play
 						</button>
@@ -265,37 +265,37 @@
 				</div>
 
 				<div class="editor-popup-buttons">
-					<button
-						v-if="popup.type === 'confirm' || popup.type === 'input' || popup.type === 'select'"
-						@click="popup.onCancel ? popup.onCancel() : closePopup()"
-					>
-						Cancel
-					</button>
-					<button @click="popup.onConfirm ? popup.onConfirm() : closePopup()">
-						OK
-					</button>
-				</div>
-			</div>
-		</div>
+					<!-- Normal popups -->
+					<template v-if="popup.type === 'confirm' || popup.type === 'input' || popup.type === 'select'">
+						<button @click="popup.onCancel ? popup.onCancel() : closePopup()">
+							Cancel
+						</button>
+					</template>
 
-		<!-- Play popup -->
-		<div
-			v-if="playPopup"
-			class="editor-popup-overlay"
-		>
-			<div class="editor-popup">
-				<h2>Play Quiz</h2>
-				<p>You can copy the link or open the quiz in a new tab.</p>
-				<div class="editor-popup-buttons">
-					<button @click="copyPlayLink">
-						Copy Link
-					</button>
-					<button @click="openPlayQuiz">
-						Open Quiz
-					</button>
-					<button @click="playPopup = false">
-						Close
-					</button>
+					<!-- Play Quiz Popup -->
+					<div
+						v-if="popup.show && popup.type === 'play'"
+						class="popup"
+					>
+						<div class="popup-actions">
+							<button @click="copyPlayLink">
+								Copy Link
+							</button>
+							<button @click="openPlayLink">
+								Open Quiz
+							</button>
+							<button @click="closePopup">
+								Close
+							</button>
+						</div>
+					</div>
+
+					<!-- Default info/success/error -->
+					<template v-else>
+						<button @click="popup.onConfirm ? popup.onConfirm() : closePopup()">
+							OK
+						</button>
+					</template>
 				</div>
 			</div>
 		</div>
@@ -319,9 +319,8 @@ const currentSlideIndex = ref(0);
 const selectedElement = ref(null);
 const currentQuizId = ref(null);
 const quizTitle = ref("");
-const scoringSystem = ref("allOrNothing"); // default
-const hasBeenSaved = ref(false); // <-- new flag
-const playPopup = ref(false); // <-- controls play popup
+const scoringSystem = ref("allOrNothing");
+const hasBeenSaved = ref(false);
 
 const scoringOptions = [
 	{ value: "allOrNothing", label: "All-or-Nothing" },
@@ -331,6 +330,34 @@ const scoringOptions = [
 ];
 
 const currentSlide = computed(() => slidesData.value[currentSlideIndex.value]);
+
+const popup = ref({
+	show: false,
+	title: "",
+	message: "",
+	type: "info", // 'info' | 'success' | 'error' | 'confirm' | 'input' | 'select' | 'play'
+	inputValue: "",
+	onConfirm: null,
+	onCancel: null,
+});
+
+const showPopup = ({ title = "", message = "", type = "info", onConfirm = null, onCancel = null }) => {
+	popup.value = {
+		show: true,
+		title,
+		message,
+		type,
+		inputValue: type === "select" ? scoringOptions[0].value : "",
+		onConfirm,
+		onCancel,
+	};
+};
+
+const closePopup = () => {
+	popup.value.show = false;
+	popup.value.onConfirm = null;
+	popup.value.onCancel = null;
+};
 
 // Slide management
 const selectSlide = index => currentSlideIndex.value = index;
@@ -372,17 +399,6 @@ const onBackgroundSelected = async (event) => {
 	if (!file) return;
 	currentSlide.value.background = URL.createObjectURL(file);
 	currentSlide.value._backgroundFile = file;
-};
-
-// Generic popup
-const popup = ref({ show: false, title: "", message: "", type: "info", inputValue: "", onConfirm: null, onCancel: null });
-const showPopup = ({ title = "", message = "", type = "info", onConfirm = null, onCancel = null }) => {
-	popup.value = { show: true, title, message, type, inputValue: type === "select" ? scoringOptions[0].value : "", onConfirm, onCancel };
-};
-const closePopup = () => {
-	popup.value.show = false;
-	popup.value.onConfirm = null;
-	popup.value.onCancel = null;
 };
 
 const originalQuizData = ref(null);
@@ -540,10 +556,14 @@ const copyPlayLink = async () => {
 	const link = `${window.location.origin}/quiz-player?quizId=${currentQuizId.value}`;
 	await navigator.clipboard.writeText(link);
 	alert("Link copied to clipboard!");
+	closePopup();
 };
-const openPlayQuiz = () => {
+
+const openPlayLink = () => {
 	if (!currentQuizId.value) return;
-	window.open(`/quiz-player?quizId=${currentQuizId.value}`, "_blank");
+	const link = `${window.location.origin}/quiz-player?quizId=${currentQuizId.value}`;
+	window.open(link, "_blank");
+	closePopup();
 };
 
 // On mount
