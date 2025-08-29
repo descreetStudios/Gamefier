@@ -19,7 +19,7 @@ service cloud.firestore {
     match /users/{userId} {
       // Banned users can only read their own data
       allow read: if request.auth != null &&
-        request.auth.uid == userId;
+        (request.auth.uid == userId || isAdmin());
 
       // Create only allowed if document ID matches UID (same rule for all users)
       allow create: if request.auth != null &&
