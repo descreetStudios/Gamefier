@@ -16,6 +16,14 @@
 						format="webp"
 					/>
 					<h2>Quiz Editor</h2>
+
+					<button
+						:disabled="isGenerating"
+						@click="generateQuestionsWithTheme"
+					>
+						{{ isGenerating ? "Generating..." : "Generate Questions" }}
+					</button>
+
 					<div class="title-buttons">
 						<button @click="saveQuiz">
 							Save
@@ -358,6 +366,98 @@ const closePopup = () => {
 	popup.value.show = false;
 	popup.value.onConfirm = null;
 	popup.value.onCancel = null;
+};
+
+// QUIZ GENERATION
+const isGenerating = ref(false);
+
+/*
+Do not modify the parser unless you know what you are doing.
+The parser works in very tight relation to the prompt found in server/api/generate-quiz-local.js.
+Improper edits to either can cause the whole ai generation to stop working.
+*/
+function parseQuizAIOutput(output) {
+	const slides = [];
+	const blocks = output.split(/\n\s*\n/); // split by blank lines between questions
+
+	blocks.forEach((block) => {
+		const lines = block.split("\n").map(l => l.trim()).filter(l => l);
+		if (!lines.length) return;
+
+		const questionLine = lines[0];
+		if (!questionLine.toLowerCase().startsWith("question:")) return;
+
+		const questionText = questionLine.replace(/^Question:\s*/i, "");
+		const answers = [];
+		let correctLetter = "";
+
+		lines.slice(1).forEach((line) => {
+			const answerMatch = line.match(/^([A-F])\.\s*(.+)/i);
+			const answerFlag = line.match(/^Answer:\s*([A-F])/i);
+
+			if (answerMatch) {
+				answers.push({ text: answerMatch[2], correct: false });
+			}
+			else if (answerFlag) {
+				correctLetter = answerFlag[1].toUpperCase();
+			}
+		});
+
+		if (correctLetter) {
+			const index = correctLetter.charCodeAt(0) - 65; // A=0, B=1...
+			if (answers[index]) answers[index].correct = true;
+		}
+
+		if (questionText && answers.length >= 2) {
+			slides.push({
+				question: questionText,
+				background: "",
+				answerNumber: answers.length,
+				answers,
+			});
+		}
+	});
+
+	return slides;
+}
+
+const generateQuestionsWithTheme = () => {
+	showPopup({
+		title: "Enter Quiz Theme",
+		message: "Please provide a theme for AI-generated questions. Always check AI-generated content for errors.",
+		type: "input",
+		inputValue: "",
+		onConfirm: () => {
+			const theme = popup.value.inputValue.trim();
+			if (!theme) {
+				closePopup();
+				return;
+			}
+			closePopup();
+			generateQuestions(theme);
+		},
+		onCancel: () => closePopup(),
+	});
+};
+
+const generateQuestions = async (theme) => {
+	if (!theme) return;
+
+	isGenerating.value = true;
+	try {
+		const res = await $fetch("/api/generate-quiz-local", {
+			method: "POST",
+			body: { theme }, // send theme to prompt
+		});
+
+		slidesData.value = parseQuizAIOutput(res.questions);
+	}
+	catch (err) {
+		console.error("Error generating quiz:", err);
+	}
+	finally {
+		isGenerating.value = false;
+	}
 };
 
 // Slide management

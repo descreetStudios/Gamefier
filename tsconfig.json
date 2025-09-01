@@ -5,5 +5,5 @@
     "**/*.ts",
     "**/*.vue",
     "types"
-, "functions/index.js"  ]
+, "functions/index.js", "server/api/generate-quiz-local.js"  ]
 }
