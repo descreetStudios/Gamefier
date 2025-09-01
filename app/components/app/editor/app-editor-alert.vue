@@ -1,30 +1,75 @@
 <template>
 	<div
-		v-if="show"
+		v-if="props.show"
 		class="editor-popup-overlay"
 	>
 		<div class="editor-popup">
-			<h2>{{ title }}</h2>
-			<p>{{ message }}</p>
+			<h2>{{ props.title }}</h2>
+			<p>{{ props.message }}</p>
 
 			<div
-				v-if="type === 'confirm'"
-				class="editor-popup-buttons"
+				v-if="props.type === 'input' || props.type === 'select'"
+				style="margin-bottom: 1rem;"
 			>
-				<button @click="onCancelClick">
-					Cancel
-				</button>
-				<button @click="onConfirmClick">
-					Confirm
-				</button>
+				<template v-if="props.type === 'input'">
+					<input
+						:value="props.modelValue"
+						type="text"
+						placeholder="Enter value"
+						style="width: 100%; padding: 0.5rem;"
+						@input="onInput"
+						@keyup.enter="props.onConfirm ? props.onConfirm() : props.closePopup()"
+					>
+				</template>
+				<template v-else>
+					<select
+						:value="props.modelValue"
+						style="width:100%; padding:0.5rem;"
+						@input="onInput"
+					>
+						<option
+							v-for="opt in props.scoringOptions"
+							:key="opt.value"
+							:value="opt.value"
+						>
+							{{ opt.label }}
+						</option>
+					</select>
+				</template>
 			</div>
-			<div
-				v-else
-				class="editor-popup-buttons"
-			>
-				<button @click="onConfirmClick">
-					OK
-				</button>
+
+			<div class="editor-popup-buttons">
+				<!-- Normal popups -->
+				<template v-if="props.type === 'confirm' || props.type === 'input' || props.type === 'select'">
+					<button @click="props.onCancel ? props.onCancel() : props.closePopup()">
+						Cancel
+					</button>
+				</template>
+
+				<!-- Play Quiz Popup -->
+				<div
+					v-if="props.show && props.type === 'play'"
+					class="popup"
+				>
+					<div class="popup-actions">
+						<button @click="eventHandler('link')">
+							Copy Link
+						</button>
+						<button @click="eventHandler('open')">
+							Open Quiz
+						</button>
+						<button @click="eventHandler('close')">
+							Close
+						</button>
+					</div>
+				</div>
+
+				<!-- Default info/success/error -->
+				<template v-else>
+					<button @click="props.onConfirm ? props.onConfirm() : props.closePopup()">
+						OK
+					</button>
+				</template>
 			</div>
 		</div>
 	</div>
@@ -34,17 +79,51 @@
 import { defineProps, defineEmits } from "vue";
 
 // unused
-const _props = defineProps({
+const props = defineProps({
+	modelValue: String,
 	show: Boolean,
 	title: String,
 	message: String,
 	type: { type: String, default: "info" }, // info | success | error | confirm
+	onConfirm: {
+		type: Function,
+		default: null,
+	},
+	onCancel: {
+		type: Function,
+		default: null,
+	},
+	closePopup: {
+		type: Function,
+		default: () => {},
+	},
+	scoringOptions: [
+		{
+			value: String,
+			label: String,
+		},
+	],
 });
 
-const emits = defineEmits(["confirm", "cancel"]);
+const emits = defineEmits(["update:modelValue", "confirm", "cancel", "open", "close", "link"]);
 
-const onConfirmClick = () => emits("confirm");
-const onCancelClick = () => emits("cancel");
+const onInput = (event) => {
+	emits("update:modelValue", event.target.value);
+};
+
+const eventHandler = (event) => {
+	switch (event) {
+		case "link":
+			emits("link");
+			break;
+		case "open":
+			emits("open");
+			break;
+		case "close":
+			emits("close");
+			break;
+	}
+};
 </script>
 
 <style scoped>

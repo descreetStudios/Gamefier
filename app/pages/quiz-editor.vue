@@ -8,6 +8,24 @@
 			v-else
 			class="editor"
 		>
+			<!-- Popup overlay -->
+			<app-editor-alert
+				v-model="popup.inputValue"
+				:show="popup.show"
+				:title="popup.title"
+				:message="popup.message"
+				:type="popup.type"
+				:on-confirm="popup.onConfirm"
+				:on-cancel="popup.onCancel"
+				:close-popup="closePopup"
+				:scoring-options="scoringOptions"
+				@confirm="popup.onConfirm ? popup.onConfirm() : closePopup()"
+				@cancel="popup.onCancel ? popup.onCancel() : closePopup()"
+				@close="closePopup"
+				@link="copyPlayLink"
+				@open="openPlayLink"
+			/>
+
 			<div class="sidebar">
 				<div class="title">
 					<NuxtImg
@@ -233,80 +251,6 @@
 				</div>
 			</div>
 		</div>
-
-		<!-- Popup overlay -->
-		<div
-			v-if="popup.show"
-			class="editor-popup-overlay"
-		>
-			<div class="editor-popup">
-				<h2>{{ popup.title }}</h2>
-				<p>{{ popup.message }}</p>
-
-				<div
-					v-if="popup.type === 'input' || popup.type === 'select'"
-					style="margin-bottom: 1rem;"
-				>
-					<template v-if="popup.type === 'input'">
-						<input
-							v-model="popup.inputValue"
-							type="text"
-							placeholder="Enter value"
-							style="width: 100%; padding: 0.5rem;"
-							@keyup.enter="popup.onConfirm ? popup.onConfirm() : closePopup()"
-						>
-					</template>
-					<template v-else>
-						<select
-							v-model="popup.inputValue"
-							style="width:100%; padding:0.5rem;"
-						>
-							<option
-								v-for="opt in scoringOptions"
-								:key="opt.value"
-								:value="opt.value"
-							>
-								{{ opt.label }}
-							</option>
-						</select>
-					</template>
-				</div>
-
-				<div class="editor-popup-buttons">
-					<!-- Normal popups -->
-					<template v-if="popup.type === 'confirm' || popup.type === 'input' || popup.type === 'select'">
-						<button @click="popup.onCancel ? popup.onCancel() : closePopup()">
-							Cancel
-						</button>
-					</template>
-
-					<!-- Play Quiz Popup -->
-					<div
-						v-if="popup.show && popup.type === 'play'"
-						class="popup"
-					>
-						<div class="popup-actions">
-							<button @click="copyPlayLink">
-								Copy Link
-							</button>
-							<button @click="openPlayLink">
-								Open Quiz
-							</button>
-							<button @click="closePopup">
-								Close
-							</button>
-						</div>
-					</div>
-
-					<!-- Default info/success/error -->
-					<template v-else>
-						<button @click="popup.onConfirm ? popup.onConfirm() : closePopup()">
-							OK
-						</button>
-					</template>
-				</div>
-			</div>
-		</div>
 	</div>
 </template>
 
@@ -510,7 +454,6 @@ const loadQuiz = async (quizId) => {
 	if (docSnap.exists()) {
 		slidesData.value = docSnap.data().slides || [];
 		quizTitle.value = docSnap.data().title || "";
-		quizTitleLowerCase.value = docSnap.data().titleLowerCase || "";
 		scoringSystem.value = docSnap.data().scoringSystem || "allOrNothing";
 		originalQuizData.value = JSON.stringify({ title: quizTitle.value, titleLowerCase: quizTitleLowerCase.value, slides: slidesData.value, scoringSystem: scoringSystem.value });
 		currentQuizId.value = quizId;
