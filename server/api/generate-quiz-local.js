@@ -16,10 +16,11 @@ export default defineEventHandler(async (event) => {
 
 					Requirements:
 					1. Each question must have a clear "Question:" line.
-					2. Each question must have at least 2 answers, labeled "A.", "B.", "C.", "D.", "E.", "F." (use only the number of answers needed, minimum 2, maximum 6).
-					3. Clearly mark the correct answer using the format "Answer: X" where X is the letter of the correct option.
-					4. Do NOT include explanations or extra text.
-					5. Separate each question and its answers with a blank line.
+					2. Each question must be 150 characters or less.
+					3. Each question must have at least 2 answers, labeled "A.", "B.", "C.", "D.", "E.", "F." (use only the number of answers needed, minimum 2, maximum 6).
+					4. Clearly mark the correct answer using the format "Answer: X" where X is the letter of the correct option.
+					5. Do NOT include explanations or extra text.
+					6. Separate each question and its answers with a blank line.
 
 					Example output:
 
