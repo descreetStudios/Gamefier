@@ -394,7 +394,14 @@ const generateQuestions = async (theme) => {
 			body: { theme }, // send theme to prompt
 		});
 
-		slidesData.value = parseQuizAIOutput(res.questions);
+		const parsedSlides = parseQuizAIOutput(res.questions);
+
+		if (parsedSlides.length === 0) {
+			console.warn("No slides generated from AI output.");
+			return;
+		}
+
+		slidesData.value.push(...parsedSlides);
 	}
 	catch (err) {
 		console.error("Error generating quiz:", err);
