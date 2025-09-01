@@ -9,7 +9,7 @@
 			class="editor"
 		>
 			<!-- Popup overlay -->
-			<app-editor-alert
+			<app-quiz-alert
 				v-model="popup.inputValue"
 				:show="popup.show"
 				:title="popup.title"

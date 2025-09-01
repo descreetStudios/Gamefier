@@ -1,9 +1,9 @@
 <template>
 	<div
 		v-if="props.show"
-		class="editor-popup-overlay"
+		class="quiz-popup-overlay"
 	>
-		<div class="editor-popup">
+		<div class="quiz-popup">
 			<h2>{{ props.title }}</h2>
 			<p>{{ props.message }}</p>
 
@@ -38,7 +38,7 @@
 				</template>
 			</div>
 
-			<div class="editor-popup-buttons">
+			<div class="quiz-popup-buttons">
 				<!-- Normal popups -->
 				<template v-if="props.type === 'confirm' || props.type === 'input' || props.type === 'select'">
 					<button @click="props.onCancel ? props.onCancel() : props.closePopup()">
@@ -66,7 +66,10 @@
 
 				<!-- Default info/success/error -->
 				<template v-else>
-					<button @click="props.onConfirm ? props.onConfirm() : props.closePopup()">
+					<button
+						:class="{ 'exit-button danger': props.title === 'Exit Quiz?' || props.title === 'Confirm Delete' }"
+						@click="props.onConfirm ? props.onConfirm() : props.closePopup()"
+					>
 						OK
 					</button>
 				</template>
@@ -76,15 +79,12 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from "vue";
-
-// unused
 const props = defineProps({
 	modelValue: String,
 	show: Boolean,
 	title: String,
 	message: String,
-	type: { type: String, default: "info" }, // info | success | error | confirm
+	type: { type: String, default: "info" }, // info | success | error | confirm | exit
 	onConfirm: {
 		type: Function,
 		default: null,
@@ -105,7 +105,7 @@ const props = defineProps({
 	],
 });
 
-const emits = defineEmits(["update:modelValue", "confirm", "cancel", "open", "close", "link"]);
+const emits = defineEmits(["update:modelValue", "open", "close", "link"]);
 
 const onInput = (event) => {
 	emits("update:modelValue", event.target.value);
@@ -127,7 +127,7 @@ const eventHandler = (event) => {
 </script>
 
 <style scoped>
-.editor-popup-overlay {
+.quiz-popup-overlay {
   position: fixed;
   top: 0; left: 0;
   width: 100vw; height: 100vh;
@@ -138,7 +138,7 @@ const eventHandler = (event) => {
   z-index: 10000;
 }
 
-.editor-popup {
+.quiz-popup {
   background: var(--surface);
   padding: 2rem;
   border-radius: 1rem;
@@ -147,18 +147,22 @@ const eventHandler = (event) => {
   text-align: center;
 }
 
-.editor-popup-buttons {
+.quiz-popup-buttons {
   display: flex;
   justify-content: center;
   gap: 1rem;
   margin-top: 1rem;
 }
 
-.editor-popup-buttons button {
+.quiz-popup-buttons button {
   padding: 0.5rem 1.2rem;
   border-radius: 0.5rem;
   border: none;
   cursor: pointer;
   font-weight: bold;
+}
+
+.exit-button.danger {
+  background-color: red;
 }
 </style>

@@ -6,6 +6,14 @@
 			v-else
 			class="quiz-container"
 		>
+			<app-quiz-alert
+				:show="exitPopup.show"
+				:title="exitPopup.title"
+				:message="exitPopup.message"
+				:type="exitPopup.type"
+				:on-confirm="exitPopup.onConfirm"
+				:on-cancel="exitPopup.onCancel"
+			/>
 			<!-- Exit button -->
 			<button
 				:class="{ danger: currentSlideIndex < quizData.slides.length }"
@@ -89,25 +97,6 @@
 				<button @click="restartQuiz">
 					Restart Quiz
 				</button>
-			</div>
-		</div>
-
-		<!-- Exit Popup -->
-		<div
-			v-if="exitPopup.show"
-			class="editor-popup-overlay"
-		>
-			<div class="editor-popup">
-				<h2>{{ exitPopup.title }}</h2>
-				<p>{{ exitPopup.message }}</p>
-				<div class="editor-popup-buttons">
-					<button @click="exitPopup.onCancel">
-						Cancel
-					</button>
-					<button @click="exitPopup.onConfirm">
-						OK
-					</button>
-				</div>
 			</div>
 		</div>
 	</div>
@@ -215,9 +204,9 @@ const finalScore = computed(() => {
 });
 
 // Exit popup state
-const exitPopup = ref({ show: false, title: "", message: "", onConfirm: null, onCancel: null });
-const showExitPopup = ({ title, message, onConfirm }) => {
-	exitPopup.value = { show: true, title, message, onConfirm, onCancel: () => (exitPopup.value.show = false) };
+const exitPopup = ref({ show: false, title: "", message: "", type: "", onConfirm: null, onCancel: null });
+const showExitPopup = ({ title, message, type, onConfirm }) => {
+	exitPopup.value = { show: true, title, message, type, onConfirm, onCancel: () => (exitPopup.value.show = false) };
 };
 
 // Exit quiz function
@@ -231,6 +220,7 @@ const exitQuiz = () => {
 		showExitPopup({
 			title: "Exit Quiz?",
 			message: "You haven't finished the quiz yet. Are you sure you want to exit?",
+			type: "confirm",
 			onConfirm: () => navigateTo(previousPath),
 		});
 	}
@@ -249,18 +239,4 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @use "/assets/scss/quiz-player.scss";
-
-.exit-button {
-  padding: 0.5rem 1rem;
-  margin: 1rem;
-  border: none;
-  border-radius: 0.25rem;
-  cursor: pointer;
-  color: white;
-
-  background-color: var(--button-bg, #36c1ff); // normal button color
-  &.danger {
-    background-color: red;
-  }
-}
 </style>
