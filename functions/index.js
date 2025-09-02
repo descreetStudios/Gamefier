@@ -1,8 +1,7 @@
 const { initializeApp } = require("firebase-admin/app");
 const { Timestamp, FieldValue } = require("firebase-admin/firestore");
 
-const { onCall, onRequest } = require("firebase-functions/v2/https");
-const { schedule } = require("firebase-functions/v2/pubsub");
+const { onCall } = require("firebase-functions/v2/https");
 
 const functions = require("firebase-functions/v1");
 const admin = require("firebase-admin");
@@ -122,68 +121,58 @@ exports.setInitialUserRole = functions.auth.user().onCreate(async (user) => {
 	}
 });
 
-// Test locally with: http://localhost:5001/gamefier-86a8b/us-central1/testUnban
-exports.testUnban = onRequest(async (req, res) => {
-	try {
-		const now = Timestamp.now();
+async function unbanExpiredUsersCore() {
+	const now = Timestamp.now();
 
-		const snapshot = await firestore
-			.collection("users")
-			.where("role", "==", "banned")
-			.where("banExpiresAt", "<=", now)
-			.get();
+	const snapshot = await firestore
+		.collection("users")
+		.where("role", "==", "banned")
+		.where("banExpiresAt", "<=", now)
+		.get();
 
-		const batch = firestore.batch();
-		snapshot.docs.forEach((doc) => {
-			batch.update(doc.ref, {
-				role: "user",
-				banReason: FieldValue.delete(),
-				banType: FieldValue.delete(),
-				banExpiresAt: FieldValue.delete(),
-				bannedBy: FieldValue.delete(),
-				banAppealText: FieldValue.delete(),
-				banAppealPending: FieldValue.delete(),
-			});
+	if (snapshot.empty) {
+		console.log("No users to unban");
+		return { count: 0 };
+	}
+
+	const batch = firestore.batch();
+	snapshot.docs.forEach((doc) => {
+		batch.update(doc.ref, {
+			role: "user",
+			banReason: FieldValue.delete(),
+			banType: FieldValue.delete(),
+			banExpiresAt: FieldValue.delete(),
+			bannedBy: FieldValue.delete(),
+			banAppealText: FieldValue.delete(),
+			banAppealPending: FieldValue.delete(),
 		});
+	});
 
-		await batch.commit();
-		res.send(`Successfully unbanned ${snapshot.size} users`);
+	await batch.commit();
+	console.log(`Successfully unbanned ${snapshot.size} users`);
+	return { count: snapshot.size };
+}
+
+/**
+ * Scheduled version (production)
+*/
+exports.unbanExpiredUsers = functions.pubsub
+	.schedule("every 1 minutes")
+	.onRun(async () => {
+		return await unbanExpiredUsersCore();
+	});
+
+/**
+ * HTTP version (local testing)
+ * Test locally with: http://localhost:5001/gamefier-86a8b/us-central1/unbanExpiredUsersHttp
+*/
+exports.unbanExpiredUsersHttp = functions.https.onRequest(async (req, res) => {
+	try {
+		const result = await unbanExpiredUsersCore();
+		res.send(`Unbanned ${result.count} users`);
 	}
 	catch (err) {
-		console.error("Error in testUnban:", err);
-		res.status(500).send("Error during unban process.");
+		console.error(err);
+		res.status(500).send("Error during unban process");
 	}
 });
-
-if (process.env.FUNCTIONS_EMULATOR !== "true") {
-	exports.unbanExpiredUsers = schedule("every 1 minutes").onRun(async () => {
-		try {
-			const now = Timestamp.now();
-
-			const snapshot = await firestore
-				.collection("users")
-				.where("role", "==", "banned")
-				.where("banExpiresAt", "<=", now)
-				.get();
-
-			const batch = firestore.batch();
-			snapshot.docs.forEach((doc) => {
-				batch.update(doc.ref, {
-					role: "user",
-					banReason: FieldValue.delete(),
-					banType: FieldValue.delete(),
-					banExpiresAt: FieldValue.delete(),
-					bannedBy: FieldValue.delete(),
-					banAppealText: FieldValue.delete(),
-					banAppealPending: FieldValue.delete(),
-				});
-			});
-
-			await batch.commit();
-			console.log(`Successfully unbanned ${snapshot.size} users`);
-		}
-		catch (err) {
-			console.error("Error in scheduled unbanExpiredUsers:", err);
-		}
-	});
-}
