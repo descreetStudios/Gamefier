@@ -3,7 +3,7 @@
 		<div class="footer__container">
 			<!-- Left: Info -->
 			<div class="footer__info">
-				<p>&copy; {{ currentYear }} Gamefier. Independently developed. All rights reserved.</p>
+				<p>&copy; {{ currentYear }} Gamefier. Developed by an independent team. All rights reserved.</p>
 				<p>
 					This project is open-source and licensed under
 					<NuxtLink

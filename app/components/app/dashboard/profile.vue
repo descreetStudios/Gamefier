@@ -1,10 +1,18 @@
 <template>
+	<AppDashboardIconEditor
+		:show-icon-editor="showIconEditor"
+		@close="closeIconEditor()"
+		@saved="savedProfileIcon()"
+	/>
 	<section class="profile">
 		<h2 class="profile__heading">
 			My Profile
 		</h2>
 		<div class="profile__content">
-			<div class="profile__iconContainer">
+			<div
+				class="profile__iconContainer"
+				@click="openIconEditor()"
+			>
 				<NuxtImg
 					class="profile__iconContainer__icon"
 					:src="userIcon"
@@ -29,10 +37,21 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
-const userIcon = ref("/images/icons/user.png");
+const { $userStore } = useNuxtApp();
+
+const userIcon = computed(() => $userStore.profileIconUrl ?? "/images/icons/user.png");
 const editIcon = ref("/images/icons/edit.png");
+const showIconEditor = ref(false);
+
+const openIconEditor = () => {
+	showIconEditor.value = true;
+};
+
+const closeIconEditor = () => {
+	showIconEditor.value = false;
+};
 </script>
 
 <style scoped lang="scss">
@@ -55,6 +74,7 @@ const editIcon = ref("/images/icons/edit.png");
 		width: 15rem;
 		height: 15rem;
 		border-radius: 50%;
+		user-select: none;
 
 		&__icon,
 		&__editOverlay,

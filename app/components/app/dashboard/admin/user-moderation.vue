@@ -1,4 +1,9 @@
 <template>
+	<AppDashboardIconEditor
+		:show-icon-editor="showIconEditor"
+		@close="closeIconEditor()"
+		@saved="savedProfileIcon()"
+	/>
 	<div class="userModeration">
 		<h2>User Moderation</h2>
 		<fieldset class="userModeration__search">
@@ -29,7 +34,10 @@
 			<legend>{{ user.displayName }} - #{{ user.id }}</legend>
 
 			<div class="userPreview">
-				<div class="userPreview__avatar">
+				<div
+					class="userPreview__avatar"
+					@click="openIconEditor()"
+				>
 					<NuxtImg
 						class="userPreview__avatar__img"
 						:src="userIcon"
@@ -156,13 +164,24 @@ const props = defineProps({
 	isLoadingMore: Boolean,
 });
 
+const { $userStore } = useNuxtApp();
+
 const userSearchName = ref("");
 const userSearchNameBackup = ref("");
 
 const emits = defineEmits(["search", "update-profile"]);
 
-const userIcon = ref("/images/icons/user.png");
+const userIcon = computed(() => $userStore.profileIconUrl ?? "/images/icons/user.png");
 const editIcon = ref("/images/icons/edit.png");
+const showIconEditor = ref(false);
+
+const openIconEditor = () => {
+	showIconEditor.value = true;
+};
+
+const closeIconEditor = () => {
+	showIconEditor.value = false;
+};
 
 const onSearch = () => {
 	emits("search", true, userSearchName.value);
@@ -180,42 +199,42 @@ const onUpdateProfile = (user) => {
 </script>
 
 <style lang="scss" scoped>
-.userModeration{
-    &__search {
-        margin-bottom: 2rem;
+.userModeration {
+	&__search {
+		margin-bottom: 2rem;
 		padding: 1rem;
 		border: 2px solid var(--inv-secondary-text);
 		border-radius: var(--border-radius);
 
 		legend {
-            padding: 0 1rem;
+			padding: 0 1rem;
 			font-weight: bold;
 		}
 
 		&Form {
-            position: relative;
+			position: relative;
 			display: flex;
 			gap: 1rem;
 
 			&_button {
-                background-color: var(--primary);
+				background-color: var(--primary);
 				position: absolute;
 				right: 0;
 				width: 15%;
 
 				&:hover {
-                    background-color: var(--primary-hover);
+					background-color: var(--primary-hover);
 				}
 			}
 
 			&_name {
-                flex: 1;
+				flex: 1;
 			}
 		}
 	}
 
 	&__userCard {
-        display: flex;
+		display: flex;
 		flex-wrap: wrap;
 		gap: 2rem;
 		padding: 1.5rem;
@@ -224,14 +243,14 @@ const onUpdateProfile = (user) => {
 		border-radius: var(--border-radius);
 
 		legend {
-            padding: 0 1rem;
+			padding: 0 1rem;
 			font-weight: bold;
 		}
 	}
 }
 
 .userPreview {
-    display: flex;
+	display: flex;
 	align-items: center;
 
 	&__avatar {
@@ -243,7 +262,7 @@ const onUpdateProfile = (user) => {
 		&__img,
 		&__overlay,
 		&__edit {
-            position: absolute;
+			position: absolute;
 			width: 100%;
 			height: 100%;
 			border-radius: 50%;
@@ -251,39 +270,39 @@ const onUpdateProfile = (user) => {
 		}
 
 		&__overlay {
-            background-color: black;
+			background-color: black;
 			opacity: 0;
 			transition: opacity 0.3s ease;
 			z-index: 1;
 			border-radius: 50%;
 
 			&:hover {
-                opacity: 0.4;
+				opacity: 0.4;
 				cursor: pointer;
 			}
 		}
 
 		&__edit {
-            opacity: 0;
+			opacity: 0;
 			padding: 6rem;
 			transition: opacity 0.3s ease;
 		}
 
 		&:hover &__edit {
-            opacity: 1;
+			opacity: 1;
 		}
 	}
 }
 
 .userForm {
-    flex: 1;
+	flex: 1;
 	display: flex;
 	flex-direction: column;
 	gap: 1rem;
 
 	input,
 	select {
-        padding: 0.5rem;
+		padding: 0.5rem;
 		font-size: 1rem;
 		border-radius: var(--border-radius);
 		border: 1px solid var(--inv-secondary-text);

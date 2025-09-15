@@ -21,7 +21,7 @@ service cloud.firestore {
       allow read: if request.auth != null &&
         (request.auth.uid == userId || isAdmin());
 
-      // Create only allowed if document ID matches UID (same rule for all users)
+      // Create only allowed if document ID matches UID
       allow create: if request.auth != null &&
         request.auth.uid == userId;
 
@@ -60,7 +60,7 @@ service cloud.firestore {
       // Any authenticated and non-banned user can read all quizzes
       allow read: if request.auth != null && !isBanned();
 
-      // Only the authenticated and non-banned author can create a quiz (with matching uid)
+      // Only the authenticated and non-banned author can create a quiz
       allow create: if request.auth != null &&
         !isBanned() &&
         request.resource.data.uid == request.auth.uid;

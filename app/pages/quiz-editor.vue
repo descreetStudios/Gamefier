@@ -520,7 +520,7 @@ const saveQuiz = async () => {
 					await deleteObject(storageRef($storage, slide._backgroundPath));
 				}
 				catch { return; }
-				const filePath = `quiz-backgrounds/${user.uid}/${Date.now()}-${slide._backgroundFile.name}`;
+				const filePath = `quiz-backgrounds/${user.uid}/${Date.now()}-${user.displayName}`;
 				const ref = storageRef($storage, filePath);
 				await uploadBytes(ref, slide._backgroundFile);
 				slide.background = await getDownloadURL(ref);
