@@ -61,8 +61,8 @@ async function getSlideImageURL(path) {
 		return url;
 	}
 	catch (e) {
-		console.warn("Errore nel caricamento immagine:", path, e.message);
-		return "/images/BackgroundDark.png"; // fallback in caso di errore
+		console.warn("Error while loading image:", path, e.message);
+		return "/images/BackgroundDark.png"; // fallback in case of error
 	}
 }
 
