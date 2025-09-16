@@ -35,7 +35,6 @@ import { httpsCallable } from "firebase/functions";
 const { $db } = useNuxtApp();
 const { $functions } = useNuxtApp();
 const { $eventBus } = useNuxtApp();
-const { $userStore } = useNuxtApp();
 
 const userSearchName = ref("");
 const pageSize = 10;
@@ -185,7 +184,6 @@ const updateProfile = async (user) => {
 		updatedStoreFields.banReason = deleteField();
 		updatedStoreFields.banType = deleteField();
 		updatedStoreFields.banExpiresAt = deleteField();
-		updatedStoreFields.bannedBy = deleteField();
 		updatedStoreFields.banAppealText = deleteField();
 		updatedStoreFields.banAppealPending = deleteField();
 	}
@@ -212,9 +210,6 @@ const updateProfile = async (user) => {
 			else {
 				updatedStoreFields.banExpiresAt = date;
 			}
-		}
-		if (!user.bannedBy || user.bannedBy != $userStore.displayName) {
-			updatedStoreFields.bannedBy = $userStore.displayName;
 		}
 	}
 

@@ -50,10 +50,21 @@ exports.updateUserAuth = onCall(async (context) => {
 				throw new Error(`Invalid argument: Role '${role}' is not allowed.`);
 			}
 
+			const updatedStoreFields = { role };
+
+			if (role === "banned") {
+				const callerUid = context.auth.uid;
+				const callerUser = await admin.auth().getUser(callerUid);
+				updatedStoreFields.bannedBy = callerUser.displayName || "Unknown";
+			}
+			else {
+				updatedStoreFields.bannedBy = FieldValue.delete();
+			}
+
 			await admin.auth().setCustomUserClaims(targetUid, { role });
 
 			// Update Firestore user doc role field to keep in sync
-			await firestore.collection("users").doc(targetUid).update({ role });
+			await firestore.collection("users").doc(targetUid).update(updatedStoreFields);
 		}
 
 		return {

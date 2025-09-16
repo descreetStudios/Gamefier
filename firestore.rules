@@ -25,32 +25,33 @@ service cloud.firestore {
       allow create: if request.auth != null &&
         request.auth.uid == userId;
 
-      allow update: if request.auth != null && (
-        (isAdmin() &&
-          !request.resource.data.diff(resource.data).changedKeys().hasAny(['role'])
-        ) ||
-        (
-          request.auth.uid == userId &&
-          !request.resource.data.diff(resource.data).changedKeys().hasAny(['role']) &&
-
-          (
-            isBanned()
-              ? request.resource.data.diff(resource.data).changedKeys().hasOnly([
-                  'banAppealText',
-                  'banAppealPending'
-                ])
-              : (
-                request.resource.data.diff(resource.data).changedKeys().hasOnly([
-                  'email',
-                  'displayName',
-                  'displayNameLowerCase',
-                  'profileIconUrl',
-                  'banAppealText'
-                ])
-              )
-          )
-        )
-      );
+      allow update: if request.auth != null &&
+        !(request.resource.data.diff(resource.data).affectedKeys().hasAny(['bannedBy'])) &&
+              (
+                (isAdmin() &&
+                  !request.resource.data.diff(resource.data).changedKeys().hasAny(['role'])
+                ) ||
+                (
+                  request.auth.uid == userId &&
+                  !request.resource.data.diff(resource.data).changedKeys().hasAny(['role']) &&
+                  (
+                    isBanned()
+                      ? request.resource.data.diff(resource.data).changedKeys().hasOnly([
+                          'banAppealText',
+                          'banAppealPending'
+                        ])
+                      : (
+                        request.resource.data.diff(resource.data).changedKeys().hasOnly([
+                          'email',
+                          'displayName',
+                          'displayNameLowerCase',
+                          'profileIconUrl',
+                          'banAppealText'
+                        ])
+                      )
+                  )
+                )
+              );
 
       allow delete: if false;
     }
