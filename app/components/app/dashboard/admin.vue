@@ -32,9 +32,7 @@ import {
 import { ref, onMounted } from "vue";
 import { httpsCallable } from "firebase/functions";
 
-const { $db } = useNuxtApp();
-const { $functions } = useNuxtApp();
-const { $eventBus } = useNuxtApp();
+const { $db, $functions, $eventBus } = useNuxtApp();
 
 const userSearchName = ref("");
 const pageSize = 10;

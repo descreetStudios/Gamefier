@@ -99,9 +99,10 @@ import {
 	limit,
 	startAfter,
 } from "firebase/firestore";
+import { httpsCallable } from "firebase/functions";
 import { onMounted, ref } from "vue";
 
-const { $db, $eventBus } = useNuxtApp();
+const { $db, $functions, $eventBus } = useNuxtApp();
 
 const users = ref([]);
 const oldUsers = ref([]);
@@ -252,17 +253,24 @@ const refuse = async (user) => {
 };
 
 const unban = async (user) => {
+	const updateUserAuth = httpsCallable($functions, "updateUserAuth");
+
 	const updates = {
-		role: "user",
 		banReason: deleteField(),
 		banType: deleteField(),
 		banExpiresAt: deleteField(),
-		bannedBy: deleteField(),
 		banAppealText: deleteField(),
 		banAppealPending: deleteField(),
 	};
+
 	try {
 		await updateDoc(doc($db, "users", user.id), updates);
+		const _result = await updateUserAuth({
+			uid: user.id,
+			fieldsToUpdate: {
+				role: "user",
+			},
+		});
 		$eventBus.emit("alert", {
 			message: `User ${user.displayName} unbanned successfully.`,
 			type: "success",
