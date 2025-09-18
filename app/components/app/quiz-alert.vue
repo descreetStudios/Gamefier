@@ -1,9 +1,9 @@
 <template>
 	<div
 		v-if="props.show"
-		class="quiz-popup-overlay"
+		class="quiz-popup__overlay"
 	>
-		<div class="quiz-popup">
+		<div class="quiz-popup__content">
 			<h2>{{ props.title }}</h2>
 			<p>{{ props.message }}</p>
 
@@ -38,7 +38,7 @@
 				</template>
 			</div>
 
-			<div class="quiz-popup-buttons">
+			<div class="quiz-popup__buttons">
 				<!-- Normal popups -->
 				<template v-if="props.type === 'confirm' || props.type === 'input' || props.type === 'select'">
 					<button @click="props.onCancel ? props.onCancel() : props.closePopup()">
@@ -49,9 +49,9 @@
 				<!-- Play Quiz Popup -->
 				<div
 					v-if="props.show && props.type === 'play'"
-					class="popup"
+					class="quiz-popup__popup"
 				>
-					<div class="popup-actions">
+					<div class="quiz-popup__popup-actions">
 						<button @click="eventHandler('link')">
 							Copy Link
 						</button>
@@ -67,7 +67,7 @@
 				<!-- Default info/success/error -->
 				<template v-else>
 					<button
-						:class="{ 'exit-button danger': props.title === 'Exit Quiz?' || props.title === 'Confirm Delete' }"
+						:class="{ 'quiz-popup__button--danger': props.title === 'Exit Quiz?' || props.title === 'Confirm Delete' }"
 						@click="props.onConfirm ? props.onConfirm() : props.closePopup()"
 					>
 						OK
@@ -85,18 +85,9 @@ const props = defineProps({
 	title: String,
 	message: String,
 	type: { type: String, default: "info" }, // info | success | error | confirm | exit
-	onConfirm: {
-		type: Function,
-		default: null,
-	},
-	onCancel: {
-		type: Function,
-		default: null,
-	},
-	closePopup: {
-		type: Function,
-		default: () => {},
-	},
+	onConfirm: { type: Function, default: null },
+	onCancel: { type: Function, default: null },
+	closePopup: { type: Function, default: () => { } },
 	scoringOptions: [
 		{
 			value: String,
@@ -126,43 +117,61 @@ const eventHandler = (event) => {
 };
 </script>
 
-<style scoped>
-.quiz-popup-overlay {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10000;
-}
-
+<style lang="scss" scoped>
 .quiz-popup {
-  background: var(--surface);
-  padding: 2rem;
-  border-radius: 1rem;
-  max-width: 400px;
-  width: 90%;
-  text-align: center;
-}
+	&__overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100vh;
+		background: rgba(0, 0, 0, 0.7);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		z-index: 10000;
+	}
 
-.quiz-popup-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 1rem;
-}
+	&__content {
+		background: var(--surface);
+		padding: 2rem;
+		border-radius: 1rem;
+		max-width: 400px;
+		width: 90%;
+		text-align: center;
+	}
 
-.quiz-popup-buttons button {
-  padding: 0.5rem 1.2rem;
-  border-radius: 0.5rem;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-}
+	&__buttons {
+		display: flex;
+		justify-content: center;
+		gap: 1rem;
+		margin-top: 1rem;
 
-.exit-button.danger {
-  background-color: red;
+		button {
+			padding: 0.5rem 1.2rem;
+			border-radius: 0.5rem;
+			border: none;
+			cursor: pointer;
+			font-weight: bold;
+		}
+	}
+
+	&__button {
+		&--danger {
+			background-color: red;
+
+			&:hover {
+				background-color: #b71c1c;
+			}
+		}
+	}
+
+	&__popup {
+		&-actions {
+			display: flex;
+			flex-direction: column;
+			gap: 0.5rem;
+		}
+	}
 }
 </style>

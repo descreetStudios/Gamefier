@@ -1,11 +1,8 @@
 <template>
-	<div class="quiz-player">
+	<div class="quiz__container">
 		<app-editor-loading-screen v-if="loading" />
 
-		<div
-			v-else
-			class="quiz-container"
-		>
+		<div v-else>
 			<app-quiz-alert
 				:show="exitPopup.show"
 				:title="exitPopup.title"
@@ -14,53 +11,70 @@
 				:on-confirm="exitPopup.onConfirm"
 				:on-cancel="exitPopup.onCancel"
 			/>
-			<!-- Exit button -->
-			<button
-				:class="{ danger: currentSlideIndex < quizData.slides.length }"
-				@click="exitQuiz"
-			>
-				Exit
-			</button>
 
-			<h2 class="quiz-title">
-				{{ quizData.title }}
-			</h2>
+			<div class="quiz__header">
+				<!-- Quiz Title -->
+				<h2 class="quiz__title">
+					{{ quizData.title }}
+				</h2>
 
-			<!-- Current slide -->
+				<!-- Exit Button -->
+				<button
+					class="quiz__exit-btn"
+					@click="exitQuiz"
+				>
+					Exit
+				</button>
+			</div>
+
+			<!-- Quiz Slide -->
 			<div
 				v-if="currentSlideIndex < quizData.slides.length"
-				class="quiz-slide"
+				class="quiz__slide"
 			>
-				<div class="slide-question-card">
-					<h3 class="slide-question">
+				<!-- Question -->
+				<div class="quiz__question-card">
+					<h3 class="quiz__question-card-text">
 						{{ currentSlide.question }}
 					</h3>
 				</div>
 
-				<div class="slide-content">
-					<div class="slide-left">
+				<!-- Content: Image + Answers -->
+				<div class="quiz__content">
+					<!-- Image -->
+					<div class="quiz__left">
 						<NuxtImg
 							v-if="currentSlide.background"
 							:src="currentSlide.background"
-							class="slide-image"
+							class="quiz__image"
+							format="webp"
+							alt="Quiz background image"
+						/>
+						<NuxtImg
+							v-else
+							:src="defaultBackground"
+							class="quiz__image"
 							format="webp"
 						/>
 					</div>
 
-					<div class="slide-right">
-						<div class="answers">
+					<!-- Answers -->
+					<div class="quiz__right">
+						<div class="quiz__answers">
 							<button
 								v-for="(answer, index) in currentSlide.answers"
 								:key="index"
-								:class="{ selected: selectedAnswerIndexes.includes(index) }"
+								class="quiz__answers-btn"
+								:class="{ 'quiz__answers-btn--selected': selectedAnswerIndexes.includes(index) }"
 								@click="toggleAnswer(index)"
 							>
 								{{ answer.text || `Answer ${index + 1}` }}
 							</button>
 						</div>
+
 						<button
 							v-if="selectedAnswerIndexes.length > 0"
-							class="next-button"
+							class="quiz__next-btn"
 							@click="nextSlide"
 						>
 							Next
@@ -72,7 +86,7 @@
 			<!-- Results -->
 			<div
 				v-else
-				class="quiz-results"
+				class="quiz__results"
 			>
 				<h3>Quiz Finished!</h3>
 				<p>Your score: {{ finalScore }} / {{ quizData.slides.length }}</p>
@@ -80,21 +94,27 @@
 				<div
 					v-for="(slide, index) in quizData.slides"
 					:key="index"
-					class="result-slide"
+					class="quiz__results-slide"
 				>
 					<h4>{{ slide.question }}</h4>
 					<ul>
 						<li
 							v-for="(answer, aIndex) in slide.answers"
 							:key="aIndex"
-							:class="{ correct: answer.correct, selected: userAnswers[index]?.includes(aIndex) }"
+							:class="{
+								'quiz__results-item--correct': answer.correct,
+								'quiz__results-item--selected': userAnswers[index]?.includes(aIndex),
+							}"
 						>
 							{{ answer.text }}
 						</li>
 					</ul>
 				</div>
 
-				<button @click="restartQuiz">
+				<button
+					class="quiz__next-btn"
+					@click="restartQuiz"
+				>
 					Restart Quiz
 				</button>
 			</div>
@@ -116,6 +136,8 @@ const quizData = ref({ title: "", slides: [], scoringSystem: "allOrNothing" });
 const currentSlideIndex = ref(0);
 const selectedAnswerIndexes = ref([]);
 const userAnswers = ref([]);
+
+const defaultBackground = ref("/images/backgroundDark.png");
 
 const currentSlide = computed(() => quizData.value.slides[currentSlideIndex.value] || { question: "", answers: [] });
 
